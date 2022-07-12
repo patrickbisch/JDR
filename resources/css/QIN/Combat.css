@@ -1,0 +1,67 @@
+body {
+    background-color:seagreen;
+}
+.FondPrincipal{
+    grid-template-columns: 6px 260px 12px 250px 12px 100px 60px 60px 56px 1px 1fr 260px 12px 14px;
+}
+.De3{
+    grid-column: 10;
+    grid-row: 1/3;
+}
+.BtnValider{
+    grid-column: 9;
+    grid-row: 1/3;
+}
+
+.CouleurLigne{
+    background-color:wheat;
+    background-color:transparent;
+}
+.EcranSelect{
+    background-color:ivory;
+}
+.MenuHaut{
+    background-color:darkkhaki;
+}
+.Carte{
+    background-color:transparent;
+}
+.MenuBas{
+    background-color:darkkhaki;
+}
+/*  Nom du PNJ, PJ et Init              */
+.NomPNJ,
+.NomPJ{
+    background-color:darkorange;
+}
+.MenuPNJ,
+.MenuPJ,
+.MenuInit{
+    background-color: #857e29;
+}
+.EcranPNJ,
+.EcranPJ,
+.EcranInit{
+    background-color:darkkhaki;
+}
+.Ligne:nth-child(2n){
+    background-color:khaki;
+}
+.Feu{
+    background-color: red;
+}
+.Bois{
+    background-color: darkolivegreen;
+    color: white;
+}
+.Terre{
+    background-color:sienna;
+    color: white;
+}
+.Metal{
+    background-color: silver;
+}
+.Eau{
+    background-color: mediumslateblue;
+}
+
