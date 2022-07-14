@@ -55,6 +55,7 @@
                     <div class="Colonne2-3 Droite">.......... :</div>
                     <div class="DonneeLab">{{__("QIN/Combat.PV")}}</div>
                     <div id="PV-{{$Cle}}" class="Trait Colonne4-6 Numerique" enabled>{{$Perso->PV}}</div>
+                    <div id="Malus-{{$Cle}}" hidden class="Trait Colonne7 Numerique" enabled>{{$Perso->Malus}}</div>
                 </div>
                 @break
             @case(0)
@@ -78,6 +79,7 @@
                             <img height="18" src="../resources/Images/Haut.png" alt="Plus">
                         </button>
                         <div id="PV-{{$Cle}}-{{$x}}" class="Trait Colonne6-8 Numerique" enabled>{{$Perso->PV}}</div>
+                        <div id="Malus-{{$Cle}}-{{$x}}" hidden class="Trait Colonne8 Numerique" enabled>{{$Perso->Malus}}</div>
                     </div>
                 @endfor
                 <div id="LignePV-{{$Cle}}" class="LignePerso DonneeDef">

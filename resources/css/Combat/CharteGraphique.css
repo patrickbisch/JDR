@@ -441,6 +441,10 @@ p{
     grid-column: 5/9;
     grid-row: 1;
 }
+.Colonne6-7{
+    grid-column: 6/8;
+    grid-row: 1;
+}
 .Colonne6-8{
     grid-column: 6/9;
     grid-row: 1;

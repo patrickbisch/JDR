@@ -5,6 +5,7 @@ class BONUS_Avant_Interface  {
 
     AfficherListe(Etat) {BONUSAVANT_AfficherListe(Etat);}
     Utiliser(Index) {BONUSAVANT_UtiliserBonusAvant(Index);}
+    Ajouter(Index, Bonus) {BONUSAVANT_Ajouter(Index, Bonus);}
 }
 var BonusAvant = new BONUS_Avant_Interface ();
 class BONUS_AVANT_Donnee {
@@ -34,38 +35,44 @@ function BONUSAVANT_Initialiser()
     {
         if(parseInt(PERSO_BASE[x].CHI) > 0)
         {
-            Perso.AffecterBonusAvantMaxi(x, PERSO_BASE[x].CHI);
-            Perso.AffecterBonusAvant(x, Perso.BonusAvantMaxi(x));
+            PERSO_DATA[x].BA.Maxi = PERSO_BASE[x].CHI;
+            PERSO_DATA[x].BA.Valeur = PERSO_BASE[x].CHI;
             BONUS_AVANT_DATA[x].Etat = true;
         }
     }
 }
+function BONUSAVANT_Ajouter(Index, Bonus)
+{
+    console.debug("BONUSAVANT_Ajouter (Debut) : ",Index+"/"+PERSO_DATA[Index].BA.Valeur);
+    PERSO_DATA[Index].BA.Valeur += parseInt(Bonus);
+    console.debug("BONUSAVANT_Ajouter : ",Bonus+"/"+PERSO_DATA[Index].BA.Valeur);
+    if(parseInt(PERSO_DATA[Index].BA.Valeur) > parseInt(PERSO_DATA[Index].BA.Maxi))
+    {
+        console.debug("BONUSAVANT_Ajouter (Maxi): ",PERSO_DATA[Index].BA.Maxi);
+        PERSO_DATA[Index].BA.Valeur = PERSO_DATA[Index].BA.Maxi;
+    }
+    if(parseInt(PERSO_DATA[Index].BA.Valeur) < 0)
+    {
+        JDR_BlesserPersonnage(Index, Math.abs(PERSO_DATA[Index].BA.Valeur));
+        PERSO_DATA[Index].BA.Valeur = 0;
+    }
+    console.debug("BONUSAVANT_Ajouter (Apres) : ",Bonus+"/"+PERSO_DATA[Index].BA.Valeur);
+    BonusAvant.Actualiser(Index);
+}
 function BONUSAVANT_Nouveau(Obj, Id)
 {
-    PERSO_DATA[Id].BonusAvant = Obj.value;
-}
-function BONUSAVANT_Utiliser(Index, Nb, Afficher = true)
-{
-    if(Nb == 0)
-    {
-        return(0);
-    }
-    if(Perso.BonusAvantMaxi(Index) == 0)
-    {
-        return(0);
-    }
-    Perso.AffecterBonusAvant(Index, -1 * Nb);
+    PERSO_DATA[Id].BA.Bonus = Obj.value;
 }
 function BONUSAVANT_UtiliserBonusAvant(Index)
 {
-    if(parseInt(PERSO_DATA[Index].BonusAvant) == 0)
+    if(parseInt(PERSO_DATA[Index].BA.Bonus) == 0)
     {
         return(0);
     }
-    let Nb = -2 * PERSO_DATA[Index].BonusAvant;
+    let Nb = -2 * PERSO_DATA[Index].BA.Bonus;
     MSG.Journal("Utilise <strong>" + Math.abs(Nb) + "</strong> points de <strong>CHI</strong>.", 2);
-    Perso.AffecterBonusAvant(Index, Nb);
-    PERSO_DATA[Index].BonusAvant = 0;
+    BonusAvant.Ajouter(Index, Nb);
+    PERSO_DATA[Index].BA.Bonus = 0;
     BONUS_AVANT_DATA[Index].PtrSelect.value = 0;
 }
 function BONUSAVANT_Activer(Index, Etat = true)
@@ -74,17 +81,9 @@ function BONUSAVANT_Activer(Index, Etat = true)
 }
 function BONUSAVANT_Actualiser(Index)
 {
-    let Nb = Perso.BonusAvant(Index);
-    if(parseInt(Nb) > 0 )
-    {
-        BONUS_AVANT_DATA[Index].PtrSelect.disabled = false;
-    }
-    else
-    {
-        BONUS_AVANT_DATA[Index].PtrSelect.value = 0;
-        BONUS_AVANT_DATA[Index].PtrSelect.disabled = true;
-    }
+    let Nb = PERSO_DATA[Index].BA.Valeur;
     BONUS_AVANT_DATA[Index].PtrLabel.innerHTML = Nb;
+    console.debug("BONUSAVANT_Actualiser : " + Index +"/"+Nb);
 }
 function BONUSAVANT_AfficherListe(Etat = true)
 {

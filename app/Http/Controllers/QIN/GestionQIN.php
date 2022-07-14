@@ -5,7 +5,6 @@ namespace App\Http\Controllers\QIN;
 use App\Models\Gestion\JDR_Campagne;
 use App\Models\Rencontre\Rencontre;
 use App\Models\Rencontre\RencontrePNJ;
-use App\Models\QIN\Cible;
 
 use App\Models\QIN\Arme;
 use App\Models\QIN\Armure;
@@ -56,15 +55,6 @@ class GestionQIN extends Controller
                 $LstPerso[$NbPJ+$NbPNJ]->Manoeuvres = Manoeuvre::Liste($PtrPNJ->id_pnj);
 
 
-
-
-                $LstPerso[$NbPJ+$NbPNJ]->CHIMaxi = $LstPerso[$NbPJ+$NbPNJ]->CHI;
-                $LstPerso[$NbPJ+$NbPNJ]->BonusCHI = 0;
-                $LstPerso[$NbPJ+$NbPNJ]->ClsCible = new Cible();
-                $LstPerso[$NbPJ+$NbPNJ]->TabPV = explode("/", $LstPerso[$NbPJ+$NbPNJ]->PV);
-                $LstPerso[$NbPJ+$NbPNJ]->TabPVMaxi = explode("/", $LstPerso[$NbPJ+$NbPNJ]->PV);
-                $LstPerso[$NbPJ+$NbPNJ]->MalusPV = 0;
-                $LstPerso[$NbPJ+$NbPNJ]->Mort = 0;
                 $LstPerso[$NbPJ+$NbPNJ]->Protection = 0;
                 $LstPerso[$NbPJ+$NbPNJ]->ProtectionArmure = 0;
                 $LstPerso[$NbPJ+$NbPNJ]->ProtectionBouclier = 0;

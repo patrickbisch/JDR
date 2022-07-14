@@ -11,7 +11,7 @@ function DeInitiative()
             let Index = INIT_DATA[x].Index;
             let NbChi = 0;
             let Bonus = parseInt(PERSO_BASE[Index].Eau) +
-                        parseInt(PERSO_DATA[Index].BonusAvant) +
+                        parseInt(PERSO_DATA[Index].BA.Bonus) +
                         parseInt(PERSO_DATA[Index].MalusPV);
             let Obj = document.querySelector("#TypeInit-" + Index);
             if(Obj.value != "0")
@@ -95,7 +95,7 @@ function DeInitiative()
                         CouleurObjet(PERSO_DATA[Index].PtrLigne, -2);
                 }
                 BonusAvant.Utiliser(Index);
-                Perso.AffecterBonusAvant(Index, NbChi);
+                BonusAvant.Ajouter(Index, NbChi);
             }
             else
             {

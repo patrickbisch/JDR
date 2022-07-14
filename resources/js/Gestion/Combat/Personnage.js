@@ -25,20 +25,18 @@ class PERSO_Interface{
     NombreAdversaire(Index) {return(PERSO_NombreAdversaire(Index));}
     Suivant() {return(PERSO_SuivantActif());}
 
-    AffecterBonusAvantMaxi(Index, Bonus) {PERSO_DATA[Index].BonusAvantMaxi = Bonus;}
-    BonusAvantMaxi(Index) {return(PERSO_DATA[Index].BonusAvantMaxi);}
-    AffecterBonusAvant(Index, Bonus) {PERSO_AffecterBonusAvant(Index, Bonus);}
-    BonusAvant(Index) {return(PERSO_DATA[Index].BonusAvantValeur);}
-
     Arme(Index, Numero) {return(PERSO_BASE[Index].Armes[Numero]);}
     NombreArme(Index) {return(PERSO_BASE[Index].Armes.length);}
-
-    Blesser(Index, NombreBlessures) {PERSO_Blesser(Index, NombreBlessures);}
 }
 var PERSO_BASE       = new Array();
 var PERSO_DATA       = new Array();
 var Perso            = new PERSO_Interface();
 
+class PERSO_Bonus{
+    Maxi = 0;
+    Valeur = 0;
+    Bonus = 0;
+}
 class PERSO_Donnee{
     //  Definition pour les données complementaires du personnage
     Mort = false;
@@ -48,12 +46,12 @@ class PERSO_Donnee{
     Action = "";
 
     // Etat de santé du perosnnage
+    TabPV = new Array();
+    TabPVMaxi = new Array();
     MalusPV = 0;
 
     //  Definition pour le bonus avant (CHI pour QIN, Maitrise pour Prothecy)
-    BonusAvantValeur = 0;
-    BonusAvantMaxi = 0;
-    BonusAvant = 0;
+    BA = new PERSO_Bonus();
 
     PtrLigne;
     PtrLigneInit;
@@ -85,6 +83,23 @@ function PERSO_Initialiser()
         {
             console.debug(PERSO_BASE[x].Manoeuvres[y]);
         }
+    }
+    for(x = 0;x < PERSO_BASE.length;x++)
+    {
+        let Boucle = 1;
+        switch(PERSO_BASE[x].id_fonction)
+        {
+            case 4:
+            case 5:
+            case 6:
+                Boucle = Perso.NbPJ;
+                break;
+        }
+        for(let y = 0;y < Boucle;y++)
+        {
+            PERSO_DATA[x].TabPV[y] = PERSO_BASE[x].PV.split("/");
+        }
+        PERSO_DATA[x].TabPVMaxi = PERSO_BASE[x].PV.split("/");
     }
 }
 function PERSO_NouveauActif()
@@ -124,13 +139,13 @@ function PERSO_NouveauActif()
 function PERSO_NombreAdversaire(Index)
 {
     let Nb = 0;
-    let Id = PERSO_BASE[Index].id_fonction;
+    let Id = Perso.TypeFonction(Index);
     for(let x = 0;x < PERSO_BASE.length;x++)
     {
-        if(((Id == 0) && (PERSO_BASE[x].id_fonction != Id)) ||
-            ((Id != 0) && (PERSO_BASE[x].id_fonction == 0)))
+        if(((Id == 0) && (Perso.TypeFonction(x) != Id)) ||
+            ((Id != 0) && (Perso.TypeFonction(x) == 0)))
         {
-            if(parseInt(PERSO_BASE[x].Mort) == 0)
+            if(!Perso.Mort(x))
             {
                 Nb++;
             }
@@ -263,22 +278,4 @@ function PERSO_ChangerEtat(Index, Mort = true)
     PERSO_DATA[Index].Mort = Mort;
     CouleurObjet(PERSO_DATA[Index].PtrLigne, 2);
     INIT_VisualiserListe(SavSensFleche[2]);
-}
-function PERSO_AffecterBonusAvant(Index, Bonus)
-{
-    PERSO_DATA[Index].BonusAvantValeur += Bonus;
-    if(parseInt(PERSO_DATA[Index].BonusAvantValeur) > parseInt(PERSO_DATA[Index].BonusAvantMaxi))
-    {
-        PERSO_DATA[Index].BonusAvantValeur = PERSO_DATA[Index].BonusAvantMaxi;
-    }
-    if(parseInt(PERSO_DATA[Index].BonusAvantValeur) < 0)
-    {
-        Perso.Blesser(Index, -1 * PERSO_DATA[Index].BonusAvantValeur);
-        PERSO_DATA[Index].BonusAvantValeur = 0;
-    }
-    BonusAvant.Actualiser(Index);
-}
-function PERSO_Blesser(Index, NbBlessures)
-{
-    JDR_BlesserPersonnage(Index, NbBlessures);
 }

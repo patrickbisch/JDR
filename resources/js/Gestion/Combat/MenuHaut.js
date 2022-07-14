@@ -75,6 +75,7 @@ function ActiverFleche(Bouton, Sens)
             break;
         case "COMBAT":
         case "ACTION":
+        case "DEFENSE":
             if(Bouton != "Init")
             {
                 PERSO_VisualiserListe(Bouton,Sens);

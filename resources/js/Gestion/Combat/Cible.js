@@ -126,6 +126,7 @@ function CIBLE_GroupePlus(x, y)
     }
     CIBLE_DATA[x].Libre--;
     Ptr.Nb++;
+    CIBLE_ChargerListe(Perso.Actif);
     CIBLE_AfficherGroupe(x);
     return(0);
 }
@@ -142,6 +143,7 @@ function CIBLE_GroupeMoins(x, y)
     }
     CIBLE_DATA[x].Libre++;
     Ptr.Nb--;
+    CIBLE_ChargerListe(Perso.Actif);
     CIBLE_AfficherGroupe(x);
     return(0);
 }
@@ -220,6 +222,10 @@ function CIBLE_AffecterNouvelle(Id)
 }
 function CIBLE_ChargerListe(Id)
 {
+    if(Id < 0)
+    {
+        return(0);
+    }
     if(CIBLE_DATA[Id].Groupe)
     {
         for(let x = 0;x < Perso.IndexPJ.length;x++)
@@ -250,15 +256,26 @@ function CIBLE_ChargerListe(Id)
             {
                 if(CIBLE_DATA[x].Groupe)
                 {
+                    let Tous = true;
                     for(let y = 0;y < Perso.NbPJ;y++)
                     {
-                        let Opt = document.createElement("option");
-                        Opt.value = x + "-" + y;
-                        Opt.text = Perso.Lettre(x) + "." + String.fromCharCode(97+y) + " " + Perso.Nom(x);
-                        Ptr.add(Opt);
-                        if(Opt.value == AncienCible)
+                        if(CIBLE_DATA[x].TabGroupe[y].Nb > 0)
                         {
-                            CIBLE_DATA[Id].Cible = AncienCible;
+                            Tous = false;
+                        }
+                    }
+                    for(let y = 0;y < Perso.NbPJ;y++)
+                    {
+                        if(Tous || (CIBLE_DATA[x].TabGroupe[y].Nb > 0))
+                        {
+                            let Opt = document.createElement("option");
+                            Opt.value = x + "-" + y;
+                            Opt.text = Perso.Lettre(x) + "." + String.fromCharCode(97+y) + " " + Perso.Nom(x);
+                            Ptr.add(Opt);
+                            if(Opt.value == AncienCible)
+                            {
+                                CIBLE_DATA[Id].Cible = AncienCible;
+                            }
                         }
                     }
                 }
@@ -318,6 +335,10 @@ function CIBLE_ChargerListe(Id)
     Ptr.add(Opt);
 
     Ptr.value = CIBLE_DATA[Id].Cible;
+    if(CIBLE_DATA[Id].Cible != AncienCible)
+    {
+        ACTION_Attaquer(Id, "CIBLE");
+    }
 }
 function CIBLE_Valide(Index)
 {

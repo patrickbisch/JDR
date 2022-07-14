@@ -47,6 +47,7 @@ function JDR_InitialiserManoeuvreArme(Id, TypeAttaque)
 {
     let TabOpt = new Array(["0", "Normale"]);
     QIN_DATA[Id].PtrSelectAttaqueDe.value = "";
+    QIN_DATA[Id].PtrSelectAttaqueDe.disabled = false;
     let Ptr = QIN_DATA[Id].PtrSelectAttaque;
     Ptr.options.length = 0;
 
@@ -165,15 +166,18 @@ function JDR_NouvelleDeAttaque(Obj, Id)
     let Ptr = QIN_DATA[Id].PtrLigneAttaque;
     CouleurObjet(Ptr, 0);
     let Nb = 0;
+    if(Obj.value == "")
+    {
+        BonusAvant.Activer(Id, true);
+        CouleurObjet(Ptr, 2);
+        JDR_AfficherDe(false, false);
+        ActiverBouton("BtnValider", false);
+        return(0);
+    }
+    QIN_DATA[Id].PtrSelectAttaque.disabled = true;
+    QIN_DATA[Id].PtrSelectAttaqueDe.disabled = true;
     switch(Obj.value)
     {
-        case "":
-            BonusAvant.Activer(Id, true);
-            CouleurObjet(Ptr, 2);
-            JDR_AfficherDe(false, false);
-            ActiverBouton("BtnValider", false);
-            return(0);
-            break;
         case "D9":
             Nb++;
         case "D8":
@@ -218,18 +222,19 @@ function JDR_NouvelleDeAttaque(Obj, Id)
             return(0);
             break;
         default:
-            MSG.Erreur("JDR_NouvelleDeAttaque = Type de DE INCONNU");
+            MSG.Erreur("JDR_NouvelleDeAttaque : (" + Obj.value + ") => Type de DE INCONNU");
             CouleurObjet(Ptr, 2);
             ActiverBouton("BtnValider", false);
             JDR_AfficherDe(false, false);
             return(0);
             break;
     }
-    if(parseInt(Perso.BonusAvantMaxi(Id)) == 0)
+    if(parseInt(PERSO_DATA[Id].BA.Maxi) == 0)
     {
         ACTION_Valider();
     }
-    else{
+    else
+    {
         ActiverBouton("BtnValider", true);
     }
 }
@@ -255,13 +260,20 @@ function JDR_GestionAttaque(Id, CorpsCorps = true)
         return(-1);
     }
     let Double = 0;
-    let BoAv  = PERSO_DATA[Id].BonusAvant;
+    let BoAv  = PERSO_DATA[Id].BA.Bonus;
     BonusAvant.Utiliser(Id);
+    let Arme = Perso.Arme(Id, Nb);
+    let TACO = Arme.Attaquer;
+    if(!CorpsCorps)
+    {
+        Arme.Quantite--;
+        TACO = Arme.Lancer;
+    }
     if(DeSelect[0].value == DeSelect[1].value)
     {
         if(DeSelect[0].value == "0")
         {
-            Perso.AffecterBonusAvant(Id, -5);
+            BonusAvant.Ajouter(Id, -5);
             MSG.Message("<strong>ECHEC CRITIQUE !!</strong>");
             MSG.Historique("<strong>ECHEC CRITIQUE !!</strong>", 1);
             MSG.Journal("<strong>ECHEC CRITIQUE !!</strong>", 2);
@@ -270,28 +282,22 @@ function JDR_GestionAttaque(Id, CorpsCorps = true)
         }
         else
         {
-            Perso.AffecterBonusAvant(Id, DeSelect[0].value);
+            BonusAvant.Ajouter(Id, DeSelect[0].value);
             Double = DeSelect[0].value;
         }
-    }
-    let Arme = Perso.Arme(Id, Nb);
-    let TACO = Arme.Lancer;
-    if(CorpsCorps)
-    {
-        TACO = Arme.Attaquer;
     }
     let Touche = parseInt(TACO) +
                 parseInt(PERSO_BASE[Id].Metal) +
                 parseInt(BoAv) +
                 parseInt(PERSO_DATA[Id].MalusPV) +
-                Math.abs(parseInt(DeSelect[0].value) - parseInt(DeSelect[1].value));
+                Math.abs(parseInt(DeSelect[0].value) - parseInt(DeSelect[1].value)) + 
+                parseInt(Double);
     let Degat = parseInt(DeSelect[0].value) - parseInt(DeSelect[1].value);
     if(parseInt(Degat) < 0)
     {
         Degat = 0;
     }
     Degat += parseInt(PERSO_BASE[Id].Metal) + parseInt(Arme.Degat) + parseInt(Double);
-    JDR_CacherLigneAttaque(Id);
 
     QIN_LstAttaque.length = 0;
     var LstCible = new Array();
@@ -352,6 +358,11 @@ function JDR_GererAttaque()
         let Ptr = QIN_LstAttaque[0];
         let Tab = Ptr.Cible.split("-");
         let Id = Tab[0]
+        if(Perso.Mort(Id))
+        {
+            JDR_DefenseTermine();
+            return(0);
+        }
         if(Ptr.Double == "0")
         {
             if(parseInt(Ptr.Touche) > parseInt(PERSO_BASE[Id].DefensePassive))
@@ -367,8 +378,7 @@ function JDR_GererAttaque()
                                 " (" + Perso.Lettre(Id) + ". " + Perso.Nom(Id) + ")", 2);
                 MSG.Historique("Raté de "+ Ptr.Touche + " contre " + PERSO_BASE[Id].DefensePassive + 
                                 " sur (" + Perso.Lettre(Id) + ". " + Perso.Nom(Id) + ")", 1);
-                QIN_LstAttaque.splice(0,1);
-                TimerQIN = setInterval(JDR_GererAttaque, 50);
+                JDR_DefenseTermine();
                 return(0);
             }
         }
@@ -389,6 +399,7 @@ function JDR_GererAttaque()
         JDR_InitialiserDefense(Id);
         CouleurObjet(QIN_DATA[Id].PtrLigneDefense, 2);
         QIN_DATA[Id].PtrSelectDefenseDe.value = "";
+        QIN_DATA[Id].PtrSelectDefenseDe.disabled = true;
         AfficherObjet(QIN_DATA[Id].PtrLigneDefense, true);
     }
     else
@@ -441,7 +452,7 @@ function JDR_CalculerBlessure(Id, MsgTexte)
         MSG.Journal(MsgTexte + CA + " => -" + PV + " PV",3);
         MSG.Historique(MsgTexte + " protection : " + CA + " => -" + PV + " PV",2);
     }
-    PERSO_Blesser(Id, PV);
+    JDR_BlesserPersonnage(Id, PV, QIN_LstAttaque[0].Cible);
     JDR_DefenseTermine();
 }
 function JDR_InitialiserDefense(Id)
@@ -469,84 +480,4 @@ function JDR_InitialiserDefense(Id)
         Ptr.add(Opt);
     }
 }
-function JDR_BlesserPersonnage(Id, Blessures)
-{
-    let TabMalus = [0,0,-1,-3,-5];
-    let Malus = 0;
-    let Reste = Blessures;
-    let Somme = 0;
-    switch(parseInt(Perso.TypeFonction(Id)))
-    {
-        case 1:
-        case 2:
-        case 3:
-            Reste =  Math.floor(Blessures / 6) + 1;
-        case 0:
-        case 7:
-            for(let x = 0;x < PERSO_BASE[Id].TabPV.length;x++)
-            {
-                PERSO_BASE[Id].TabPV[x] -= Reste;
-                if(PERSO_BASE[Id].TabPV[x] < 0)
-                {
-                    Reste = Math.abs(PERSO_BASE[Id].TabPV[x]);
-                    PERSO_BASE[Id].TabPV[x] = 0;
-                }
-                else
-                {
-                    Reste = 0;
-                }
-                if(PERSO_BASE[Id].TabPV[x] != PERSO_BASE[Id].TabPVMaxi[x])
-                {
-                    Malus = TabMalus[x];
-                }
-                Somme += PERSO_BASE[Id].TabPV[x];
-            }
-            if(Somme == 0)
-            {
-                Perso.ChangerEtat(Id, true);
-            }
-            PERSO_DATA[Id].MalusPV = Malus;
-            PV_Actualiser(Id)
-            break;
-        default:
-            MSG.Erreur("JDR_BlesserPersonnage = id_fonction : "+PERSO_BASE[Id].id_fonction+" NON GEREE "+Blessures+"Degats");
-    }
-}
 /*************************************************************************************/
-/*************************************************************************************/
-/*************************************************************************************/
-/*************************************************************************************/
-/*************************************************************************************/
-/*************************************************************************************/
-/*************************************************************************************/
-function JDR_ControlerAction()
-{
-    let Id = Perso.Actif;
-
-    ActiverBouton("BtnValider", false);
-    if(PERSO_DATA[Id].Action == "")
-    {
-        CouleurObjet(ACTION_DATA[Id].PtrLigne, 2);
-        return(0);
-    }
-    if(PERSO_DATA[Id].Action == "1")
-    {
-        CouleurObjet(ACTION_DATA[Id].PtrLigne, 0);
-        if(Cible.Groupe(Id))
-        {
-            ActiverBouton("BtnValider", true);
-        }
-        else
-        {
-            if(Cible.Cible(Id) == "-1")
-            {
-                CouleurObjet(CIBLE_DATA[Id].PtrLigne, 2);
-            }
-            else
-            {
-                CouleurObjet(CIBLE_DATA[Id].PtrLigne, 0);
-                ActiverBouton("BtnValider", true);
-            }
-        }
-    }
-}
