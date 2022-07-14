@@ -196,7 +196,6 @@ function PERSO_SupprimerAction(Index)
         PERSO_DATA[Index].NbAction = 0;
     } 
     Action.AfficherValeur(Index, Perso.NbAction(Index) + "/" + Perso.NbActionMaxi(Index));
-    LancerModule("NouveauActif");
 }
 function PERSO_VisualiserListeActif(Bouton, Sens)
 {

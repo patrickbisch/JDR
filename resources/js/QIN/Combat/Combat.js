@@ -25,9 +25,9 @@ class QIN_Attaque{
 }
 var QIN_LstAttaque = new Array();
 
-/*************************************************************************************************/
-/*      Procedures pour la gestion du combat et ses objets
-/*************************************************************************************************/
+/*****************************************************************************/
+/*  Initialisation des objets, etc pour les comabts
+/*****************************************************************************/
 function JDR_InitialiserCombat()
 {
     for(let x = 0;x < PERSO_BASE.length;x++)
@@ -126,6 +126,9 @@ function JDR_InitialiserManoeuvreArme(Id, TypeAttaque)
         Ptr.disabled = true;
     }
 }
+/*****************************************************************************/
+/*  Gestion de l'affichage des differents objets
+/*****************************************************************************/
 function JDR_CacherLigneAttaque(Id)
 {
     JDR_AfficherAttaque(Id, false);
@@ -141,9 +144,9 @@ function JDR_AfficherDefense(Id, Etat = false)
 {
     AfficherObjet(QIN_DATA[Id].PtrLigneDefense, Etat);
 }
-/*************************************************************************************************/
-/*      Gestion de l'attaque 
-/*************************************************************************************************/
+/*****************************************************************************/
+/*  Gestion de l'attaque 
+/*****************************************************************************/
 function JDR_GererAction(Id)
 {
     JDR_AfficherAttaque(Id, true);
@@ -184,14 +187,13 @@ function JDR_NouvelleDeAttaque(Obj, Id)
     QIN_DATA[Id].PtrSelectAttaqueDe.disabled = true;
     switch(parseInt(JDR_LancerDe(Obj.value)))
     {
-        case 0:
-            return(0);
         case 1:
             break;
+        case 0:
+            return(0);
         default:
             CouleurObjet(Ptr, 2);
-            return(0);
-            break;
+            return(-1);
     }
     if(parseInt(PERSO_DATA[Id].BA.Maxi) == 0)
     {
@@ -351,9 +353,9 @@ function JDR_GererAttaque()
         ACTION_Terminer(Perso.Actif);
     }
 }
-/**********************************************************************************************************/
-/*  Gestion de la defense
-/**********************************************************************************************************/
+/*****************************************************************************/
+/*  Gestion pour la defense
+/*****************************************************************************/
 function JDR_InitialiserDefense(Id)
 {
     let Ptr = QIN_DATA[Id].PtrSelectDefense;
@@ -361,9 +363,12 @@ function JDR_InitialiserDefense(Id)
 
     let TabOpt = new Array(["0", "NON"],
                             );
-    if(!CIBLE_DATA[Id].Groupe)
+    if(!CIBLE_DATA.Groupe)
     {
-        TabOpt.push(["1", "Esquive (x)"],)
+        if(Perso.NbAction(Id) > 0)
+        {
+            TabOpt.push(["1","Esquiver (" + PERSO_BASE[Id].esquive + ")"],);
+        }
     }
 
     TabOpt.push(["",""],);
@@ -384,7 +389,7 @@ function JDR_InitialiserDefense(Id)
     QIN_DATA[Id].PtrSelectDefenseDe.value = "";
     QIN_DATA[Id].PtrSelectDefenseDe.disabled = true;
     CouleurObjet(QIN_DATA[Id].PtrLigneDefense, 2);
-    AfficherObjet(QIN_DATA[Id].PtrLigneDefense, true);
+    JDR_AfficherDefense(Id, true);
     if(Ptr.options.length < 3)
     {
         Ptr.value = "0";
@@ -393,28 +398,31 @@ function JDR_InitialiserDefense(Id)
 }
 function JDR_NouvelleDefense(Obj, Id)
 {
+    Obj.disabled = true;
     switch(Obj.value)
     {
         case "0":
             JDR_CalculerBlessure(Id, "Aucune défense, ");
             break;
+        case "1":
+            person.UtiliserAction(Id);
+            JDR_CalculerBlessure(Id, "Esquive ratée, ");
+            break;
         default:
+            Obj.disabled = false;
             MSG.Erreur("JDR_NouvelleDefense : [" + Obj.value + "] NON GEREE !");
             return(-1);
     }
 }
 function JDR_DefenseTermine(Id)
 {
-    if(parseInt(Id) >= 0)
-    {
-        AfficherObjet(QIN_DATA[Id].PtrLigneDefense, false);
-    }
+    JDR_AfficherDefense(Id, false);
     QIN_LstAttaque.splice(0,1);
     TimerQIN = setInterval(JDR_GererAttaque, 50);
 }
-/*************************************************************************************/
-/*  Calcule des blessures en fonction des dégâts et de la protection de la cible
-/*************************************************************************************/
+/***************************************************************************************/
+/*      Calcul des PV perdu en fonction de la protection et des dégâts
+/***************************************************************************************/
 function JDR_CalculerBlessure(Id, MsgTexte)
 {
     let CA = Equip.Protection(Id) + QIN_LstAttaque[0].Protection;
@@ -428,6 +436,7 @@ function JDR_CalculerBlessure(Id, MsgTexte)
     {
         PV = 0;
     }
+
     if(PV == 0)
     {
         MSG.Journal(MsgTexte + CA + " => Aucun dégât",3);

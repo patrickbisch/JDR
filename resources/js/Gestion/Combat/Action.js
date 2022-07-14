@@ -194,6 +194,7 @@ function ACTION_Terminer(Index)
     ActiverBouton("BtnValider", false);
     ACTION_AfficherLigne(Index, false);
     Perso.UtiliserAction(Index);
+    LancerModule("NouveauActif");
 }
 function ACTION_AfficherListe(Visible = true)
 {
