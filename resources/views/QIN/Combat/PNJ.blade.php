@@ -100,6 +100,15 @@
             <div id="Resistance-{{$Cle}}" class="Trait Colonne8 Numerique" enabled>{{$Perso->Resistance}}</div>
         </div>
 
+        <div id="LigneDefendre-{{$Cle}}" class="LigneDefendre LignePerso DonneeDef">
+            <select id="DefenseContre-{{$Cle}}" class="EcranSelect Colonne2-4">
+
+            </select>
+            <select id="JetDefense-{{$Cle}}" class="EcranSelect Colonne5-8">
+
+            </select>
+        </div>
+
         <div id="LigneArmure-{{$Cle}}" class="LigneCombat LigneArmure LignePerso DonneeDef">
             <div class="Colonne2-3 Droite">.............. :</div>
             <div class="DonneeLab">{{__("Combat.Armure")}}</div>
@@ -182,21 +191,6 @@
             <div class="Colonne2">{{__("Combat.Arme")}}</div>
             <div id="Arme-{{$Cle}}" class="Numerique Colonne3 Trait"></div>
             <select id="TypeArme-{{$Cle}}" class="TypeArme EcranSelect DonneeSelect">
-
-            </select>
-        </div>
-
-        <div id="LigneDefendre-{{$Cle}}" class="LigneDefendre LignePerso DonneeDef">
-            <div class="Colonne2 Droite">.. :</div>
-            <div class="Colonne2">{{__("Combat.DefenseContre")}}</div>
-            <div class="Colonne3 Trait Numerique"></div>
-            <select id="DefenseContre-{{$Cle}}" class="EcranSelect Colonne4-5">
-                <option value="" selected disabled></option>
-                <option value="0">NON</option>
-                <option value="E">{{__("Combat.Esquive")}}</option>
-                <option value="P">{{__("Combat.Parade")}}</option>
-            </select>
-            <select id="JetDefense-{{$Cle}}" class="EcranSelect Colonne6-8">
 
             </select>
         </div>

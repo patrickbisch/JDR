@@ -25,7 +25,6 @@ return [
     'CoupPrecis'        => 'Coup précis',
     'DoubleAttaque'     => 'Double attaque',
     'Cible'             => 'Cible',
-    'DefenseContre'     => 'Défendre',
     'Esquive'           => 'Esquiver',
     'Parade'            => 'Parer',
     'Armure'            => 'Armure',

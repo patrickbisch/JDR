@@ -49,6 +49,9 @@ function JDR_InitialiserCombat()
                             JDR_NouvelleDefense(Ptr.PtrSelectDefense, x);    
         });
         Ptr.PtrSelectDefenseDe = document.querySelector("#JetDefense-" + x);
+        Ptr.PtrSelectDefenseDe.addEventListener('change', function(){
+                            JDR_NouvelleDeDefense(Ptr.PtrSelectDefenseDe, x);    
+        });
 
         let TabOpt = new Array(["A", "Automatique"], ["L", "Libre"],
                                 ["D1", "Double 1"], ["D2", "Double 2"], ["D3", "Double 3"], ["D4", "Double 4"], ["D5", "Double 5"],
@@ -363,11 +366,11 @@ function JDR_InitialiserDefense(Id)
 
     let TabOpt = new Array(["0", "NON"],
                             );
-    if(!CIBLE_DATA.Groupe)
+    if(!CIBLE_DATA[Id].Groupe)
     {
         if(Perso.NbAction(Id) > 0)
         {
-            TabOpt.push(["1","Esquiver (" + PERSO_BASE[Id].esquive + ")"],);
+            TabOpt.push(["1","Esquiver (" + PERSO_BASE[Id].Esquive + ")"],);
         }
     }
 
@@ -401,17 +404,136 @@ function JDR_NouvelleDefense(Obj, Id)
     Obj.disabled = true;
     switch(Obj.value)
     {
-        case "0":
+        case "0": //    Aucune defense
             JDR_CalculerBlessure(Id, "Aucune défense, ");
             break;
-        case "1":
-            person.UtiliserAction(Id);
-            JDR_CalculerBlessure(Id, "Esquive ratée, ");
+        case "1": //    Esquive
+            QIN_DATA[Id].PtrSelectDefenseDe.value = "";
+            QIN_DATA[Id].PtrSelectDefenseDe.disabled = false;
             break;
         default:
             Obj.disabled = false;
             MSG.Erreur("JDR_NouvelleDefense : [" + Obj.value + "] NON GEREE !");
             return(-1);
+    }
+    BonusAvant.Activer(Id, true);
+}
+function JDR_NouvelleDeDefense(Obj, Id)
+{
+    console.debug("JDR_NouvelleDeDefense : "+Obj.value);
+    BonusAvant.Activer(Id, false);
+    Obj.disabled = true;
+    let Ptr = QIN_DATA[Id].PtrLigneDefense;
+    CouleurObjet(Ptr, 0);
+    switch(parseInt(JDR_LancerDe(Obj.value)))
+    {
+        case 1:
+            break;
+        case 0:
+            return(0);
+        default:
+            CouleurObjet(Ptr, 2);
+            return(-1);
+    }
+    if(parseInt(PERSO_DATA[Id].BA.Maxi) == 0)
+    {
+        JDR_DefenseValider();
+    }
+    else
+    {
+        ActiverBouton("BtnValider", true);
+    }
+}
+function JDR_DefenseValider()
+{
+    let Tab = QIN_LstAttaque[0].Cible.split("-");
+    let Id = Tab[0];
+    console.debug("JDR_DefenseValider : "+Id);
+
+    let BoAv  = PERSO_DATA[Id].BA.Bonus;
+    BonusAvant.Utiliser(Id);
+    let Double = 0;
+    if(DeSelect[0].value == DeSelect[1].value)
+    {
+        if(DeSelect[0].value == "0")
+        {
+            BonusAvant.Ajouter(Id, -5);
+            Perso.UtiliserAction(Id);
+            JDR_CalculerBlessure(Id, "Défense ratée, ");
+            MSG.Message("<strong>ECHEC CRITIQUE !!</strong>");
+            MSG.Historique("<strong>ECHEC CRITIQUE !!</strong>", 2);
+            MSG.Journal("<strong>ECHEC CRITIQUE !!</strong>", 3);
+            return(0);
+        }
+        else
+        {
+            BonusAvant.Ajouter(Id, DeSelect[0].value);
+            Double = DeSelect[0].value;
+        }
+    }
+
+    let CA  = 0;
+    let Defense = "";
+    switch(QIN_DATA[Id].PtrSelectDefense.value)
+    {
+        case "1":
+            CA = parseInt(PERSO_BASE[Id].Esquive) +
+            parseInt(PERSO_BASE[Id].Eau) +
+            parseInt(BoAv) +
+            parseInt(PERSO_DATA[Id].MalusPV) +
+            Math.abs(parseInt(DeSelect[0].value) - parseInt(DeSelect[1].value)) + 
+            parseInt(Double);
+            Defense = "Esquive";
+            Perso.UtiliserAction(Id);
+            break;
+        default:
+            MSG.Erreur("TYPE DE DEFENSE NONB GEREE");
+            return(0);
+    }
+/*
+    let Nb = Equip.ArmeSelectionne(Id);
+    if(parseInt(Nb) < 0)
+    {
+        return(-1);
+    }
+    let Arme = Perso.Arme(Id, Nb);
+    let TACO = Arme.Attaquer;
+*/
+    if(parseInt(QIN_LstAttaque[0].Double) > 0)
+    {
+        if(parseInt(Double) > parseInt(QIN_LstAttaque[0].Double))
+        {
+            MSG.Historique("<strong>" + Defense + " critique : " + Double + " contre " + QIN_LstAttaque[0].Double + "</strong> => Aucun dégât", 2);
+            MSG.Journal("<strong>" + Defense + " critique : " + Double + " / " + QIN_LstAttaque[0].Double + "</strong> => Aucun dégât", 3);
+            JDR_DefenseTermine(Id);
+        }
+        else
+        {
+            JDR_CalculerBlessure(Id, Defense + " critique ratée : " + Double + " / " + QIN_LstAttaque[0].Double + ", ");
+        }
+    }
+    else
+    {
+        if(parseInt(Double) > 0)
+        {
+            MSG.Historique("<strong>" + Defense + " critique : " + Double + "</strong> => Aucun dégât", 2);
+            MSG.Journal("<strong>" + Defense + " critique : " + Double + "</strong> => Aucun dégât", 3);
+            JDR_DefenseTermine(Id);
+        }
+        else
+        {
+            if(parseInt(CA) >= parseInt(QIN_LstAttaque[0].Touche))
+            {
+                Defense += " réussie : " + CA + " / " + QIN_LstAttaque[0].Touche + " => Aucun dégât";
+                MSG.Historique(Defense, 2);
+                MSG.Journal(Defense, 3);
+                JDR_DefenseTermine(Id);
+            }
+            else
+            {
+                JDR_CalculerBlessure(Id, Defense + " ratée : " + CA + " / " + QIN_LstAttaque[0].Touche + ", ");
+            }
+        }
     }
 }
 function JDR_DefenseTermine(Id)

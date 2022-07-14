@@ -33,7 +33,7 @@ function ValiderDe()
             ACTION_Valider();
             break;
         case "DEFENSE":
-            JDR_DefenseTermine();
+            JDR_DefenseValider();
             break;
         default:
             MSG.Erreur("ValiderDe = Phase de tour [" + Gestion.Phase + "] INCONNUE !!");
