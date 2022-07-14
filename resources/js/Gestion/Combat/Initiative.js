@@ -23,9 +23,6 @@ class INIT_Donnee {
 var INIT_DATA       = new Array();
 var INIT_LignePtr   = new Array();
 
-var DeLabel         = new Array();
-var DeSelect        = new Array();
-
 function INIT_DemarrerTour()
 {
     ArreterModule();

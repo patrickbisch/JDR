@@ -119,20 +119,7 @@ function JDR_ModifierListeInitialisation()
         Init.CaracteristiquePersonnage(x, PERSO_BASE[x].Eau);
     }
     BonusAvant.Initialiser();
-
-    let Obj = document.querySelector("#De0-0");
-    DeLabel.push(Obj);
-    AfficherBouton(Obj, false);
-    Obj = document.querySelector("#De1-0");
-    DeLabel.push(Obj);
-    AfficherBouton(Obj, false);
-
-    Obj = document.querySelector("#De0-1");
-    DeSelect.push(Obj);
-    AfficherBouton(Obj, false);
-    Obj = document.querySelector("#De1-1");
-    DeSelect.push(Obj);
-    AfficherBouton(Obj, false);
+    JDR_InitialiserDE();
     JDR_InitialiserCombat();
 }
 

@@ -25,70 +25,9 @@ class QIN_Attaque{
 }
 var QIN_LstAttaque = new Array();
 
-function JDR_GererAction(Id)
-{
-    JDR_AfficherAttaque(Id, true);
-    if(QIN_DATA[Id].PtrSelectAttaqueDe.value != "")
-    {
-        ActiverBouton("BtnValider", true);
-        JDR_ActiverDe(true, true);
-        return(0);
-    }
-    CouleurObjet(QIN_DATA[Id].PtrLigneAttaque, 2);
-}
-function JDR_CacherLigneAttaque(Id)
-{
-    JDR_AfficherAttaque(Id, false);
-    JDR_AfficherAttaque(Id, false);
-    JDR_AfficherDefense(Id, false);
-    JDR_ActiverDe(false, false);
-}
-function JDR_InitialiserManoeuvreArme(Id, TypeAttaque)
-{
-    let TabOpt = new Array(["0", "Normale"]);
-    QIN_DATA[Id].PtrSelectAttaqueDe.value = "";
-    QIN_DATA[Id].PtrSelectAttaqueDe.disabled = false;
-    let Ptr = QIN_DATA[Id].PtrSelectAttaque;
-    Ptr.options.length = 0;
-
-    Nb = Equip.ArmeSelectionne(Id);
-    if(parseInt(Nb) >= 0)
-    {
-        let Arme = Perso.Arme(Id, Nb);
-        let Distance = 1;
-        if(TypeAttaque == "4")
-        {
-            Distance = 0;
-        }
-        for(let x = 0;x < PERSO_BASE[Id].Manoeuvres.length;x++)
-        {
-            if((PERSO_BASE[Id].Manoeuvres[x].id_arme == Arme.id_arme) &&
-                (PERSO_BASE[Id].Manoeuvres[x].distance == Distance) &&
-                (PERSO_BASE[Id].Manoeuvres[x].type == 1))
-            {
-                TabOpt.push([PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre, PERSO_BASE[Id].Manoeuvres[x].nom]);
-            }
-        }
-    }
-
-    for(let y = 0;y < TabOpt.length;y++)
-    {
-        var Opt = document.createElement("option");
-        Opt.text = TabOpt[y][1];
-        Opt.value = TabOpt[y][0];
-        Ptr.add(Opt);
-    }
-    Ptr.value = "0";
-    MSG.Journal("Il exécute une attaque <strong>Normale</strong>.", 1);
-    if(TabOpt.length > 1)
-    {
-        Ptr.disabled = false;
-    }
-    else
-    {
-        Ptr.disabled = true;
-    }
-}
+/*************************************************************************************************/
+/*      Procedures pour la gestion du combat et ses objets
+/*************************************************************************************************/
 function JDR_InitialiserCombat()
 {
     for(let x = 0;x < PERSO_BASE.length;x++)
@@ -141,6 +80,59 @@ function JDR_InitialiserCombat()
         JDR_AfficherAttaque(x, false);
     }
 }
+function JDR_InitialiserManoeuvreArme(Id, TypeAttaque)
+{
+    let TabOpt = new Array(["0", "Normale"]);
+    QIN_DATA[Id].PtrSelectAttaqueDe.value = "";
+    QIN_DATA[Id].PtrSelectAttaqueDe.disabled = false;
+    let Ptr = QIN_DATA[Id].PtrSelectAttaque;
+    Ptr.options.length = 0;
+
+    Nb = Equip.ArmeSelectionne(Id);
+    if(parseInt(Nb) >= 0)
+    {
+        let Arme = Perso.Arme(Id, Nb);
+        let Distance = 1;
+        if(TypeAttaque == "4")
+        {
+            Distance = 0;
+        }
+        for(let x = 0;x < PERSO_BASE[Id].Manoeuvres.length;x++)
+        {
+            if((PERSO_BASE[Id].Manoeuvres[x].id_arme == Arme.id_arme) &&
+                (PERSO_BASE[Id].Manoeuvres[x].distance == Distance) &&
+                (PERSO_BASE[Id].Manoeuvres[x].type == 1))
+            {
+                TabOpt.push([PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre, PERSO_BASE[Id].Manoeuvres[x].nom]);
+            }
+        }
+    }
+
+    for(let y = 0;y < TabOpt.length;y++)
+    {
+        var Opt = document.createElement("option");
+        Opt.text = TabOpt[y][1];
+        Opt.value = TabOpt[y][0];
+        Ptr.add(Opt);
+    }
+    Ptr.value = "0";
+    MSG.Journal("Il exécute une attaque <strong>Normale</strong>.", 1);
+    if(TabOpt.length > 1)
+    {
+        Ptr.disabled = false;
+    }
+    else
+    {
+        Ptr.disabled = true;
+    }
+}
+function JDR_CacherLigneAttaque(Id)
+{
+    JDR_AfficherAttaque(Id, false);
+    JDR_AfficherAttaque(Id, false);
+    JDR_AfficherDefense(Id, false);
+    JDR_ActiverDe(false, false);
+}
 function JDR_AfficherAttaque(Id, Etat = false)
 {
     AfficherObjet(QIN_DATA[Id].PtrLigneAttaque, Etat);
@@ -148,6 +140,20 @@ function JDR_AfficherAttaque(Id, Etat = false)
 function JDR_AfficherDefense(Id, Etat = false)
 {
     AfficherObjet(QIN_DATA[Id].PtrLigneDefense, Etat);
+}
+/*************************************************************************************************/
+/*      Gestion de l'attaque 
+/*************************************************************************************************/
+function JDR_GererAction(Id)
+{
+    JDR_AfficherAttaque(Id, true);
+    if(QIN_DATA[Id].PtrSelectAttaqueDe.value != "")
+    {
+        ActiverBouton("BtnValider", true);
+        JDR_ActiverDe(true, true);
+        return(0);
+    }
+    CouleurObjet(QIN_DATA[Id].PtrLigneAttaque, 2);
 }
 function JDR_NouvelleAttaque(Obj, Id)
 {
@@ -176,56 +182,14 @@ function JDR_NouvelleDeAttaque(Obj, Id)
     }
     QIN_DATA[Id].PtrSelectAttaque.disabled = true;
     QIN_DATA[Id].PtrSelectAttaqueDe.disabled = true;
-    switch(Obj.value)
+    switch(parseInt(JDR_LancerDe(Obj.value)))
     {
-        case "D9":
-            Nb++;
-        case "D8":
-            Nb++;
-        case "D7":
-            Nb++;
-        case "D6":
-            Nb++;
-        case "D5":
-            Nb++;
-        case "D4":
-            Nb++;
-        case "D3":
-            Nb++;
-        case "D2":
-            Nb++;
-        case "D1":
-            Nb++;
-        case "D0":
-            DeLabel[0].innerHTML = Nb;
-            DeLabel[1].innerHTML = Nb;
-            DeSelect[0].value = Nb;
-            DeSelect[1].value = Nb;
-            JDR_AfficherDe(true);
-            JDR_ActiverDe(true);
-            break;
-        case "A":
-            JDR_AfficherDe(true);
-            JDR_ActiverDe(true);
-            De.Lancer();
-            DeLabel[0].innerHTML = De.Yin;
-            DeLabel[1].innerHTML = De.Yang;
-            DeSelect[0].value = De.Yin;
-            DeSelect[1].value = De.Yang;
-            break;
-        case "L":
-            JDR_AfficherDe(false);
-            JDR_ActiverDe(true);
-            DeSelect[0].value = "0";
-            DeSelect[1].value = "0";
-            ActiverBouton("BtnValider", true);
+        case 0:
             return(0);
+        case 1:
             break;
         default:
-            MSG.Erreur("JDR_NouvelleDeAttaque : (" + Obj.value + ") => Type de DE INCONNU");
             CouleurObjet(Ptr, 2);
-            ActiverBouton("BtnValider", false);
-            JDR_AfficherDe(false, false);
             return(0);
             break;
     }
@@ -237,20 +201,6 @@ function JDR_NouvelleDeAttaque(Obj, Id)
     {
         ActiverBouton("BtnValider", true);
     }
-}
-function JDR_AfficherDe(Etat, Etat1 = !Etat)
-{
-    AfficherBouton(DeLabel[0], Etat);
-    AfficherBouton(DeLabel[1], Etat);
-    AfficherBouton(DeSelect[0], Etat1);
-    AfficherBouton(DeSelect[1], Etat1);
-}
-function JDR_ActiverDe(Etat)
-{
-    ActiverBouton(DeLabel[0], Etat);
-    ActiverBouton(DeLabel[1], Etat);
-    ActiverBouton(DeSelect[0], Etat);
-    ActiverBouton(DeSelect[1], Etat);
 }
 function JDR_GestionAttaque(Id, CorpsCorps = true)
 {
@@ -303,11 +253,8 @@ function JDR_GestionAttaque(Id, CorpsCorps = true)
     var LstCible = new Array();
     if(CIBLE_DATA[Id].Groupe)
     {
-        console.debug("Multi cible");
         for(let x = 0;x < CIBLE_DATA[Id].TabGroupe.length;x++)
         {
-            console.debug(x);
-            console.debug(CIBLE_DATA[Id].TabGroupe[x]);
             if(CIBLE_DATA[Id].TabGroupe[x].Nb > 0)
             {
                 let y = CIBLE_DATA[Id].TabGroupe[x].Nb;
@@ -360,7 +307,7 @@ function JDR_GererAttaque()
         let Id = Tab[0]
         if(Perso.Mort(Id))
         {
-            JDR_DefenseTermine();
+            JDR_DefenseTermine(Id);
             return(0);
         }
         if(Ptr.Double == "0")
@@ -378,7 +325,7 @@ function JDR_GererAttaque()
                                 " (" + Perso.Lettre(Id) + ". " + Perso.Nom(Id) + ")", 2);
                 MSG.Historique("Raté de "+ Ptr.Touche + " contre " + PERSO_BASE[Id].DefensePassive + 
                                 " sur (" + Perso.Lettre(Id) + ". " + Perso.Nom(Id) + ")", 1);
-                JDR_DefenseTermine();
+                JDR_DefenseTermine(Id);
                 return(0);
             }
         }
@@ -397,10 +344,6 @@ function JDR_GererAttaque()
             PERSO_VisualiserListe("PJ", SavSensFleche[1]);
         }
         JDR_InitialiserDefense(Id);
-        CouleurObjet(QIN_DATA[Id].PtrLigneDefense, 2);
-        QIN_DATA[Id].PtrSelectDefenseDe.value = "";
-        QIN_DATA[Id].PtrSelectDefenseDe.disabled = true;
-        AfficherObjet(QIN_DATA[Id].PtrLigneDefense, true);
     }
     else
     {
@@ -408,11 +351,45 @@ function JDR_GererAttaque()
         ACTION_Terminer(Perso.Actif);
     }
 }
-function JDR_DefenseTermine()
+/**********************************************************************************************************/
+/*  Gestion de la defense
+/**********************************************************************************************************/
+function JDR_InitialiserDefense(Id)
 {
-    AfficherObjet(QIN_DATA[Cible.Active].PtrLigneDefense, false);
-    QIN_LstAttaque.splice(0,1);
-    TimerQIN = setInterval(JDR_GererAttaque, 50);
+    let Ptr = QIN_DATA[Id].PtrSelectDefense;
+    Ptr.options.length = 0;
+
+    let TabOpt = new Array(["0", "NON"],
+                            );
+    if(!CIBLE_DATA[Id].Groupe)
+    {
+        TabOpt.push(["1", "Esquive (x)"],)
+    }
+
+    TabOpt.push(["",""],);
+    for(let y = 0;y < TabOpt.length;y++)
+    {
+        var Opt = document.createElement("option");
+        Opt.text = TabOpt[y][1];
+        Opt.value = TabOpt[y][0];
+        Opt.disabled = false;
+        if(TabOpt[y][0] == "")
+        {
+            Opt.disabled = true;
+            Opt.selected = true;
+        }
+        Ptr.add(Opt);
+    }
+    Ptr.disabled = false;
+    QIN_DATA[Id].PtrSelectDefenseDe.value = "";
+    QIN_DATA[Id].PtrSelectDefenseDe.disabled = true;
+    CouleurObjet(QIN_DATA[Id].PtrLigneDefense, 2);
+    AfficherObjet(QIN_DATA[Id].PtrLigneDefense, true);
+    if(Ptr.options.length < 3)
+    {
+        Ptr.value = "0";
+        JDR_NouvelleDefense(Ptr, Id);
+    }
 }
 function JDR_NouvelleDefense(Obj, Id)
 {
@@ -426,11 +403,20 @@ function JDR_NouvelleDefense(Obj, Id)
             return(-1);
     }
 }
+function JDR_DefenseTermine(Id)
+{
+    if(parseInt(Id) >= 0)
+    {
+        AfficherObjet(QIN_DATA[Id].PtrLigneDefense, false);
+    }
+    QIN_LstAttaque.splice(0,1);
+    TimerQIN = setInterval(JDR_GererAttaque, 50);
+}
+/*************************************************************************************/
+/*  Calcule des blessures en fonction des dégâts et de la protection de la cible
+/*************************************************************************************/
 function JDR_CalculerBlessure(Id, MsgTexte)
 {
-    console.debug("JDR_CalculerBlessure : " + Id);
-    console.debug(QIN_LstAttaque[0]);
-    console.debug("Protection : " + Equip.Protection(Id));
     let CA = Equip.Protection(Id) + QIN_LstAttaque[0].Protection;
     if(CA < 0)
     {
@@ -453,31 +439,5 @@ function JDR_CalculerBlessure(Id, MsgTexte)
         MSG.Historique(MsgTexte + " protection : " + CA + " => -" + PV + " PV",2);
     }
     JDR_BlesserPersonnage(Id, PV, QIN_LstAttaque[0].Cible);
-    JDR_DefenseTermine();
+    JDR_DefenseTermine(Id);
 }
-function JDR_InitialiserDefense(Id)
-{
-    console.debug("JDR_InitialiserDefense : " + Id);
-    let Ptr = QIN_DATA[Id].PtrSelectDefense;
-    Ptr.options.length = 0;
-
-
-    let TabOpt = new Array(["0", "NON"],
-                            );
-
-    TabOpt.push(["",""],);
-    for(let y = 0;y < TabOpt.length;y++)
-    {
-        var Opt = document.createElement("option");
-        Opt.text = TabOpt[y][1];
-        Opt.value = TabOpt[y][0];
-        Opt.disabled = false;
-        if(TabOpt[y][0] == "")
-        {
-            Opt.disabled = true;
-            Opt.selected = true;
-        }
-        Ptr.add(Opt);
-    }
-}
-/*************************************************************************************/

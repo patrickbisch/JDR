@@ -55,7 +55,6 @@ function PV_Afficher(Index, Etat = true)
 }
 function PV_AfficherListe(Etat = true)
 {
-    console.debug("PV_AfficherListe : "+Etat);
     for(let x = 0;x < PV_DATA.length;x++)
     {
         PV.Afficher(x, Etat);

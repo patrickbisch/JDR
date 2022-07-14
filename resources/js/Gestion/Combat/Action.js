@@ -226,7 +226,6 @@ function ACTION_Attaquer(Id, Source)
         return(0);
     }
     let Nb = Cible.Cible(Id);
-    console.debug("ACTION_Attaquer : "+Id+"/"+Nb);
     ActiverBouton("BtnValider", false);
     if(Source == "ACTION")
     {
@@ -244,7 +243,6 @@ function ACTION_Attaquer(Id, Source)
     }
     else
     {
-        console.debug("ACTION_Attaquer (Select) : ", ACTION_DATA[Id].PtrSelect.value);
         Cible.Couleur(Id, 0);
         if(ACTION_DATA[Id].PtrSelect.value != "0")
         {

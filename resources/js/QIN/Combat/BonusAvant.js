@@ -43,12 +43,9 @@ function BONUSAVANT_Initialiser()
 }
 function BONUSAVANT_Ajouter(Index, Bonus)
 {
-    console.debug("BONUSAVANT_Ajouter (Debut) : ",Index+"/"+PERSO_DATA[Index].BA.Valeur);
     PERSO_DATA[Index].BA.Valeur += parseInt(Bonus);
-    console.debug("BONUSAVANT_Ajouter : ",Bonus+"/"+PERSO_DATA[Index].BA.Valeur);
     if(parseInt(PERSO_DATA[Index].BA.Valeur) > parseInt(PERSO_DATA[Index].BA.Maxi))
     {
-        console.debug("BONUSAVANT_Ajouter (Maxi): ",PERSO_DATA[Index].BA.Maxi);
         PERSO_DATA[Index].BA.Valeur = PERSO_DATA[Index].BA.Maxi;
     }
     if(parseInt(PERSO_DATA[Index].BA.Valeur) < 0)
@@ -56,7 +53,6 @@ function BONUSAVANT_Ajouter(Index, Bonus)
         JDR_BlesserPersonnage(Index, Math.abs(PERSO_DATA[Index].BA.Valeur));
         PERSO_DATA[Index].BA.Valeur = 0;
     }
-    console.debug("BONUSAVANT_Ajouter (Apres) : ",Bonus+"/"+PERSO_DATA[Index].BA.Valeur);
     BonusAvant.Actualiser(Index);
 }
 function BONUSAVANT_Nouveau(Obj, Id)
@@ -83,7 +79,6 @@ function BONUSAVANT_Actualiser(Index)
 {
     let Nb = PERSO_DATA[Index].BA.Valeur;
     BONUS_AVANT_DATA[Index].PtrLabel.innerHTML = Nb;
-    console.debug("BONUSAVANT_Actualiser : " + Index +"/"+Nb);
 }
 function BONUSAVANT_AfficherListe(Etat = true)
 {
