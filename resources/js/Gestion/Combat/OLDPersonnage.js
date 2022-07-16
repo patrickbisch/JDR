@@ -167,23 +167,6 @@ function PERSO_InitialiserNombreAction()
                              + "/" + Perso.NbActionMaxi(x));
     }
 }
-function PERSO_AffecterAction(Index, NombreAction)
-{
-    let Nb = Perso.NbActionMaxi(Index) - Perso.NbAction(Index);
-    PERSO_DATA[Index].NbActionMaxi = NombreAction;
-
-    PERSO_DATA[Index].NbAction = Perso.NbActionMaxi(Index) - Nb;
-    if(parseInt(Perso.NbAction(Index)) > parseInt(Perso.NbActionMaxi(Index)))
-    {
-        PERSO_DATA[Index].NbAction = Perso.NbActionMaxi(Index);
-    }
-    if(parseInt(Perso.NbAction(Index)) < 0)
-    {
-        PERSO_DATA[Index].NbAction = 0;
-    }
-    Action.AfficherValeur(Index, Perso.NbAction(Index)
-        + "/" + Perso.NbActionMaxi(Index));
-}
 function PERSO_SupprimerAction(Index)
 {
     PERSO_DATA[Index].NbAction--;

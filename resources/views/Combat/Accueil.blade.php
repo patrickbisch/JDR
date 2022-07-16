@@ -51,6 +51,12 @@
     <script src="../resources/js/Outils/Bouton.js"></script>
     <script src="../resources/js/Outils/Message.js"></script>
     <script src="../resources/js/Combat/Personnage.js"></script>
+    <script src="../resources/js/Combat/Equipement.js"></script>
+    <script src="../resources/js/Combat/Action.js"></script>
+    <script src="../resources/js/Combat/Attaque.js"></script>
+    <script src="../resources/js/Combat/Defense.js"></script>
+    <script src="../resources/js/Combat/Initiative.js"></script>
+    <script src="../resources/js/Combat/Cible.js"></script>
 
 
     <script src="../resources/js/Gestion/Combat/OLDMenuHaut.js"></script>

@@ -5,8 +5,8 @@ class COMBAT_Interface{
     Demarrer() {COMBAT_DemarrerTour();}
 
 }
-var COMBAT_DATA     = new Array();
-var Combat          = new COMBAT_Interface();
+var COMBAT_DATA1     = new Array();
+var Combat1          = new COMBAT_Interface();
 
 class COMBAT_Donnee{
 

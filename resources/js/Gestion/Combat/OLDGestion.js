@@ -1,5 +1,5 @@
 class GESTION_Interface{
-    Phase = "INIT";
+    Phase = "DEMARRAGE";
     NouvellePhase(NomPhase) {Gestion.Phase = NomPhase;}
 }
 /*******************************************************************/

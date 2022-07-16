@@ -1,6 +1,7 @@
 class OBJET_Interface{
     Afficher(Obj, Etat) {OBJET_Afficher(Obj, Etat);}
-    AfficherListe(Code, Etat) {OBJET_AfficherListe(Code, Etat);}
+    AfficherFamille(Code, Etat) {OBJET_AfficherFamille(Code, Etat);}
+    AfficherListe(PtrStructure, Etat) {OBJET_AfficherListe(PtrStructure, Etat);}
     Couleur(Obj, Etat) {OBJET_Couleur(Obj, Etat);}
 }
 var Objet       = new OBJET_Interface();
@@ -16,7 +17,15 @@ function OBJET_Afficher(Ptr, Etat = true)
         Ptr.style.height = "0px";
     }
 }
-function OBJET_AfficherListe(Code, Etat = true)
+function OBJET_AfficherListe(PtrStructure, Etat = false)
+{
+    for(let x = 0;x < PtrStructure.length;x++)
+    {
+        let Ptr = PtrStructure[x];
+        Objet.Afficher(Ptr.PtrLigne, Ptr.Etat && Etat);
+    }
+}
+function OBJET_AfficherFamille(Code, Etat = true)
 {
     let LstObj = document.querySelectorAll("."+Code);
     for(let x = 0; x < LstObj.length; x++)

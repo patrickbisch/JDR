@@ -23,9 +23,9 @@ class PERSO_Interface{
     BonusAvant(Index) {return(PERSO_DATA[Index].BonusAvant);}
 
     //InitialiserNombreAction() {PERSO_InitialiserNombreAction();}
-    //AffecterNombreAction(Index, NbAction) {PERSO_AffecterAction(Index, NbAction);}
-    //NbAction(Index) {return(PERSO_DATA[Index].NbAction);}
-    //NbActionMaxi(Index) {return(PERSO_DATA[Index].NbActionMaxi);}
+    AffecterNombreAction(Index, NbAction) {PERSO_AffecterAction(Index, NbAction);}
+    NbAction(Index) {return(PERSO_DATA[Index].NbAction);}
+    NbActionMaxi(Index) {return(PERSO_DATA[Index].NbActionMaxi);}
     //UtiliserAction(Index) {PERSO_SupprimerAction(Index);}
 
     //NombreAdversaire(Index) {return(PERSO_NombreAdversaire(Index));}
@@ -51,6 +51,7 @@ class PERSO_Donnee{
     Bloque = false;
 
     //  Definition pour les actions
+    PtrLabelAction;
     NbAction = 0;
     NbActionMaxi = 0;
 
@@ -91,6 +92,8 @@ function PERSO_Initialiser()
         let Obj = document.querySelector("#Ligne-" + Id);
         Ptr.PtrLigne = Obj;
 
+        Obj = document.querySelector("#NbAction-" + Id);
+        Ptr.PtrLabelAction = Obj;
 
         if(Perso.TypeFonction(Id) == 0)
         {
@@ -99,7 +102,15 @@ function PERSO_Initialiser()
         }
     }
     PERSO_InitialiserListe();
+    Caracteristique.Initialiser(Perso.Taille);
     BonusAvant.Initialiser(Perso.Taille);
+    DefensePassive.Initialiser(Perso.Taille);
+    Equipement.Initialiser(Perso.Taille);
+    Action.Initialiser(Perso.Taille);
+    Attaque.Initialiser(Perso.Taille);
+    Defense.Initialiser(Perso.Taille);
+    Initiative.Initialiser(Perso.Taille);
+    PV.Initialiser(Perso.Taille);
 /***************************************************************************************/
 /***************************************************************************************/
 /******      MODE DEBUG                                                            *****/
@@ -203,6 +214,23 @@ function PERSO_ChangerEtatListe(Ptr)
 {
     Ptr.Etat = !Ptr.Etat;
     PERSO_ActualiserListe();
+}
+function PERSO_AffecterAction(Index, NombreAction)
+{
+    let Nb = Perso.NbActionMaxi(Index) - Perso.NbAction(Index);
+    PERSO_DATA[Index].NbActionMaxi = NombreAction;
+
+    PERSO_DATA[Index].NbAction = Perso.NbActionMaxi(Index) - Nb;
+    if(parseInt(Perso.NbAction(Index)) > parseInt(Perso.NbActionMaxi(Index)))
+    {
+        PERSO_DATA[Index].NbAction = Perso.NbActionMaxi(Index);
+    }
+    if(parseInt(Perso.NbAction(Index)) < 0)
+    {
+        PERSO_DATA[Index].NbAction = 0;
+    }
+    PERSO_DATA[Index].PtrLabelAction.innerHTML = Perso.NbAction(Index) +
+                                        "/" + Perso.NbActionMaxi(Index);
 }
 /***************************************************************************************/
 /***************************************************************************************/

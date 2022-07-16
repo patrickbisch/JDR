@@ -3,7 +3,7 @@ class BA_Interface  {
     //Actualiser(Index) {BONUSAVANT_Actualiser(Index);}
     Activer(Index, Etat) {BS_Activer(Index, Etat);}
 
-    AfficherListe(Etat) {BA_AfficherListe(Etat);}
+    AfficherListe(Etat) {OBJET_AfficherListe(BA_DATA, Etat);}
     Utiliser(Index) {BA_Utiliser(Index);}
     Ajouter(Index, Bonus) {BA_Ajouter(Index, Bonus);}
 }
@@ -14,10 +14,11 @@ class BA_Donnee {
     PtrSelect;
     Etat = false;
 }
-var BA_DATA     = new Array();
+let BA_DATA     = new Array();
 
 function BA_Initialiser(Taille)
 {
+    MSG.Historique("Initialisation du CHI.",1)
     for(let x = 0; x < Taille; x++)
     {
         let Ptr = new BA_Donnee();
@@ -39,7 +40,7 @@ function BA_Initialiser(Taille)
         BA_Actualiser(x);
         BA_BonusMaxi(x, Perso.Base(x).Terre);
     }
-    BA_AfficherListe(true);
+    BonusAvant.AfficherListe(false);
 }
 function BA_BonusMaxi(Id, Valeur)
 {
@@ -96,14 +97,6 @@ function BA_Ajouter(Id, Bonus)
         BA.Valeur = 0;
     }
     BA_Actualiser(Id);
-}
-function BA_AfficherListe(Etat = true)
-{
-    for(let x = 0;x < BA_DATA.length;x++)
-    {
-        let Ptr = BA_DATA[x];
-        Objet.Afficher(Ptr.PtrLigne, Ptr.Etat && Etat);
-    }
 }
 function BS_Activer(Id, Etat = false)
 {

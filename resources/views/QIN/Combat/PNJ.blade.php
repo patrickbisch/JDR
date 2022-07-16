@@ -1,15 +1,3 @@
-<?php
-    $LstInit = [["A", "Automatique", ""],
-                ["I", "Identique", ""],
-                ["1", "1", ""],
-                ["5", "5", ""],
-                ["9", "9", ""],
-                ["D0", "Double 0", ""],
-                ["D1", "Double 1", ""],
-                ["D9", "Double 9", ""],
-                ];
-?>
-
 @foreach($LstPerso as $Cle => $Perso)
     @if($Perso->id_fonction == 0)
         @break
@@ -23,14 +11,14 @@
             <div id="NbAction-{{$Cle}}" class="NbAction Numerique">/</div>
         </div>
 
-        <div class="LignePerso LigneTrait DonneeDef">
+        <div id="LigneTrait-{{$Cle}}" class="LignePerso LigneTrait DonneeDef">
             <div class="Colonne2-3 Droite">................. :</div>
             <div class="DonneeLab">{{__("QIN/Combat.Trait")}}</div>
-            <div id="Feu-{{$Cle}}" class="Trait Feu Numerique Colonne4" enabled>{{$Perso->Feu}}</div>
-            <div id="Bois-{{$Cle}}" class="Trait Bois Numerique Colonne5" enabled>{{$Perso->Bois}}</div>
-            <div id="Terre-{{$Cle}}" class="Trait Terre Numerique Colonne6" enabled>{{$Perso->Terre}}</div>
-            <div id="Metal-{{$Cle}}" class="Trait Metal Numerique Colonne7" enabled>{{$Perso->Metal}}</div>
-            <div id="Eau-{{$Cle}}" class="Trait Eau Numerique Colonne8" enabled>{{$Perso->Eau}}</div>
+            <div id="Feu-{{$Cle}}" class="Trait Feu Numerique Colonne4" enabled></div>
+            <div id="Bois-{{$Cle}}" class="Trait Bois Numerique Colonne5" enabled></div>
+            <div id="Terre-{{$Cle}}" class="Trait Terre Numerique Colonne6" enabled></div>
+            <div id="Metal-{{$Cle}}" class="Trait Metal Numerique Colonne7" enabled></div>
+            <div id="Eau-{{$Cle}}" class="Trait Eau Numerique Colonne8" enabled></div>
         </div>
 
         <div id="LigneChi-{{$Cle}}" class="LignePerso DonneeDef">
@@ -40,10 +28,7 @@
             <div class="Colonne4-6 Droite">.... :</div>
             <div class="Colonne4-6">{{__("QIN/Combat.BonusCHI")}}</div>
             <select id="BonusChi-{{$Cle}}" class="Action Colonne7-8 EcranSelect Droite DonneeSelect">
-                <option value="0" selected></option>
-                @for($x = 1; $x <= $Perso->Terre; $x++)
-                    <option value="{{$x}}">{{$x}}</option>
-                @endfor
+
             </select>
         </div>
 
@@ -94,7 +79,7 @@
         <div id="LigneDefense-{{$Cle}}" class="LigneCombat LignePerso DonneeDef">
             <div class="Colonne2-3 Droite">. :</div>
             <div class="DonneeLab">{{__("QIN/Combat.DefensePassive")}}</div>
-            <div id="DefensePassive-{{$Cle}}" class="Trait Colonne4 Numerique" enabled>{{$Perso->DefensePassive}}</div>
+            <div id="DefensePassive-{{$Cle}}" class="Trait Colonne4 Numerique" enabled></div>
             <div class="Colonne5-7 Droite">..... :</div>
             <div class="Colonne5-7">{{__("QIN/Combat.Resistance")}}</div>
             <div id="Resistance-{{$Cle}}" class="Trait Colonne8 Numerique" enabled>{{$Perso->Resistance}}</div>
@@ -110,47 +95,30 @@
         </div>
 
         <div id="LigneArmure-{{$Cle}}" class="LigneCombat LigneArmure LignePerso DonneeDef">
-            <div class="Colonne2-3 Droite">.............. :</div>
+            <div class="Colonne2 Droite">......... :</div>
             <div class="DonneeLab">{{__("Combat.Armure")}}</div>
-            <div id="Armure-{{$Cle}}" class="Numerique Colonne4 Trait"> </div>
-            <select id="TypeArmure-{{$Cle}}" class="EcranSelect Colonne5-8">
+            <div id="Armure-{{$Cle}}" class="Numerique Colonne3 Trait"> </div>
+            <select id="TypeArmure-{{$Cle}}" class="EcranSelect Colonne4-8">
 
             </select>
         </div>
 
         <div id="LigneBouclier-{{$Cle}}" class="LigneCombat LigneBouclier LignePerso DonneeDef">
-            <div class="Colonne2-3 Droite">............. :</div>
+            <div class="Colonne2 Droite">........ :</div>
             <div class="DonneeLab">{{__("Combat.Bouclier")}}</div>
-            <div id="Bouclier-{{$Cle}}" class="Numerique Colonne4 Trait"> </div>
-            <select id="TypeBouclier-{{$Cle}}" class="EcranSelect Colonne5-8">
+            <div id="Bouclier-{{$Cle}}" class="Numerique Colonne3 Trait"> </div>
+            <select id="TypeBouclier-{{$Cle}}" class="EcranSelect Colonne4-8">
 
             </select>
         </div>
 
-        <?php 
-            $LstInit[1][2] = "selected";
-            $LstInit[0][2] = ""; 
-            if($Perso->id_fonction == 7)
-            {
-                $LstInit[0][2] = "selected";
-                $LstInit[1][2] = "";
-            }
-        ?>
         <div id="LigneInit-{{$Cle}}" class="LigneInit LignePerso DonneeDef">
             <div class="Colonne2-3 Droite">............ :</div>
             <div class="DonneeLab">{{__("QIN/Combat.Initiative")}}</div>
             <select id="TypeInit-{{$Cle}}" class="EcranSelect DonneeSelect TypeInit">
-                @for($y = 0; $y < count($LstInit); $y++)
-                    <option value="{{$LstInit[$y][0]}}" {{$LstInit[$y][2]}}>
-                        {{$LstInit[$y][1]}}
-                    </option>
-                @endfor
+
             </select>
         </div>
-        <?php 
-            $LstInit[0][2] = ""; 
-            $LstInit[1][2] = "";
-        ?>
 
         @switch($Perso->id_fonction)
             @case(4)
@@ -170,10 +138,7 @@
             <div class="Colonne2-3 Droite">................ :</div>
             <div class="DonneeLab">{{__("Combat.Action")}}</div>
             <select id="Action-{{$Cle}}" class="Action EcranSelect DonneeSelect">
-                <option value="0" selected></option>
-                <option value="1">{{__("Combat.Attaque")}}</option>
-                <option value="2">{{__("Combat.Mouvement")}}</option>
-                <option value="3">{{__("Combat.Aucune")}}</option>
+
             </select>
         </div>
 
