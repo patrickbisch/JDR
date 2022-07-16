@@ -1,4 +1,4 @@
-class PERSO_Interface{
+class PERSO_InterfaceOLD{
     Actif = -1;
     Taille = 0;
     NbPJ = 0;
@@ -19,7 +19,7 @@ class PERSO_Interface{
     InitialiserNombreAction() {PERSO_InitialiserNombreAction();}
     AffecterNombreAction(Index, NbAction) {PERSO_AffecterAction(Index, NbAction);}
     NbAction(Index) {return(PERSO_DATA[Index].NbAction);}
-    NbActionMaxi(Index) {return(PERSO_BASE[Index].NbActionMaxi);}
+    NbActionMaxi(Index) {return(PERSO_DATA[Index].NbActionMaxi);}
     UtiliserAction(Index) {PERSO_SupprimerAction(Index);}
 
     NombreAdversaire(Index) {return(PERSO_NombreAdversaire(Index));}
@@ -27,23 +27,20 @@ class PERSO_Interface{
 
     Arme(Index, Numero) {return(PERSO_BASE[Index].Armes[Numero]);}
     NombreArme(Index) {return(PERSO_BASE[Index].Armes.length);}
+    Bouclier(Index, Numero) {return(PERSO_BASE[Index].Boucliers[Numero]);}
 }
-var PERSO_BASE       = new Array();
-var PERSO_DATA       = new Array();
-var Perso            = new PERSO_Interface();
+//var PERSO_BASE       = new Array();
+//var PERSO_DATA       = new Array();
+//var Perso            = new PERSO_Interface();
 
-class PERSO_Bonus{
-    Maxi = 0;
-    Valeur = 0;
-    Bonus = 0;
-}
 class PERSO_Donnee{
     //  Definition pour les données complementaires du personnage
     Mort = false;
 
     //  Definition pour les actions
-    NbACtion = 0;
-    Action = "";
+    NbAction = 0;
+    NbActionMaxi = 0;
+    Action = "";    // ????????????????????????????????????????????????
 
     // Etat de santé du perosnnage
     TabPV = new Array();
@@ -66,7 +63,6 @@ function PERSO_Initialiser()
     {
         //  Gestion des ACTIONS
         let Ptr = new PERSO_Donnee();
-        Ptr.NbAction = Perso.NbActionMaxi(x);
         let Obj = document.querySelector("#Ligne-" + x);
         Ptr.PtrLigne = Obj;
         Obj = document.querySelector("#LigneInit-" + x);
@@ -174,7 +170,7 @@ function PERSO_InitialiserNombreAction()
 function PERSO_AffecterAction(Index, NombreAction)
 {
     let Nb = Perso.NbActionMaxi(Index) - Perso.NbAction(Index);
-    PERSO_BASE[Index].NbActionMaxi = NombreAction;
+    PERSO_DATA[Index].NbActionMaxi = NombreAction;
 
     PERSO_DATA[Index].NbAction = Perso.NbActionMaxi(Index) - Nb;
     if(parseInt(Perso.NbAction(Index)) > parseInt(Perso.NbActionMaxi(Index)))

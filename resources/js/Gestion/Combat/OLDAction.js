@@ -49,7 +49,7 @@ function ACTION_InitialiserListe(Index)
         let Arme = Perso.Arme(Index, Nb);
         if((Arme.Attaquer > 0) && (Arme.Quantite > 0))
         {
-            TabAction.push(["4", "Attaquer"]);
+            TabAction.push(["4", "Attaquer (" + Arme.Attaquer + ")"]);
         }
         if(Arme.Lancer > 0)
         {
@@ -57,11 +57,11 @@ function ACTION_InitialiserListe(Index)
             {
                 if(Arme.Attaquer > 0)
                 {
-                    TabAction.push(["5", "Lancer (" + Arme.Quantite + ")"]);
+                    TabAction.push(["5", "Lancer (" + Arme.Lancer + ") [" + Arme.Quantite + "]"]);
                 }
                 else
                 {
-                    TabAction.push(["6", "Tirer (" + Arme.Quantite + ")"]);
+                    TabAction.push(["6", "Tirer (" + Arme.Lancer + ") [" + Arme.Quantite + "]"]);
                 }
             }
             else

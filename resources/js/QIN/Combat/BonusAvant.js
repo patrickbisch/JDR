@@ -1,91 +1,111 @@
-class BONUS_Avant_Interface  {
-    Initialiser() {BONUSAVANT_Initialiser();}
-    Actualiser(Index) {BONUSAVANT_Actualiser(Index);}
-    Activer(Index, Etat) {BONUSAVANT_Activer(Index, Etat);}
+class BA_Interface  {
+    Initialiser(Taille) {BA_Initialiser(Taille);}
+    //Actualiser(Index) {BONUSAVANT_Actualiser(Index);}
+    Activer(Index, Etat) {BS_Activer(Index, Etat);}
 
-    AfficherListe(Etat) {BONUSAVANT_AfficherListe(Etat);}
-    Utiliser(Index) {BONUSAVANT_UtiliserBonusAvant(Index);}
-    Ajouter(Index, Bonus) {BONUSAVANT_Ajouter(Index, Bonus);}
+    AfficherListe(Etat) {BA_AfficherListe(Etat);}
+    Utiliser(Index) {BA_Utiliser(Index);}
+    Ajouter(Index, Bonus) {BA_Ajouter(Index, Bonus);}
 }
-var BonusAvant = new BONUS_Avant_Interface ();
-class BONUS_AVANT_Donnee {
+var BonusAvant  = new BA_Interface ();
+class BA_Donnee {
     PtrLigne;
     PtrLabel;
     PtrSelect;
     Etat = false;
 }
-var BONUS_AVANT_DATA        = new Array();
+var BA_DATA     = new Array();
 
-function BONUSAVANT_Initialiser()
+function BA_Initialiser(Taille)
 {
-    for(let x = 0; x < PERSO_BASE.length; x++)
+    for(let x = 0; x < Taille; x++)
     {
-        let Ptr = new BONUS_AVANT_Donnee();
+        let Ptr = new BA_Donnee();
+        BA_DATA.push(Ptr);
         Ptr.PtrLigne = document.querySelector("#LigneChi-" + x);
         Ptr.PtrLabel = document.querySelector("#CHI-" + x);
         let Obj = document.querySelector("#BonusChi-" + x);
         Obj.addEventListener('change', function(){
-                        BONUSAVANT_Nouveau(Obj,x);    
+                        BA_Nouveau(Obj,x);    
         });
         Ptr.PtrSelect = Obj;
         Ptr.Etat = false;
-        BONUS_AVANT_DATA.push(Ptr);
+
+        let Nb = Perso.Base(x).CHI;
+        Perso.BonusAvant(x).Maxi = Nb;
+        Perso.BonusAvant(x).Valeur = Nb;
+        if(parseInt(Nb) > 0 ) {Ptr.Etat = true;}
+
+        BA_Actualiser(x);
+        BA_BonusMaxi(x, Perso.Base(x).Terre);
     }
-    for(let x = 0; x < BONUS_AVANT_DATA.length; x++)
+    BA_AfficherListe(true);
+}
+function BA_BonusMaxi(Id, Valeur)
+{
+    let Ptr = BA_DATA[Id].PtrSelect;
+    Ptr.options.length = 0;
+
+    let Opt = document.createElement("option");
+    Opt.text = "";
+    Opt.value = "0";
+    Opt.selected = true;
+    Ptr.add(Opt);
+
+    for(let x = 1;x <= Valeur;x++)
     {
-        if(parseInt(PERSO_BASE[x].CHI) > 0)
-        {
-            PERSO_DATA[x].BA.Maxi = PERSO_BASE[x].CHI;
-            PERSO_DATA[x].BA.Valeur = PERSO_BASE[x].CHI;
-            BONUS_AVANT_DATA[x].Etat = true;
-        }
+        Opt = document.createElement("option");
+        Opt.text = x;
+        Opt.value = x;
+        Ptr.add(Opt);
     }
 }
-function BONUSAVANT_Ajouter(Index, Bonus)
+function BA_Nouveau(Obj, Id)
 {
-    PERSO_DATA[Index].BA.Valeur += parseInt(Bonus);
-    if(parseInt(PERSO_DATA[Index].BA.Valeur) > parseInt(PERSO_DATA[Index].BA.Maxi))
-    {
-        PERSO_DATA[Index].BA.Valeur = PERSO_DATA[Index].BA.Maxi;
-    }
-    if(parseInt(PERSO_DATA[Index].BA.Valeur) < 0)
-    {
-        JDR_BlesserPersonnage(Index, Math.abs(PERSO_DATA[Index].BA.Valeur));
-        PERSO_DATA[Index].BA.Valeur = 0;
-    }
-    BonusAvant.Actualiser(Index);
+    Perso.BonusAvant(Id).Bonus = Obj.value;
 }
-function BONUSAVANT_Nouveau(Obj, Id)
+function BA_Actualiser(Id)
 {
-    PERSO_DATA[Id].BA.Bonus = Obj.value;
+    let Nb = Perso.BonusAvant(Id).Valeur;
+    BA_DATA[Id].PtrLabel.innerHTML = Nb;
 }
-function BONUSAVANT_UtiliserBonusAvant(Index)
+function BA_Utiliser(Id)
 {
-    if(parseInt(PERSO_DATA[Index].BA.Bonus) == 0)
+    let BA = Perso.BonusAvant(Id);
+    if(parseInt(BA.Bonus) == 0)
     {
         return(0);
     }
-    let Nb = -2 * PERSO_DATA[Index].BA.Bonus;
+    let Nb = -2 * BA.Bonus;
     MSG.Journal("Utilise <strong>" + Math.abs(Nb) + "</strong> points de <strong>CHI</strong>.", 2);
-    BonusAvant.Ajouter(Index, Nb);
-    PERSO_DATA[Index].BA.Bonus = 0;
-    BONUS_AVANT_DATA[Index].PtrSelect.value = 0;
+    BA_Ajouter(Id, Nb);
+    BA.Bonus = 0;
+    BA_DATA[Id].PtrSelect.value = 0;
 }
-function BONUSAVANT_Activer(Index, Etat = true)
+function BA_Ajouter(Id, Bonus)
 {
-    BONUS_AVANT_DATA[Index].PtrSelect.disabled = !Etat;
-}
-function BONUSAVANT_Actualiser(Index)
-{
-    let Nb = PERSO_DATA[Index].BA.Valeur;
-    BONUS_AVANT_DATA[Index].PtrLabel.innerHTML = Nb;
-}
-function BONUSAVANT_AfficherListe(Etat = true)
-{
-    for(let x = 0;x < BONUS_AVANT_DATA.length;x++)
+    let BA = Perso.BonusAvant(Id);
+    BA.Valeur += parseInt(Bonus);
+    if(parseInt(BA.Valeur) > parseInt(BA.Maxi))
     {
-        let Ptr = BONUS_AVANT_DATA[x];
-        AfficherObjet(Ptr.PtrLigne, Ptr.Etat && Etat);
-        PV.Afficher(x, Ptr.Etat && Etat);
+        BA.Valeur = BA.Maxi;
     }
+    if(parseInt(BA.Valeur) < 0)
+    {
+        JDR_BlesserPersonnage(Id, Math.abs(BA.Valeur));
+        BA.Valeur = 0;
+    }
+    BA_Actualiser(Id);
+}
+function BA_AfficherListe(Etat = true)
+{
+    for(let x = 0;x < BA_DATA.length;x++)
+    {
+        let Ptr = BA_DATA[x];
+        Objet.Afficher(Ptr.PtrLigne, Ptr.Etat && Etat);
+    }
+}
+function BS_Activer(Id, Etat = false)
+{
+    BA_DATA[Id].PtrSelect.disabled = !Etat;
 }

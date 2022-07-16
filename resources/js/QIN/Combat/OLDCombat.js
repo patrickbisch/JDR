@@ -7,14 +7,19 @@ class QIN_Combat {
     PtrLigneDefense;
     PtrSelectDefense;
     PtrSelectDefenseDe;
+    DefenseAutorise = true;
+    DefenseGratuite = false;
+    ValeurParade = 0;
+    AttaqueCC = 0;
+    AttaqueD = 0;
     constructor() {
     }
 }
 var QIN_DATA     = new Array();
 
 class QIN_Attaque{
-    constructor(Indice, Touche, Double, Degat, Cible, TypeAttaque, Protection = 0) {
-        this.Indice = Indice;
+    constructor(Source, Touche, Double, Degat, Cible, TypeAttaque, Protection = 0) {
+        this.Source = Source;
         this.Touche = Touche;
         this.Double = Double;
         this.Degat = Degat;
@@ -263,14 +268,14 @@ function JDR_GestionAttaque(Id, CorpsCorps = true)
             if(CIBLE_DATA[Id].TabGroupe[x].Nb > 0)
             {
                 let y = CIBLE_DATA[Id].TabGroupe[x].Nb;
-                Ptr = new QIN_Attaque(0, Touche + y - 1, 0, Degat + y - 1, Perso.IndexPJ[x] + "-0", CorpsCorps, 0);
+                Ptr = new QIN_Attaque(Id + "-" + x, Touche + y - 1, 0, Degat + y - 1, Perso.IndexPJ[x] + "-0", CorpsCorps, 0);
                 LstCible.push(Ptr);
             }
         }
     }
     else
     {
-        Ptr = new QIN_Attaque(0, Touche, 0, Degat, CIBLE_DATA[Id].Cible , CorpsCorps, 0);
+        Ptr = new QIN_Attaque(Id, Touche, 0, Degat, CIBLE_DATA[Id].Cible , CorpsCorps, 0);
         LstCible.push(Ptr);
     }
     for(let x = 0;x < LstCible.length;x++)
@@ -279,17 +284,17 @@ function JDR_GestionAttaque(Id, CorpsCorps = true)
         switch(QIN_DATA[Id].PtrSelectAttaque.value)
         {
             case "0":   // Attaque normale
-                Ptr = new QIN_Attaque(1, Source.Touche, Double, Source.Degat, Source.Cible, CorpsCorps, 0);
+                Ptr = new QIN_Attaque(Source.Source, Source.Touche, Double, Source.Degat, Source.Cible, CorpsCorps, 0);
                 QIN_LstAttaque.push(Ptr);
                 break;
             case "8":   // Coup double
-                Ptr = new QIN_Attaque(1, Source.Touche-1, Double, Source.Degat-1, Source.Cible, CorpsCorps, 0);
+                Ptr = new QIN_Attaque(Source.Source, Source.Touche-1, Double, Source.Degat-1, Source.Cible, CorpsCorps, 0);
                 QIN_LstAttaque.push(Ptr);
-                Ptr = new QIN_Attaque(2, Source.Touche-2, Double, Source.Degat-2, Source.Cible, CorpsCorps, 0);
+                Ptr = new QIN_Attaque(Source.Source, Source.Touche-2, Double, Source.Degat-2, Source.Cible, CorpsCorps, 0);
                 QIN_LstAttaque.push(Ptr);
                 break;
             case "9":   // Coup precis
-                Ptr = new QIN_Attaque(1, Source.Touche-1, Double, Source.Degat, Source.Cible, CorpsCorps, -2);
+                Ptr = new QIN_Attaque(Source.Source, Source.Touche-1, Double, Source.Degat, Source.Cible, CorpsCorps, -2);
                 QIN_LstAttaque.push(Ptr);
                 break;
             default:
@@ -366,11 +371,47 @@ function JDR_InitialiserDefense(Id)
 
     let TabOpt = new Array(["0", "NON"],
                             );
-    if(!CIBLE_DATA[Id].Groupe)
+    if(CIBLE_DATA[Id].Groupe)
     {
-        if(Perso.NbAction(Id) > 0)
+        QIN_DATA[Id].DefenseAutorise = false;
+    }
+    if(QIN_DATA[Id].DefenseAutorise)
+    {
+        if((Perso.NbAction(Id) > 0) || (QIN_DATA[Id].DefenseGratuite))
         {
             TabOpt.push(["1","Esquiver (" + PERSO_BASE[Id].Esquive + ")"],);
+
+            let PA = 0;
+            let PB = 0;
+            let Nb = Equip.ArmeSelectionne(Id);
+            if(parseInt(Nb) >= 0)
+            {
+                let Arme = Perso.Arme(Id, Nb);
+                PA = Arme.Attaquer;
+                if((!QIN_LstAttaque[0].CorpsCorps) && (Arme.MaitriseCC < 3))
+                {
+                    PA = 0;
+                }
+            }
+            Nb = Equip.BouclierSelectionne(Id);
+            if(parseInt(Nb) >= 0)
+            {
+                let Bouclier = Perso.Bouclier(Id, Nb);
+                PB = Bouclier.Maitrise + Bouclier.DefenseActive + Bouclier.Bonus;
+            }
+            if(PA > PB)
+            {
+                TabOpt.push(["2","Parer (" + PA + ")"],);
+                QIN_DATA[Id].ValeurParade = PA;
+            }
+            else
+            {
+                if(parseInt(PB) > 0)
+                {
+                    TabOpt.push(["2","Parade bouclier (" + PB + ")"],);
+                    QIN_DATA[Id].ValeurParade = PB;
+                }
+            }
         }
     }
 
@@ -408,6 +449,7 @@ function JDR_NouvelleDefense(Obj, Id)
             JDR_CalculerBlessure(Id, "Aucune défense, ");
             break;
         case "1": //    Esquive
+        case "2": //    Parade
             QIN_DATA[Id].PtrSelectDefenseDe.value = "";
             QIN_DATA[Id].PtrSelectDefenseDe.disabled = false;
             break;
@@ -458,7 +500,10 @@ function JDR_DefenseValider()
         if(DeSelect[0].value == "0")
         {
             BonusAvant.Ajouter(Id, -5);
-            Perso.UtiliserAction(Id);
+            if(!QIN_DATA[Id].DefenseGratuite)
+            {
+                Perso.UtiliserAction(Id);
+            }
             JDR_CalculerBlessure(Id, "Défense ratée, ");
             MSG.Message("<strong>ECHEC CRITIQUE !!</strong>");
             MSG.Historique("<strong>ECHEC CRITIQUE !!</strong>", 2);
@@ -473,18 +518,24 @@ function JDR_DefenseValider()
     }
 
     let CA  = 0;
-    let Defense = "";
+    let Defense = "Parade";
+    let ValeurDefense = QIN_DATA[Id].ValeurParade;
     switch(QIN_DATA[Id].PtrSelectDefense.value)
     {
         case "1":
-            CA = parseInt(PERSO_BASE[Id].Esquive) +
-            parseInt(PERSO_BASE[Id].Eau) +
-            parseInt(BoAv) +
-            parseInt(PERSO_DATA[Id].MalusPV) +
-            Math.abs(parseInt(DeSelect[0].value) - parseInt(DeSelect[1].value)) + 
-            parseInt(Double);
             Defense = "Esquive";
-            Perso.UtiliserAction(Id);
+            ValeurDefense = PERSO_BASE[Id].Esquive;
+        case "2":
+            CA = parseInt(ValeurDefense) +
+                    parseInt(PERSO_BASE[Id].Eau) +
+                    parseInt(BoAv) +
+                    parseInt(PERSO_DATA[Id].MalusPV) +
+                    Math.abs(parseInt(DeSelect[0].value) - parseInt(DeSelect[1].value)) + 
+                    parseInt(Double);
+            if(!QIN_DATA[Id].DefenseGratuite)
+            {
+                Perso.UtiliserAction(Id);
+            }
             break;
         default:
             MSG.Erreur("TYPE DE DEFENSE NONB GEREE");

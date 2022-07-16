@@ -64,8 +64,11 @@
 
 @section('CodeJavaScript')
     <script src="../resources/js/QIN/Combat/BonusAvant.js"></script>
-    <script src="../resources/js/QIN/Combat/PointVie.js"></script>
-    <script src="../resources/js/QIN/Combat/Combat.js"></script>
-    <script src="../resources/js/QIN/Combat/Gestion.js"></script>
-    <script src="../resources/js/QIN/Combat/Initiative.js"></script>
+
+
+
+    <script src="../resources/js/QIN/Combat/OLDPointVie.js"></script>
+    <script src="../resources/js/QIN/Combat/OLDCombat.js"></script>
+    <script src="../resources/js/QIN/Combat/OLDGestion.js"></script>
+    <script src="../resources/js/QIN/Combat/OLDInitiative.js"></script>
 @endsection

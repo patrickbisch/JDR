@@ -123,4 +123,4 @@ function JDR_ModifierListeInitialisation()
     JDR_InitialiserCombat();
 }
 
-JDR_ModifierListeInitialisation();
+//JDR_ModifierListeInitialisation();

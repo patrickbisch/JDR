@@ -48,7 +48,7 @@
         <div id="LigneChi-{{$Cle}}" class="LignePerso DonneeDef">
             <div class="Colonne2 Droite">........... :</div>
             <div class="DonneeLab">{{__("QIN/Combat.CHI")}}</div>
-            <div id="CHI-{{$Cle}}" class="CHI Trait Colonne3 Numerique" enabled>{{$Perso->CHI}}</div>
+            <div id="CHI-{{$Cle}}" class="CHI Trait Colonne3 Numerique" enabled></div>
             <div class="Colonne4-6 Droite">.. :</div>
             <div class="Colonne4-6">{{__("QIN/Combat.BonusCHI2")}}</div>
             <select id="BonusChi-{{$Cle}}" class="Action Colonne7-8 EcranSelect Droite DonneeSelect">

@@ -89,52 +89,6 @@ function ActiverFleche(Bouton, Sens)
             MSG.Erreur("ActiverFleche = Phase de tour [" + Gestion.Phase + "] INCONNUE !!");
     }
 }
-/*******************************************************************/
-/*  Gestion des boutons du formulaire
-/*  LancerDe, ouvrir et fermer les listes deroulantes (PNJ, PJ et Init)
-/*******************************************************************/
-function AfficherBouton(Obj, Etat = true)
-{
-    let Ptr;
-    if(typeof(Obj) == "string")
-    {
-        Ptr = LstBtn[Obj];
-    }
-    else
-    {
-        Ptr = Obj;
-    }
-    if(Etat)
-    {
-        Ptr.style.display = "block";
-    }
-    else
-    {
-        Ptr.style.display = "none";
-    }
-}
-function ActiverBouton(Obj, Etat = true)
-{
-    let Ptr;
-    if(typeof(Obj) == "string")
-    {
-        Ptr = LstBtn[Obj];
-    }
-    else
-    {
-        Ptr = Obj;
-    }
-    if(Etat)
-    {
-        Ptr.disabled = false;
-        Ptr.style.opacity = "1";
-    }
-    else
-    {
-        Ptr.disabled = true;
-        Ptr.style.opacity = "0.3";
-    }
-}
 function ActiverBoutonID(Code, Etat = true)
 {
     console.warn("ActiverBoutonID : " + Code + "/" + Etat);
@@ -145,10 +99,6 @@ function ActiverBoutonID(Code, Etat = true)
 function ActiverListeBouton(Etat = false)
 {
     LstBtn.forEach(function(Ptr) {ActiverBouton(Ptr,Etat);});
-}
-function AjouterBouton(Cle, Ptr)
-{
-    LstBtn[Cle] = Ptr;
 }
 function InitialiserBoutonMenuHaut()
 {
@@ -171,18 +121,6 @@ function InitialiserBouton(Chaine)
     let Ptr = document.querySelector("#" + Chaine);
     switch(Chaine)
     {
-        case "PNJ-Bas":
-        case "PNJ-Haut":
-        case "PJ-Bas":
-        case "PJ-Haut":
-        case "Init-Bas":
-        case "Init-Haut":
-            Ptr.addEventListener('click', function(e){
-                e.preventDefault();
-                ActiverFleche(Tab[0],Tab[1]);
-            });
-            ActiverBouton(Ptr, false);
-            break;
         case "LancerDe":
             Ptr.addEventListener('click', function(e){
                 e.preventDefault();
@@ -197,16 +135,6 @@ function InitialiserBouton(Chaine)
             });
             ActiverBouton(Ptr, false);
             break;
-        case "Histo-Bas":
-        case "Histo-Haut":
-        case "Journal-Bas":
-        case "Journal-Haut":
-            Ptr.addEventListener('click', function(e){
-                e.preventDefault();
-                MSG.Afficher(Tab[0]);
-            });
-            ActiverBouton(Ptr, true);
-            break;
         default:
             MSG.Erreur("InitialisationBouton = [" + Chaine + "] INCONNU !");
             return(-1);
@@ -215,4 +143,4 @@ function InitialiserBouton(Chaine)
     return(1);
 }
 
-InitialiserBoutonMenuHaut();
+//InitialiserBoutonMenuHaut();

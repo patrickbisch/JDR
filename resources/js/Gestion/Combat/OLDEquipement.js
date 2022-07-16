@@ -7,6 +7,7 @@ class EQUIP_Interface  {
     ArmeSelectionne(Index) {return(EQUIP_DATA[Index].Equipement[0].PtrSelect.value);}
     ChoisirArmePrincipale(Index) {EQUIP_SelectionnerObjet(Index, 0, 0)}
     CouleurArme(Index, Couleur) {CouleurObjet(EQUIP_DATA[Index].Equipement[0].PtrLigne, Couleur);}
+    BouclierSelectionne(Index) {return(EQUIP_DATA[Index].Equipement[2].PtrSelect.value);}
     Protection(Index) {return(EQUIP_Protection(Index));}
 }
 var Equip = new EQUIP_Interface();
@@ -218,14 +219,7 @@ function EQUIP_NouveauObjet(Obj, Id, x)
                                             PERSO_BASE[Id].Armes[Nb].Nom + "</strong>.", 1);
                             break;
                     }
-                    if(PERSO_BASE[Id].Armes[Nb].Attaquer > PERSO_BASE[Id].Armes[Nb].Lancer)
-                    {
-                        EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML = PERSO_BASE[Id].Armes[Nb].Attaquer;
-                    }
-                    else
-                    {
-                        EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML = PERSO_BASE[Id].Armes[Nb].Lancer;
-                    }
+                    EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML = PERSO_BASE[Id].Armes[Nb].Degat;
                     if(PERSO_BASE[Id].Armes[Nb].DeuxMains)
                     {
                         if(EQUIP_DATA[Id].Equipement[2].PtrSelect.value != "-2")
@@ -284,17 +278,17 @@ function EQUIP_NouveauObjet(Obj, Id, x)
     {
         if(parseInt(Nb) < 0)
         {
-            Perso.AffecterNombreAction(Id, 1);
+            Perso.AffecterNombreAction(Id, PERSO_BASE[Id].Eau + 1);
         }
         else
         {
-            if(parseInt(PERSO_BASE[Id].Armes[Nb].NbActionLance) > parseInt(PERSO_BASE[Id].Armes[Nb].NbActionAttaque))
+            if(parseInt(PERSO_BASE[Id].Armes[Nb].MaitriseCC) == 0)
             {
-                Perso.AffecterNombreAction(Id, PERSO_BASE[Id].Armes[Nb].NbActionLance);
+                Perso.AffecterNombreAction(Id, PERSO_BASE[Id].Armes[Nb].MaitriseD + 1);
             }
             else
             {
-                Perso.AffecterNombreAction(Id, PERSO_BASE[Id].Armes[Nb].NbActionAttaque);
+                Perso.AffecterNombreAction(Id, PERSO_BASE[Id].Armes[Nb].MaitriseCC + 1);
             }
         }
     }

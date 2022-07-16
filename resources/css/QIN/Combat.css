@@ -2,7 +2,7 @@ body {
     background-color:seagreen;
 }
 .FondPrincipal{
-    grid-template-columns: 6px 260px 12px 250px 12px 100px 60px 60px 56px 1px 1fr 260px 12px 14px;
+    grid-template-columns: 6px 254px 12px 250px 12px 100px 60px 60px 56px 1px 1fr 254px 12px 14px;
 }
 .De3{
     grid-column: 10;

@@ -47,16 +47,25 @@
 
     </div>
 
-    <script src="../resources/js/Gestion/Combat/MenuHaut.js"></script>
-    <script src="../resources/js/Gestion/Combat/Gestion.js"></script>
-    <script src="../resources/js/Gestion/Combat/Initiative.js"></script>
-    <script src="../resources/js/Gestion/Combat/Action.js"></script>
-    <script src="../resources/js/Gestion/Combat/Cible.js"></script>
-    <script src="../resources/js/Gestion/Combat/Combat.js"></script>
-    <script src="../resources/js/Gestion/Combat/Equipement.js"></script>
-    <script src="../resources/js/Gestion/Combat/Personnage.js"></script>
+    <script src="../resources/js/Outils/Objet.js"></script>
+    <script src="../resources/js/Outils/Bouton.js"></script>
+    <script src="../resources/js/Outils/Message.js"></script>
+    <script src="../resources/js/Combat/Personnage.js"></script>
+
+
+    <script src="../resources/js/Gestion/Combat/OLDMenuHaut.js"></script>
+    <script src="../resources/js/Gestion/Combat/OLDGestion.js"></script>
+    <script src="../resources/js/Gestion/Combat/OLDInitiative.js"></script>
+    <script src="../resources/js/Gestion/Combat/OLDAction.js"></script>
+    <script src="../resources/js/Gestion/Combat/OLDCible.js"></script>
+    <script src="../resources/js/Gestion/Combat/OLDCombat.js"></script>
+    <script src="../resources/js/Gestion/Combat/OLDEquipement.js"></script>
+    <script src="../resources/js/Gestion/Combat/OLDPersonnage.js"></script>
     @yield('CodeJavaScript')
-    <script src="../resources/js/Gestion/Combat/Demarrage.js"></script>
+    <script src="../resources/js/Gestion/Combat/OLDDemarrage.js"></script>
+    
+
+    <script src="../resources/js/Combat/Demarrage.js"></script>
 
 </form>
 </body>
