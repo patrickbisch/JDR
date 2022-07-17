@@ -17,9 +17,7 @@ function MOTEUR_LancerModule(NomModule, NomProcedure)
             Bouton.Initialiser();
             MSG.Initialiser();
             MSG.Message("Lancement de l'application.", true);
-            //Objet.AfficherListe("DonneeDef", false);
-            //Objet.AfficherListe("Ligne", false);
-            //Objet.AfficherListe("Initiative", false);
+            Objet.AfficherFamille("Ligne", false);
             TimerMoteur = setInterval(MOTEUR_RecupererBaseDonnee , 500);
 /**************************************************************************************/
 /**************************************************************************************/
@@ -35,6 +33,10 @@ MSG.AfficherJournal(true);
         case "Initialisation":
             console.info("Lancement de l'initalisation.");
             TimerMoteur = setInterval(Perso.Initialiser , 100);
+            break;
+        case "Tour INIT":
+            console.info("Lancement d'un tour d'initialisation.");
+            TimerMoteur = setInterval(Initiative.NouveauTour , 50);
             break;
         default:
             console.error("MOTEUR_LancerModule : Module [" + NomModule + "] NON GERE !")

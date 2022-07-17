@@ -1,15 +1,17 @@
 class BOUTON_Gestion{
     PtrBouton = new Array();
     Etat = false;
+    Valide = true;
 }
 class BOUTON_Interface{
     Initialiser() {BOUTON_Initialiser();}
     Afficher(Obj, Etat) {BOUTON_Afficher(Obj, Etat);}
     Activer(Obj, Etat) {BOUTON_Activer(Obj, Etat);}
+    Phase(Nom) {BoutonPhase = Nom;}
 }
 var Bouton          = new BOUTON_Interface();
-let BoutonListe     = new Array();
-
+var BtnValider;
+let BoutonPhase = ""
 /*******************************************************************/
 /*  Gestion des boutons du formulaire
 /*  LancerDe, ouvrir et fermer les listes deroulantes (PNJ, PJ et Init)
@@ -20,6 +22,26 @@ function BOUTON_Initialiser()
     for(let x = 0; x < LstObj.length; x++)
     {
         BOUTON_Ajouter(LstObj[x]);
+    }
+    BtnValider = document.querySelector("#BtnValider");
+    Bouton.Afficher(BtnValider, false);
+    BtnValider.addEventListener('click', function(e){
+                e.preventDefault();
+                BOUTON_ValiderDe();
+    });
+}
+/*******************************************************************/
+/*  Gestion pour la validation
+/*******************************************************************/
+function BOUTON_ValiderDe()
+{
+    switch(BoutonPhase)
+    {
+        case "INIT":
+            INIT_ValiderDe();
+            break;
+        default:
+            MSG.Erreur("BOUTON_ValiderDe = Phase de tour [" + BoutonPhase + "] INCONNUE !!");
     }
 }
 function BOUTON_Ajouter(Ptr)

@@ -1,50 +1,10 @@
 class PV_Interface  {
-    Initialiser(Taille) {PV_Initialiser(Taille);}
-
     Afficher(Index, Etat) {PV_Afficher(Index, Etat);}
     AfficherListe(Etat) {PV_AfficherListe(Etat);}
 }
-var PV = new PV_Interface ();
-class PV_Donnee {
-    PtrLigne;
-    PtrPV;
-    PtrMalus;
-    Groupe = new Array();
-}
-var PV_DATA        = new Array();
-
 /**************************************************************************************/
 /* Gestion des zones PV et de leur affichage 
 /**************************************************************************************/
-function PV_Initialiser(Taille)
-{
-    for(let x = 0;x < Taille;x++)
-    {
-        let Ptr = new PV_Donnee();
-        Ptr.PtrLigne = document.querySelector("#LignePV-" + x);
-        switch(parseInt(Perso.TypeFonction(x)))
-        {
-            case 4:
-            case 5:
-            case 6:
-                for(let y = 0;y < Perso.NombrePJ();y++)
-                {
-                    let Obj = new PV_Donnee();
-                    Obj.PtrLigne = document.querySelector("#LignePV-" + x + "-" + y);
-                    Obj.PtrPV = document.querySelector("#PV-" + x + "-" + y);
-                    Obj.PtrMalus = document.querySelector("#Malus-" + x + "-" + y);
-                    Ptr.Groupe.push(Obj);
-                }
-                break;
-            default:
-                Ptr.PtrPV = document.querySelector("#PV-" + x);
-                Ptr.PtrMalus = document.querySelector("#Malus-" + x);
-                break;
-        }
-        PV_DATA.push(Ptr);
-        PV_Actualiser(x);
-    }
-}
 function PV_Afficher(Index, Etat = true)
 {
     AfficherObjet(PV_DATA[Index].PtrLigne, Etat);
@@ -61,36 +21,6 @@ function PV_AfficherListe(Etat = true)
         PV_Actualiser(x);
     }
 }
-function PV_Actualiser(Index)
-{
-    switch(parseInt(Perso.TypeFonction(Index)))
-    {
-        case 4:
-        case 5:
-        case 6:
-            for(let x = 0;x < PV_DATA[Index].Groupe.length;x++)
-            {
-                PV_ActualiserPV(Index, x, PV_DATA[Index].Groupe[x]);
-            }
-            break;
-        default:
-            PV_ActualiserPV(Index, 0, PV_DATA[Index]);
-    }
-}
-function PV_ActualiserPV(Id, Ligne, PtrPV)
-{
-    let Chaine = "";
-    for(let x = 0;x < PERSO_DATA[Id].TabPV[Ligne].length;x++)
-    {
-        if(x > 0)
-        {
-            Chaine += " / ";
-        }
-        Chaine+= PERSO_DATA[Id].TabPV[Ligne][x];
-    }
-    PtrPV.PtrPV.innerHTML = Chaine;
-    PtrPV.PtrMalus.innerHTML = PERSO_DATA[Id].MalusPV;
-}
 /**************************************************************************************/
 /* Gestion des des point de vies (blessures etc .....)
 /**************************************************************************************/
@@ -105,7 +35,10 @@ function JDR_BlesserPersonnage(Id, Blessures, CibleVeritable)
         case 1:
         case 2:
         case 3:
-            Reste =  Math.floor(Blessures / 6) + 1;
+            if(Blessures > 0)
+            {
+                Reste =  Math.floor(Blessures / 6) + 1;
+            }
         case 0:
         case 7:
             for(let x = 0;x < PERSO_DATA[Id].TabPV[0].length;x++)
@@ -137,7 +70,10 @@ function JDR_BlesserPersonnage(Id, Blessures, CibleVeritable)
         case 5:
         case 6:
             let Encore = true;
-            Reste =  Math.floor(Blessures / 6) + 1;
+            if(Blessures > 0)
+            {
+                Reste =  Math.floor(Blessures / 6) + 1;
+            }
             if(CibleVeritable !== undefined)
             {
                 let Chaine = CibleVeritable + "-0";

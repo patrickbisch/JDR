@@ -1,7 +1,6 @@
 class PERSO_Interface{
     Actif = -1;
     Taille = 0;
-    NbPJ = 0;
     IndexPJ = new Array();
     Liste = new Array();
     constructor() {
@@ -10,7 +9,6 @@ class PERSO_Interface{
     Initialiser() {PERSO_Initialiser();}
     Base(Index) {return(PERSO_BASE[Index]);}
     //NouveauActif() {PERSO_NouveauActif();}
-    //NombrePJ() {return(Perso.NbPJ);}
     TypeFonction(Index) {return(PERSO_BASE[Index].id_fonction);}
 
     Nom(Index) {return(PERSO_BASE[Index].Nom);}
@@ -38,7 +36,7 @@ class PERSO_Interface{
 var Perso            = new PERSO_Interface();
 
 let PERSO_BASE       = new Array();
-let PERSO_DATA       = new Array();
+var PERSO_DATA       = new Array();
 
 class PERSO_Bonus{
     Maxi = 0;
@@ -97,10 +95,27 @@ function PERSO_Initialiser()
 
         if(Perso.TypeFonction(Id) == 0)
         {
-            Perso.NbPJ++;
             Perso.IndexPJ.push(Id);
         }
     }
+    for(let Id = 0;Id < Perso.Taille;Id++)
+    {
+        let Boucle = 1;
+        switch(Perso.TypeFonction(Id))
+        {
+            case 4:
+            case 5:
+            case 6:
+                Boucle = Perso.IndexPJ.length;
+                break;
+        }
+        for(let y = 0;y < Boucle;y++)
+        {
+            PERSO_DATA[Id].TabPV[y] = PERSO_BASE[Id].PV.split("/");
+        }
+        PERSO_DATA[Id].TabPVMaxi = PERSO_BASE[Id].PV.split("/");
+    }
+
     PERSO_InitialiserListe();
     Caracteristique.Initialiser(Perso.Taille);
     BonusAvant.Initialiser(Perso.Taille);
@@ -111,6 +126,7 @@ function PERSO_Initialiser()
     Defense.Initialiser(Perso.Taille);
     Initiative.Initialiser(Perso.Taille);
     PV.Initialiser(Perso.Taille);
+    Cible.Initialiser(Perso.Taille);
 /***************************************************************************************/
 /***************************************************************************************/
 /******      MODE DEBUG                                                            *****/
@@ -122,6 +138,7 @@ PERSO_DATA[2].Mort = true
 PERSO_DATA[4].Bloque = true;
 PERSO_DATA[4].Afficher = false;
 PERSO_ActualiserListe();
+Moteur.LancerModule("Tour INIT");
 /***************************************************************************************/
 /***************************************************************************************/
 }
@@ -164,6 +181,8 @@ function PERSO_InitialiserListe()
 
     Perso.Liste[0].Etat = true;
     Perso.Liste[1].Etat = true;
+    Perso.Liste[0].Valide = false;
+    Perso.Liste[1].Valide = false;
 }
 /***************************************************************************************/
 /***************************************************************************************/
@@ -180,10 +199,10 @@ function PERSO_ActualiserListe()
             PERSO_Actualiser(x, Perso.Liste[0].Etat);
         }
     }
-    BOUTON_Activer(Perso.Liste[0].PtrBouton[0], !Perso.Liste[0].Etat);
-    BOUTON_Activer(Perso.Liste[0].PtrBouton[1], Perso.Liste[0].Etat);
-    BOUTON_Activer(Perso.Liste[1].PtrBouton[0], !Perso.Liste[1].Etat);
-    BOUTON_Activer(Perso.Liste[1].PtrBouton[1], Perso.Liste[1].Etat);
+    BOUTON_Activer(Perso.Liste[0].PtrBouton[0], !Perso.Liste[0].Etat && Perso.Liste[0].Valide);
+    BOUTON_Activer(Perso.Liste[0].PtrBouton[1], Perso.Liste[0].Etat && Perso.Liste[0].Valide);
+    BOUTON_Activer(Perso.Liste[1].PtrBouton[0], !Perso.Liste[1].Etat && Perso.Liste[1].Valide);
+    BOUTON_Activer(Perso.Liste[1].PtrBouton[1], Perso.Liste[1].Etat && Perso.Liste[1].Valide);
 }
 function PERSO_Actualiser(Id, AfficherLigne)
 {

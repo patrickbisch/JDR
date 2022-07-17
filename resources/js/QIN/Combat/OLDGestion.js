@@ -73,7 +73,7 @@ class De {
         return(this.Valeur);
     }
 }
-function JDR_LancerDe(TypeLance = "")
+function JDR_LancerDeOLD(TypeLance = "")
 {
     let Nb = 0;
     let Retour = 1;
@@ -130,20 +130,6 @@ function JDR_LancerDe(TypeLance = "")
             break;
     }
     return(Retour);
-}
-function JDR_AfficherDe(Etat, Etat1 = !Etat)
-{
-    AfficherBouton(DeLabel[0], Etat);
-    AfficherBouton(DeLabel[1], Etat);
-    AfficherBouton(DeSelect[0], Etat1);
-    AfficherBouton(DeSelect[1], Etat1);
-}
-function JDR_ActiverDe(Etat)
-{
-    ActiverBouton(DeLabel[0], Etat);
-    ActiverBouton(DeLabel[1], Etat);
-    ActiverBouton(DeSelect[0], Etat);
-    ActiverBouton(DeSelect[1], Etat);
 }
 function JDR_InitialiserDE()
 {
