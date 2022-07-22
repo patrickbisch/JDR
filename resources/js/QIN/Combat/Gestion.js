@@ -1,9 +1,19 @@
-var LstDE = new Array;
 //  Gestion des DE pour QIN
+class RetourDE{
+    Erreur = true;
+    Double = false;
+    Yang = 0;
+    Yin = 0;
+    TirageLibre = false;
+}
+let LstDE = new Array;
+let TirageDE = new RetourDE();
+
 function JDR_LancerDE(TypeLance = "")
 {
     let Nb = 0;
-    let Retour = 1;
+    TirageDE.Erreur = false;
+    TirageDE.Double = false;
     switch(TypeLance)
     {
         case "D9":
@@ -25,42 +35,135 @@ function JDR_LancerDE(TypeLance = "")
         case "D1":
             Nb++;
         case "D0":
-            JDR_ValeurDE(Nb, Nb);
+            JDR_ValeurDE(Nb, Nb, true);
             JDR_AfficherDE(0);
             break;
         case "A":
-            JDR_ValeurDE(Math.floor(Math.random() * 10), Math.floor(Math.random() * 10));
+            TirageDE.Yang = Math.floor(Math.random() * 10);
+            TirageDE.Yin = Math.floor(Math.random() * 10);
+            if(TirageDE.Yang == TirageDE.Yin) {TirageDE.Double = true;}
+            JDR_ValeurDE(TirageDE.Yang, TirageDE.Yin, TirageDE.Double);
             JDR_AfficherDE(0);
             break;
         case "L":
+            TirageDE.TirageLibre = true;
             JDR_ValeurDE(0, 0);
             JDR_AfficherDE(1);
             Bouton.Activer(BtnValider, true);
-            Retour = 0
-            break;
         default:
-            MSG.Erreur("JDR_LancerDE : (" + TypeLance + ") => Type de DE INCONNU");
             Bouton.Activer(BtnValider, false);
             JDR_AfficherDE(-1);
-            Retour = 1;
-            break;
+            TirageDE.Erreur = true;
     }
-    return(Retour);
+    return(TirageDE);
 }
 function JDR_InitialiserDE()
 {
     LstDE = new Array([document.querySelector("#De0-0"), document.querySelector("#De0-1")],
                         [document.querySelector("#De1-0"), document.querySelector("#De1-1")],
                     );
-    console.debug (LstDE);
     JDR_AfficherDE(-1);
 }
-function JDR_ValeurDE(Yang, Yin)
+function JDR_ValeurDE(Yang, Yin, JetDouble = false)
 {
+    TirageDE.Yang = Yang;
+    TirageDE.Yin = Yin;
+    TirageDE.Double = JetDouble;
     LstDE[0][0].innerHTML = Yang;
     LstDE[0][1].value = Yang;
     LstDE[1][0].innerHTML = Yin;
     LstDE[1][1].value = Yin;
+}
+function JDR_InverserDE()
+{
+    JDR_ValeurDE(TirageDE.Yin, TirageDE.Yang, TirageDE.Double);
+}
+function JDR_AugmenterUnDE()
+{
+    let Encore = !TirageDE.Double;
+    if((TirageDE.Yang == 0) && (TirageDE.Yin == 0)){return(-1);}
+    if(Math.abs(TirageDE.Yang - TirageDE.Yin) == 9)
+    {
+        Encore = false;
+    }
+    if(TirageDE.Yang == TirageDE.Yin)
+    {
+        Encore = false;
+    }
+    if(Encore && (TirageDE.Yang > TirageDE.Yin) && (TirageDE.Yang < 9))
+    {
+        TirageDE.Yang++;
+        Encore = false;
+    }
+    if(Encore && (TirageDE.Yang == 9) && (TirageDE.Yin > 0))
+    {
+        TirageDE.Yin--;
+        Encore = false;
+    }
+    if(Encore && (TirageDE.Yin < 9))
+    {
+        TirageDE.Yin++;
+        Encore = false;
+    }
+    if(Encore && (TirageDE.Yang > 0))
+    {
+        TirageDE.Yang--;
+        Encore = false;
+    }
+    JDR_ValeurDE(TirageDE.Yang, TirageDE.Yin, false);
+}
+function JDR_AugmenterDeuxDE()
+{
+    let Tab = new Array();
+    let Somme = 0;
+    let Nb = 0;
+    let Calcul;
+    if((TirageDE.Yang == 0) && (TirageDE.Yin == 0)){return(-1);}
+    for(let x = 0;x < 5;x++)
+    {
+        Tab.push(new RetourDE());
+        switch(x)
+        {
+            case 0:
+                Tab[x].Yang = TirageDE.Yang + 1;
+                Tab[x].Yin = TirageDE.Yin - 1;
+                break;
+            case 1:
+                Tab[x].Yang = TirageDE.Yang - 1;
+                Tab[x].Yin = TirageDE.Yin + 1;
+                break;
+            case 2:
+                Tab[x].Yang = TirageDE.Yang + 1;
+                Tab[x].Yin = TirageDE.Yin + 1;
+                break;
+            case 3:
+                Tab[x].Yang = TirageDE.Yang - 1;
+                Tab[x].Yin = TirageDE.Yin - 1;
+                break;
+            case 4:
+                Tab[x].Yang = TirageDE.Yang;
+                Tab[x].Yin = TirageDE.Yin;
+                break;
+            }
+        if(Tab[x].Yang < 0) {Tab[x].Yang = 0;}
+        if(Tab[x].Yin < 0) {Tab[x].Yin = 0;}
+        if(Tab[x].Yang > 9) {Tab[x].Yang = 9;}
+        if(Tab[x].Yin > 9) {Tab[x].Yin = 9;}
+        if(Tab[x].Yang == Tab[x].Yin)
+        {
+            Calcul = Tab[x].Yang;
+        }
+        else
+        {
+            Calcul = Math.abs(Tab[x].Yang - Tab[x].Yin);
+        }
+        if(Calcul > Somme)
+        {
+            Somme = Calcul;
+            Nb = x;
+        }
+    }
+    JDR_ValeurDE(Tab[Nb].Yang, Tab[Nb].Yin, false);
 }
 function JDR_AfficherDE(Indice)
 {
@@ -94,6 +197,13 @@ function JDR_TexteValeurDE(Code)
         }
     }
     return("");
+}
+function JDR_InitialiserBonusInitiative()
+{
+    for(let x = 0;x < INIT_DATA.length;x++)
+    {
+        INIT_DATA[x].BonusCarac = Perso.Base(x).Eau;
+    }
 }
 function JDR_InitialiserSelectJet(PtrSelect, Option = 0)
 {

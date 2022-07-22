@@ -462,7 +462,6 @@ function JDR_NouvelleDefense(Obj, Id)
 }
 function JDR_NouvelleDeDefense(Obj, Id)
 {
-    console.debug("JDR_NouvelleDeDefense : "+Obj.value);
     BonusAvant.Activer(Id, false);
     Obj.disabled = true;
     let Ptr = QIN_DATA[Id].PtrLigneDefense;
@@ -490,7 +489,6 @@ function JDR_DefenseValider()
 {
     let Tab = QIN_LstAttaque[0].Cible.split("-");
     let Id = Tab[0];
-    console.debug("JDR_DefenseValider : "+Id);
 
     let BoAv  = PERSO_DATA[Id].BA.Bonus;
     BonusAvant.Utiliser(Id);

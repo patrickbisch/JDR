@@ -11,6 +11,7 @@ use App\Models\QIN\Armure;
 use App\Models\QIN\Bouclier;
 use App\Models\QIN\Personnage;
 use App\Models\QIN\Manoeuvre;
+use App\Models\QIN\Tao;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -53,6 +54,7 @@ class GestionQIN extends Controller
                 $LstPerso[$NbPJ+$NbPNJ]->Armures = Armure::Liste($PtrPNJ->id_pnj);
                 $LstPerso[$NbPJ+$NbPNJ]->Boucliers = Bouclier::Liste($PtrPNJ->id_pnj);
                 $LstPerso[$NbPJ+$NbPNJ]->Manoeuvres = Manoeuvre::Liste($PtrPNJ->id_pnj);
+                $LstPerso[$NbPJ+$NbPNJ]->Taos = Tao::Liste($PtrPNJ->id_pnj);
 
 
                 $LstPerso[$NbPJ+$NbPNJ]->Protection = 0;

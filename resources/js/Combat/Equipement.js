@@ -1,6 +1,9 @@
 class EQUIP_Interface  {
     Initialiser(Taille) {EQUIP_Initialiser(Taille);}
+    Personnage() {EQUIP_EquiperPersonnage();}
     AfficherListe(Etat) {EQUIP_AfficherListe(Etat);}
+    AffecterArme(Id, IdArme) {EQUIP_Affecter(Id, 0, IdArme);}
+    AfficherArmureNaturelle(Id) {EQUIP_ArmureNaturelle(Id);}
 }
 var Equipement = new EQUIP_Interface();
 let EQUIP_DATA = new Array();
@@ -14,7 +17,51 @@ class EQUIP_Objet{
 class EQUIP_Donnee{
     Equipement = new Array();
 }
-
+let Mode = "AUTRE";
+/*********************************************************************************************/
+/*  Lancement de la phase EQUIPEMENT
+/*********************************************************************************************/
+function EQUIP_EquiperPersonnage()
+{
+    Moteur.ArreterModule();
+    MSG.ViderHistorique();
+    MSG.ViderJournal();
+    MSG.Message("Gestion de l'equipement des perosnnage.", true);
+    MSG.Journal("Gestion de l'equipement.");
+    Mode = "EQUIP";
+    Perso.Actif = -1;
+    Initiative.EtatBouton(false, false);
+    Perso.Liste[0].Etat = false;
+    Perso.Liste[1].Etat = false;
+    Perso.Liste[0].Valide = false;
+    Perso.Liste[1].Valide = false;
+    JDR_AfficherDE(-1);
+    PERSO_ActualiserListe();
+    Bouton.Phase("EQUIPEMENT");
+    Equipement.AfficherListe(true);
+    Bouton.Afficher(BtnValider, true);
+    Tao.AfficherListe("EQUIP");
+    EQUIP_ControlerAffectation();
+    MSG.Message("Affecter l'equipement, puis <strong>validez</strong>.");
+/*********************************************************************************************/
+/*********************************************************************************************/
+EQUIP_Affecter(5, 0, 0);
+EQUIP_Affecter(6, 0, 0);
+EQUIP_Affecter(8, 2, -2);
+EQUIP_Affecter(8, 0, 0);
+EQUIP_Affecter(9, 1, 0);
+EQUIP_Affecter(9, 2, -2);
+EQUIP_Affecter(9, 0, 1);
+EQUIP_Affecter(10, 1, 2);
+EQUIP_Affecter(13, 1, 1);
+EQUIP_Affecter(13, 2, -2);
+EQUIP_ControlerAffectation();
+/*********************************************************************************************/
+/*********************************************************************************************/
+}
+/*********************************************************************************************/
+/*  Initialisation du module
+/*********************************************************************************************/
 function EQUIP_Initialiser(Taille)
 {
     MSG.Historique("Initialisation de l'équipement.", 1);
@@ -30,10 +77,14 @@ function EQUIP_Initialiser(Taille)
         Obj = EQUIP_InitialiserObjet(x, ["LigneBouclier", "Bouclier", "TypeBouclier"]);
         Ptr.Equipement.push(Obj);
 
+        Obj = EQUIP_InitialiserObjet(x, ["LigneANaturel", "ANaturel", "TypeANaturel"]);
+        Ptr.Equipement.push(Obj);
+
         EQUIP_DATA.push(Ptr);
         EQUIP_InitialiserSelect(x, Perso.Base(x).Armes, 0);
         EQUIP_InitialiserSelect(x, Perso.Base(x).Armures, 1);
         EQUIP_InitialiserSelect(x, Perso.Base(x).Boucliers, 2);
+        EQUIP_InitialiserArmureNaturelle(x);
 
         EQUIP_DATA[x].Equipement[0].PtrSelect.addEventListener('change', function(){
             EQUIP_ObjetModifie(EQUIP_DATA[x].Equipement[0].PtrSelect, x, 0);
@@ -45,7 +96,7 @@ function EQUIP_Initialiser(Taille)
             EQUIP_ObjetModifie(EQUIP_DATA[x].Equipement[2].PtrSelect, x, 2);
         });
     }
-    EQUIP_AfficherListe(false);
+    Equipement.AfficherListe(false);
 }
 function EQUIP_InitialiserObjet(Id, Code)
 {
@@ -57,7 +108,10 @@ function EQUIP_InitialiserObjet(Id, Code)
     Ptr.Etat = true;
     return(Ptr);
 }
-function EQUIO_CreerChoix(Valeur, Id)
+/*********************************************************************************************/
+/*  Initialisation de l'equipement des personnages
+/*********************************************************************************************/
+function EQUIP_CreerChoix(Valeur, Id)
 {
     let Opt = document.createElement("option");
     Opt.value = Valeur;
@@ -90,8 +144,8 @@ function EQUIP_InitialiserSelect(x, Tab, Id)
             Ptr.PtrSelect.add(Opt);
         }
 
-        Ptr.PtrSelect.add(EQUIO_CreerChoix(-2, Id));
-        Ptr.PtrSelect.add(EQUIO_CreerChoix(-1, -1));
+        Ptr.PtrSelect.add(EQUIP_CreerChoix(-2, Id));
+        Ptr.PtrSelect.add(EQUIP_CreerChoix(-1, -1));
     
         Ptr.PtrSelect.value = 0;
         if((parseInt(Id) == 0) && (Perso.TypeFonction(x) == 0))
@@ -114,9 +168,56 @@ function EQUIP_InitialiserSelect(x, Tab, Id)
         Ptr.Etat = false;
     }
 }
+function EQUIP_InitialiserArmureNaturelle(Id)
+{
+    let Ptr = EQUIP_DATA[Id].Equipement[3];
+    Ptr.PtrLabel.innerHTML = "0";
+    let Opt = document.createElement("option");
+    Opt.text = "Armure naturelle";
+    Opt.value = 0;
+    Opt.disabled = true;
+    Opt.selected = true;
+    Ptr.PtrSelect.add(Opt);
+    Ptr.PtrSelect.disabled = true;
+    Ptr.Etat = false;
+    EQUIP_ArmureNaturelle(Id);
+}
+function EQUIP_ArmureNaturelle(Id)
+{
+    let Ptr = EQUIP_DATA[Id].Equipement[3]
+    Ptr.PtrLabel.innerHTML = Perso.Base(Id).ArmureNaturelle;
+    if(Perso.Base(Id).ArmureNaturelle == 0)
+    {
+        Ptr.Etat = false;
+        Objet.Afficher(Ptr.PtrLigne, Ptr.Etat);
+    }
+    else
+    {
+        Ptr.Etat = true;
+        switch(Bouton.Phase)
+        {
+            case "INIT":
+                break;
+            default:
+                Objet.Afficher(Ptr.PtrLigne, Ptr.Etat);
+                break;
+        }
+    }
+}
+/**************************************************************************************/
+/*  Validation d'un nouveau objet
+/**************************************************************************************/
 function EQUIP_ObjetModifie(Obj, Id, x)
 {
     EQUIP_NouveauObjet(Obj, Id, x)
+    EQUIP_ControlerAffectation();
+}
+function EQUIP_Affecter(Id, Type, Indice)
+{
+    let Ptr = EQUIP_DATA[Id].Equipement[Type].PtrSelect;
+    Ptr.value = Indice;
+    EQUIP_NouveauObjet(Ptr, Id, Type);
+    EQUIP_ControlerAffectation();
 }
 function EQUIP_NouveauObjet(Obj, Id, x)
 {
@@ -128,12 +229,14 @@ function EQUIP_NouveauObjet(Obj, Id, x)
             break;
         case -2:
             EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML = "";
+            EQUIP_Commentaire(Id, Mode + "/" + x + "/-2");
             break;
         default:
             switch(parseInt(x))
             {
                 case 0:
                     EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML = Perso.Base(Id).Armes[Nb].Degat;
+                    EQUIP_Commentaire(Id, Mode + "/" + x, Perso.Base(Id).Armes[Nb].Nom);
                     if(Perso.Base(Id).Armes[Nb].DeuxMains)
                     {
                         if(EQUIP_DATA[Id].Equipement[2].PtrSelect.value != -2)
@@ -146,9 +249,11 @@ function EQUIP_NouveauObjet(Obj, Id, x)
                     break;
                 case 1:
                     EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML = Perso.Base(Id).Armures[Nb].Protection;
+                    EQUIP_Commentaire(Id, Mode + "/" + x, Perso.Base(Id).Armures[Nb].Nom);
                     break;
                 case 2:
                     EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML =  Perso.Base(Id).Boucliers[Nb].Protection;
+                    EQUIP_Commentaire(Id, Mode + "/" + x, Perso.Base(Id).Boucliers[Nb].Nom);
                     Nb = EQUIP_DATA[Id].Equipement[0].PtrSelect.value;
                     if(parseInt(Nb) >= 0)
                     {
@@ -160,7 +265,7 @@ function EQUIP_NouveauObjet(Obj, Id, x)
                     }
                     break;
                 default:
-                    MSG.Erreur("EQUIPE : "+x+" NON GERE");
+                    MSG.Erreur("EQUIPE : " + x + " NON GERE");
                     break;
             }
     }
@@ -183,35 +288,56 @@ function EQUIP_NouveauObjet(Obj, Id, x)
         }
     }
 }
-function EQUIP_Commentaire(Id, Cmds)
+/**************************************************************************************/
+/*  Ajout de commentaire deans le journaux et historique
+/**************************************************************************************/
+function EQUIP_Commentaire(Id, Cmds, Nom)
 {
     switch(Cmds)
     {
-        case "-1>0>EQUIP":
-            MSG.Historique(Perso.Gras(Id) + " a retiré son arme.", 1);
-            break;
-        case "-2>0>EQUIP":
+        case "EQUIP/0/-2":
+        case "AUTRE/0/-2":
             MSG.Historique(Perso.Gras(Id) + " n'a aucune arme.", 1);
+            MSG.Journal(Perso.Gras(Id), 1);
+            MSG.Journal("n'a aucune arme.", 2);
             break;
-        case "-1>1>EQUIP":
-            MSG.Historique(Perso.Gras(Id) + " a retiré son armure.", 1);
-            break;
-        case "-2>1>EQUIP":
+        case "EQUIP/1/-2":
+        case "AUTRE/1/-2":
             MSG.Historique(Perso.Gras(Id) + " n'a aucune armure.", 1);
+            MSG.Journal(Perso.Gras(Id), 1);
+            MSG.Journal("n'a aucune armure.", 2);
             break;
-        case "-1>2>EQUIP":
-            MSG.Historique(Perso.Gras(Id) + " a retiré son bouclier.", 1);
-            break;
-        case "-2>2>EQUIP":
+        case "EQUIP/2/-2":
+        case "AUTRE/2/-2":
             MSG.Historique(Perso.Gras(Id) + " n'a aucun bouclier.", 1);
+            MSG.Journal(Perso.Gras(Id), 1);
+            MSG.Journal("n'a aucun bouclier.", 2);
+            break;
+        case "EQUIP/0":
+        case "AUTRE/0":
+            MSG.Historique(Perso.Gras(Id) + " s'equipe avec : <strong>" + Nom + "</strong>", 1);
+            MSG.Journal(Perso.Gras(Id), 1);
+            MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 2);
+            break;
+        case "EQUIP/1":
+        case "AUTRE/1":
+            MSG.Historique(Perso.Gras(Id) + " s'equipe avec : <strong>" + Nom + "</strong>", 1);
+            MSG.Journal(Perso.Gras(Id), 1);
+            MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 2);
+            break;
+        case "EQUIP/2":
+        case "AUTRE/2":
+            MSG.Historique(Perso.Gras(Id) + " s'equipe avec : <strong>" + Nom + "</strong>", 1);
+            MSG.Journal(Perso.Gras(Id), 1);
+            MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 2);
             break;
         default:
             MSG.Erreur("EQUIP_Commentaire = Requete [" + Cmds + "] NON GEREE !");
     }
 }
-
-
-
+/**************************************************************************************/
+/*  Affichage du detail de l'eqsuipement
+/**************************************************************************************/
 function EQUIP_AfficherListe(Etat = false)
 {
     for(let x = 0;x < EQUIP_DATA.length;x++)
@@ -220,6 +346,40 @@ function EQUIP_AfficherListe(Etat = false)
         {
             let Ptr = EQUIP_DATA[x].Equipement[y];
             Objet.Afficher(Ptr.PtrLigne, Ptr.Etat && Etat);
+            if(Mode == "EQUIP")
+            {
+                Ptr.PtrSelect.disabled = false;
+            }
+            else
+            {
+                Ptr.PtrSelect.disabled = true;
+            }
         }
     }
+}
+function EQUIP_ControlerAffectation()
+{
+    let Erreur = false;
+    for(let x = 0;x < EQUIP_DATA.length;x++)
+    {
+        for(let y = 0;y < EQUIP_DATA[x].Equipement.length;y++)
+        {
+            let Ptr = EQUIP_DATA[x].Equipement[y];
+            if(Ptr.PtrSelect.value == "-1")
+            {
+                Objet.Couleur(Ptr.PtrLigne, 2);
+                Erreur = true;
+            }
+            else
+            {
+                Objet.Couleur(Ptr.PtrLigne, 0);
+            }
+        }
+    }
+    Bouton.Activer(BtnValider, !Erreur);
+}
+function EQUIP_ValiderDe()
+{
+    Mode = "AUTRE";
+    Moteur.LancerModule("Tour INIT");
 }

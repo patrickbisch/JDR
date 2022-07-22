@@ -100,5 +100,15 @@ function BA_Ajouter(Id, Bonus)
 }
 function BS_Activer(Id, Etat = false)
 {
-    BA_DATA[Id].PtrSelect.disabled = !Etat;
+    if(Id < 0)
+    {
+        for(let x = 0;x < BA_DATA.length;x++)
+        {
+            BA_DATA[x].PtrSelect.disabled = !Etat;
+        }
+    }
+    else
+    {
+        BA_DATA[Id].PtrSelect.disabled = !Etat;
+    }
 }

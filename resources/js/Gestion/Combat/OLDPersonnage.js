@@ -56,48 +56,6 @@ class PERSO_Donnee{
     }
 }
 
-function PERSO_Initialiser()
-{
-    Perso.Taille = PERSO_BASE.length;
-    for(x = 0;x < PERSO_BASE.length;x++)
-    {
-        //  Gestion des ACTIONS
-        let Ptr = new PERSO_Donnee();
-        let Obj = document.querySelector("#Ligne-" + x);
-        Ptr.PtrLigne = Obj;
-        Obj = document.querySelector("#LigneInit-" + x);
-        Ptr.PtrLigneInit = Obj;
-        PERSO_DATA.push(Ptr);
-        if(PERSO_BASE[x].id_fonction == 0)
-        {
-            Perso.NbPJ++;
-            Perso.IndexPJ.push(x);
-        }
-        let Nb = PERSO_BASE[x].Manoeuvres.length
-        console.debug("Manoeuvres de ("+x+") : " +Nb);
-        for(let y = 0;y<PERSO_BASE[x].Manoeuvres.length;y++)
-        {
-            console.debug(PERSO_BASE[x].Manoeuvres[y]);
-        }
-    }
-    for(x = 0;x < PERSO_BASE.length;x++)
-    {
-        let Boucle = 1;
-        switch(PERSO_BASE[x].id_fonction)
-        {
-            case 4:
-            case 5:
-            case 6:
-                Boucle = Perso.NbPJ;
-                break;
-        }
-        for(let y = 0;y < Boucle;y++)
-        {
-            PERSO_DATA[x].TabPV[y] = PERSO_BASE[x].PV.split("/");
-        }
-        PERSO_DATA[x].TabPVMaxi = PERSO_BASE[x].PV.split("/");
-    }
-}
 function PERSO_NouveauActif()
 {
     ArreterModule();

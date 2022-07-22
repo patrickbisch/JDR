@@ -20,7 +20,7 @@ class INIT_Donnee {
         this.Code = "";
     }
 }
-var INIT_DATA       = new Array();
+var INIT_DATA2       = new Array();
 var INIT_LignePtr   = new Array();
 
 function INIT_DemarrerTour()

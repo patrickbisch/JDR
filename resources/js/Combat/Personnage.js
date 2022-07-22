@@ -117,6 +117,7 @@ function PERSO_Initialiser()
     }
 
     PERSO_InitialiserListe();
+    BonusExceptionnel.Initialiser();
     Caracteristique.Initialiser(Perso.Taille);
     BonusAvant.Initialiser(Perso.Taille);
     DefensePassive.Initialiser(Perso.Taille);
@@ -127,18 +128,23 @@ function PERSO_Initialiser()
     Initiative.Initialiser(Perso.Taille);
     PV.Initialiser(Perso.Taille);
     Cible.Initialiser(Perso.Taille);
+    Tao.Initialiser(Perso.Taille);
 /***************************************************************************************/
 /***************************************************************************************/
 /******      MODE DEBUG                                                            *****/
 /***************************************************************************************/
 /***************************************************************************************/
 Perso.Actif = 11;
-PERSO_DATA[1].Bloque = true;
-PERSO_DATA[2].Mort = true
-PERSO_DATA[4].Bloque = true;
-PERSO_DATA[4].Afficher = false;
+//PERSO_DATA[1].Bloque = true;
+//PERSO_DATA[2].Mort = true
+//PERSO_DATA[4].Bloque = true;
+//PERSO_DATA[4].Afficher = false;
+PERSO_DATA[3].MalusPV = -1;
+PERSO_DATA[5].MalusPV = -3;
+PERSO_DATA[6].MalusPV = -5;
 PERSO_ActualiserListe();
-Moteur.LancerModule("Tour INIT");
+//Moteur.LancerModule("Tour INIT");
+Moteur.LancerModule("Equipement");
 /***************************************************************************************/
 /***************************************************************************************/
 }

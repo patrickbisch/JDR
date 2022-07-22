@@ -36,7 +36,18 @@ MSG.AfficherJournal(true);
             break;
         case "Tour INIT":
             console.info("Lancement d'un tour d'initialisation.");
-            TimerMoteur = setInterval(Initiative.NouveauTour , 50);
+            Objet.AfficherFamille("LignePerso", false);
+            TimerMoteur = setInterval(Initiative.NouveauTour, 100);
+            break;
+        case "Equipement":
+            console.info("Lancement de l'equipement des pesonnages");
+            Objet.AfficherFamille("LignePerso", false);
+            TimerMoteur = setInterval(Equipement.Personnage , 100);
+            break;
+        case "COMBAT":
+            console.info("Lancement du combat");
+            Objet.AfficherFamille("LignePerso", false);
+            TimerMoteur = setInterval(Combat.Lancer, 100);
             break;
         default:
             console.error("MOTEUR_LancerModule : Module [" + NomModule + "] NON GERE !")

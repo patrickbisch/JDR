@@ -68,11 +68,5 @@
     <script src="../resources/js/QIN/Combat/DefensePassive.js"></script>
     <script src="../resources/js/QIN/Combat/Gestion.js"></script>
     <script src="../resources/js/QIN/Combat/PointVie.js"></script>
-
-
-
-    <script src="../resources/js/QIN/Combat/OLDPointVie.js"></script>
-    <script src="../resources/js/QIN/Combat/OLDCombat.js"></script>
-    <script src="../resources/js/QIN/Combat/OLDGestion.js"></script>
-    <script src="../resources/js/QIN/Combat/OLDInitiative.js"></script>
+    <script src="../resources/js/QIN/Combat/Tao.js"></script>
 @endsection

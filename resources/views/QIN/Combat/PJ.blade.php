@@ -31,6 +31,15 @@
             </select>
         </div>
 
+        <div id="LigneTao-{{$Cle}}" class="LignePerso DonneeDef">
+            <select id="Tao-{{$Cle}}" class="Colonne2-6 EcranSelect DonneeSelect">
+
+            </select>
+            <select id="BonusTao-{{$Cle}}" class="Colonne7-8 EcranSelect Droite DonneeSelect">
+
+            </select>
+        </div>
+
         @switch($Perso->id_fonction)
             @case(0)
             @case(7)
@@ -66,6 +75,13 @@
             <div class="DonneeLab">{{__("Combat.Armure")}}</div>
             <div id="Armure-{{$Cle}}" class="Numerique Colonne3 Trait"> </div>
             <select id="TypeArmure-{{$Cle}}" class="EcranSelect Colonne4-8">
+
+            </select>
+        </div>
+
+        <div id="LigneANaturel-{{$Cle}}" class="LignePerso DonneeDef">
+            <div id="ANaturel-{{$Cle}}" class="Numerique Colonne3 Trait"> </div>
+            <select id="TypeANaturel-{{$Cle}}" class="EcranSelect Colonne4-8">
 
             </select>
         </div>

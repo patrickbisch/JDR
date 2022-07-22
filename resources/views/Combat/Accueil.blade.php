@@ -23,12 +23,6 @@
             {{csrf_field()}}
     <div class="FondPrincipal">
         <div class="MenuHaut"></div>
-        <button id="LancerDe" class="Bouton LancerDe Info" name="Action" value="Lancer" type="submit">
-            <img height="60" src="../resources/Images/LancerDe.png" alt="LancerDe">
-            <span class="InfoBulle">
-                {{__('Combat.InfoLancerDe')}}
-            </span>
-        </button>
 
         <button id="BtnValider" class="Bouton BtnValider Info" name="Action" value="Valider" type="submit">
             <img height="52" src="../resources/Images/Valider.png" alt="Valider">
@@ -57,20 +51,9 @@
     <script src="../resources/js/Combat/Defense.js"></script>
     <script src="../resources/js/Combat/Initiative.js"></script>
     <script src="../resources/js/Combat/Cible.js"></script>
-
-
-    <script src="../resources/js/Gestion/Combat/OLDMenuHaut.js"></script>
-    <script src="../resources/js/Gestion/Combat/OLDGestion.js"></script>
-    <script src="../resources/js/Gestion/Combat/OLDInitiative.js"></script>
-    <script src="../resources/js/Gestion/Combat/OLDAction.js"></script>
-    <script src="../resources/js/Gestion/Combat/OLDCible.js"></script>
-    <script src="../resources/js/Gestion/Combat/OLDCombat.js"></script>
-    <script src="../resources/js/Gestion/Combat/OLDEquipement.js"></script>
-    <script src="../resources/js/Gestion/Combat/OLDPersonnage.js"></script>
+    <script src="../resources/js/Combat/BonusExceptionnel.js"></script>
+    <script src="../resources/js/Combat/Combat.js"></script>
     @yield('CodeJavaScript')
-    <script src="../resources/js/Gestion/Combat/OLDDemarrage.js"></script>
-    
-
     <script src="../resources/js/Combat/Demarrage.js"></script>
 
 </form>
