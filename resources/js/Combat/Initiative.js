@@ -1,4 +1,5 @@
 class INIT_Interface  {
+    Actif = -1;
     Liste = new BOUTON_Gestion();
 
     Initialiser(Taille) {INIT_Initialiser(Taille);}
@@ -178,15 +179,22 @@ function INIT_AfficherListe()
     for(x = 0;x < INIT_ORDRE.length;x++)
     {
         INIT_DATA[x].PtrLabelNum.innerHTML = Perso.Lettre(INIT_ORDRE[x]);
-        INIT_DATA[x].PtrLabelNom.innerHTML = Perso.Nom(INIT_ORDRE[x]) +" >> "+INIT_DATA[INIT_ORDRE[x]].Valeur;
+        INIT_DATA[x].PtrLabelNom.innerHTML = Perso.Nom(INIT_ORDRE[x]);
         INIT_DATA[x].PtrLabelFormat.innerHTML = INIT_DATA[INIT_ORDRE[x]].Format;
-        if(parseInt(INIT_DATA[INIT_ORDRE[x]].Valeur) == -66)
+        if(Initiative.Actif == x)
         {
-            Objet.Couleur(INIT_DATA[x].PtrLigneInit, 2);
+            Objet.Couleur(INIT_DATA[x].PtrLigneInit, 1);
         }
         else
         {
-            Objet.Couleur(INIT_DATA[x].PtrLigneInit, 0);
+            if(parseInt(INIT_DATA[INIT_ORDRE[x]].Valeur) == -66)
+            {
+                Objet.Couleur(INIT_DATA[x].PtrLigneInit, 2);
+            }
+            else
+            {
+                Objet.Couleur(INIT_DATA[x].PtrLigneInit, 0);
+            }
         }
         Objet.Afficher(INIT_DATA[x].PtrLigneInit, true)
     }

@@ -164,6 +164,12 @@ function TAO_ChargerTable(Id, Indice)
                         }
                     }
                     break;
+                case 3:
+                    if(PERSO_BASE[Id].Taos[x].action > 0)
+                    {
+                        Ajout = true;
+                    }
+                    break;
             }
             if(Ajout)
             {
@@ -235,7 +241,11 @@ function TAO_Afficher(Id, Module)
             case "COMBAT":
                 Tab = TAO_InitialiserSelect(Id, 2);
                 break;
+            case "ACTION":
+                Tab = TAO_InitialiserSelect(Id, 3);
+                break;
             default:
+                MSG.Erreur("TAO_Afficher (Module : "+Module+") NON GERE");
                 Etat = false;
         }
     }

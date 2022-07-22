@@ -90,23 +90,6 @@ function PERSO_NouveauActif()
         MSG.Message("FIN DU TOUR !!!!", 1);
     }
 }
-function PERSO_NombreAdversaire(Index)
-{
-    let Nb = 0;
-    let Id = Perso.TypeFonction(Index);
-    for(let x = 0;x < PERSO_BASE.length;x++)
-    {
-        if(((Id == 0) && (Perso.TypeFonction(x) != Id)) ||
-            ((Id != 0) && (Perso.TypeFonction(x) == 0)))
-        {
-            if(!Perso.Mort(x))
-            {
-                Nb++;
-            }
-        }
-    }
-    return(Nb);
-}
 function PERSO_SuivantActif()
 {
     let Index = Init.Suivant(true);
@@ -124,15 +107,6 @@ function PERSO_InitialiserNombreAction()
         Action.AfficherValeur(x, Perso.NbAction(x)
                              + "/" + Perso.NbActionMaxi(x));
     }
-}
-function PERSO_SupprimerAction(Index)
-{
-    PERSO_DATA[Index].NbAction--;
-    if(Perso.NbAction(Index) < 0)
-    {
-        PERSO_DATA[Index].NbAction = 0;
-    } 
-    Action.AfficherValeur(Index, Perso.NbAction(Index) + "/" + Perso.NbActionMaxi(Index));
 }
 function PERSO_VisualiserListeActif(Bouton, Sens)
 {
@@ -208,10 +182,4 @@ function PERSO_VisualiserListe(Bouton,Sens)
             }
         }
     }
-}
-function PERSO_ChangerEtat(Index, Mort = true)
-{
-    PERSO_DATA[Index].Mort = Mort;
-    CouleurObjet(PERSO_DATA[Index].PtrLigne, 2);
-    INIT_VisualiserListe(SavSensFleche[2]);
 }

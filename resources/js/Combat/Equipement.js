@@ -2,8 +2,12 @@ class EQUIP_Interface  {
     Initialiser(Taille) {EQUIP_Initialiser(Taille);}
     Personnage() {EQUIP_EquiperPersonnage();}
     AfficherListe(Etat) {EQUIP_AfficherListe(Etat);}
+    Activer(Index, Etat) {EQUIP_Activer(Index, Etat);}
     AffecterArme(Id, IdArme) {EQUIP_Affecter(Id, 0, IdArme);}
     AfficherArmureNaturelle(Id) {EQUIP_ArmureNaturelle(Id);}
+    ArmeSelectionne(Index) {return(EQUIP_DATA[Index].Equipement[0].PtrSelect.value);}
+    CouleurArme(Index, Couleur) {Objet.Couleur(EQUIP_DATA[Index].Equipement[0].PtrLigne, Couleur);}
+    ChoisirArmePrincipale(Index) {EQUIP_Affecter(Index, 0, 0)}
 }
 var Equipement = new EQUIP_Interface();
 let EQUIP_DATA = new Array();
@@ -17,7 +21,6 @@ class EQUIP_Objet{
 class EQUIP_Donnee{
     Equipement = new Array();
 }
-let Mode = "AUTRE";
 /*********************************************************************************************/
 /*  Lancement de la phase EQUIPEMENT
 /*********************************************************************************************/
@@ -28,7 +31,6 @@ function EQUIP_EquiperPersonnage()
     MSG.ViderJournal();
     MSG.Message("Gestion de l'equipement des perosnnage.", true);
     MSG.Journal("Gestion de l'equipement.");
-    Mode = "EQUIP";
     Perso.Actif = -1;
     Initiative.EtatBouton(false, false);
     Perso.Liste[0].Etat = false;
@@ -65,6 +67,7 @@ EQUIP_ControlerAffectation();
 function EQUIP_Initialiser(Taille)
 {
     MSG.Historique("Initialisation de l'équipement.", 1);
+    Bouton.Phase("EQUIPEMENT");
     for(let x = 0;x < Taille;x++)
     {
         let Ptr = new EQUIP_Donnee();
@@ -222,6 +225,7 @@ function EQUIP_Affecter(Id, Type, Indice)
 function EQUIP_NouveauObjet(Obj, Id, x)
 {
     let Nb = Obj.value;
+    let Mode = Bouton.Phase();
     switch(parseInt(Nb))
     {
         case -1:
@@ -295,41 +299,65 @@ function EQUIP_Commentaire(Id, Cmds, Nom)
 {
     switch(Cmds)
     {
-        case "EQUIP/0/-2":
-        case "AUTRE/0/-2":
+        case "EQUIPEMENT/0/-2":
+        case "INIT/0/-2":
             MSG.Historique(Perso.Gras(Id) + " n'a aucune arme.", 1);
             MSG.Journal(Perso.Gras(Id), 1);
             MSG.Journal("n'a aucune arme.", 2);
             break;
-        case "EQUIP/1/-2":
-        case "AUTRE/1/-2":
+        case "ACTION/0/-2":
+            MSG.Historique("n'a aucune arme.", 1);
+            MSG.Journal("n'a aucune arme.", 1);
+            break;
+        case "EQUIPEMENT/1/-2":
+        case "INIT/1/-2":
             MSG.Historique(Perso.Gras(Id) + " n'a aucune armure.", 1);
             MSG.Journal(Perso.Gras(Id), 1);
             MSG.Journal("n'a aucune armure.", 2);
             break;
-        case "EQUIP/2/-2":
-        case "AUTRE/2/-2":
+        case "ACTION/1/-2":
+            MSG.Historique("n'a aucune armure.", 1);
+            MSG.Journal("n'a aucune armure.", 1);
+            break;
+        case "EQUIPEMENT/2/-2":
+        case "INIT/2/-2":
             MSG.Historique(Perso.Gras(Id) + " n'a aucun bouclier.", 1);
             MSG.Journal(Perso.Gras(Id), 1);
             MSG.Journal("n'a aucun bouclier.", 2);
             break;
-        case "EQUIP/0":
-        case "AUTRE/0":
+        case "ACTION/2/-2":
+            MSG.Historique("n'a aucun bouclier.", 1);
+            MSG.Journal("n'a aucun bouclier.", 1);
+            break;
+        case "EQUIPEMENT/0":
+        case "INIT/0":
             MSG.Historique(Perso.Gras(Id) + " s'equipe avec : <strong>" + Nom + "</strong>", 1);
             MSG.Journal(Perso.Gras(Id), 1);
             MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 2);
             break;
-        case "EQUIP/1":
-        case "AUTRE/1":
+        case "ACTION/0":
+            MSG.Historique("s'equipe avec : <strong>" + Nom + "</strong>", 1);
+            MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 1);
+            break;
+        case "EQUIPEMENT/1":
+        case "INIT/1":
             MSG.Historique(Perso.Gras(Id) + " s'equipe avec : <strong>" + Nom + "</strong>", 1);
             MSG.Journal(Perso.Gras(Id), 1);
             MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 2);
             break;
-        case "EQUIP/2":
-        case "AUTRE/2":
+        case "ACTION/1":
+            MSG.Historique("s'equipe avec : <strong>" + Nom + "</strong>", 1);
+            MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 1);
+            break;
+        case "EQUIPEMENT/2":
+        case "INIT/2":
             MSG.Historique(Perso.Gras(Id) + " s'equipe avec : <strong>" + Nom + "</strong>", 1);
             MSG.Journal(Perso.Gras(Id), 1);
             MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 2);
+            break;
+        case "ACTION/2":
+            MSG.Historique("s'equipe avec : <strong>" + Nom + "</strong>", 1);
+            MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 1);
             break;
         default:
             MSG.Erreur("EQUIP_Commentaire = Requete [" + Cmds + "] NON GEREE !");
@@ -338,6 +366,17 @@ function EQUIP_Commentaire(Id, Cmds, Nom)
 /**************************************************************************************/
 /*  Affichage du detail de l'eqsuipement
 /**************************************************************************************/
+function EQUIP_Activer(Index, Etat)
+{
+    if(EQUIP_DATA[Index].Equipement.length > 0)
+    {
+        EQUIP_DATA[Index].Equipement[0].PtrSelect.disabled = !Etat;
+    }
+    if(EQUIP_DATA[Index].Equipement.length > 2)
+    {
+        EQUIP_DATA[Index].Equipement[2].PtrSelect.disabled = !Etat;
+    }
+}
 function EQUIP_AfficherListe(Etat = false)
 {
     for(let x = 0;x < EQUIP_DATA.length;x++)
@@ -346,7 +385,7 @@ function EQUIP_AfficherListe(Etat = false)
         {
             let Ptr = EQUIP_DATA[x].Equipement[y];
             Objet.Afficher(Ptr.PtrLigne, Ptr.Etat && Etat);
-            if(Mode == "EQUIP")
+            if(Bouton.Phase() == "EQUIPEMENT")
             {
                 Ptr.PtrSelect.disabled = false;
             }

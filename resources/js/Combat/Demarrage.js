@@ -49,6 +49,10 @@ MSG.AfficherJournal(true);
             Objet.AfficherFamille("LignePerso", false);
             TimerMoteur = setInterval(Combat.Lancer, 100);
             break;
+        case "Nouveau Personnage":
+            console.info("Nouveau personnage");
+            TimerMoteur = setInterval(Combat.NouveauPersonnage, 100);
+            break;
         default:
             console.error("MOTEUR_LancerModule : Module [" + NomModule + "] NON GERE !")
     }

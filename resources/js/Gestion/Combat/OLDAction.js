@@ -1,12 +1,11 @@
-class ACTION_Interface {
+class ACTION_Interface2 {
     Initialiser(Taille) {ACTION_Initialiser(Taille);}
     AfficherLigne(Index, Visible) {ACTION_AfficherLigne(Index, Visible);}
     AfficherListe(Visible) {ACTION_AfficherListe(Visible);}
     Couleur(Index, Etat) {ACTION_Couleur(Index, Etat);}
-    AfficherValeur(Index, Valeur) {ACTION_AfficherValeur(Index, Valeur);}
     InitialiserListe(Index) {ACTION_InitialiserListe(Index);}
 }
-var Action          = new ACTION_Interface();
+var Action2          = new ACTION_Interface2();
 
 class ACTION_Donnee {
     PtrLigne;
@@ -16,7 +15,7 @@ class ACTION_Donnee {
     constructor() {
     }
 }
-var ACTION_DATA     = new Array();
+var ACTION_DATA2     = new Array();
 
 function ACTION_Initialiser(Taille)
 {
@@ -206,10 +205,6 @@ function ACTION_AfficherListe(Visible = true)
 function ACTION_AfficherLigne(Index, Visible = true)
 {
     AfficherObjet(ACTION_DATA[Index].PtrLigne, Visible);
-}
-function ACTION_AfficherValeur(Index, Valeur)
-{
-    ACTION_DATA[Index].PtrLabel.innerHTML = Valeur;
 }
 function ACTION_Couleur(Index, Etat = 0)
 {

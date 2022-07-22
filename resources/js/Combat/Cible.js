@@ -1,5 +1,5 @@
 class CIBLE_Interface  {
-    Active = -1;
+    Actif = -1;
     Initialiser(Taille) {CIBLE_Initialiser(Taille);}
     AfficherListe(Etat) {CIBLE_AfficherListe(Etat);}
 }

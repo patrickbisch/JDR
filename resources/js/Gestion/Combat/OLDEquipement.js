@@ -3,9 +3,7 @@ class EQUIP_Interface  {
     AfficherListeArme(Etat) {EQUIP_AfficherListe(0, Etat);}
     AfficherListeArmure(Etat) {EQUIP_AfficherListe(1, Etat);}
     AfficherListeBouclier(Etat) {EQUIP_AfficherListe(2, Etat);}
-    Activer(Index, Etat) {EQUIP_Activer(Index, Etat);}
     ArmeSelectionne(Index) {return(EQUIP_DATA[Index].Equipement[0].PtrSelect.value);}
-    ChoisirArmePrincipale(Index) {EQUIP_SelectionnerObjet(Index, 0, 0)}
     CouleurArme(Index, Couleur) {CouleurObjet(EQUIP_DATA[Index].Equipement[0].PtrLigne, Couleur);}
     BouclierSelectionne(Index) {return(EQUIP_DATA[Index].Equipement[2].PtrSelect.value);}
     Protection(Index) {return(EQUIP_Protection(Index));}
@@ -64,17 +62,6 @@ function EQUIP_InitialisationTermine()
     }
     LancerModule("Initialisation");
 }
-function EQUIP_Activer(Index, Etat)
-{
-    if(EQUIP_DATA[Index].Equipement.length > 0)
-    {
-        EQUIP_DATA[Index].Equipement[0].PtrSelect.disabled = !Etat;
-    }
-    if(EQUIP_DATA[Index].Equipement.length > 2)
-    {
-        EQUIP_DATA[Index].Equipement[2].PtrSelect.disabled = !Etat;
-    }
-}
 function EQUIP_AfficherInventaire()
 {
     for(let x = 0;x < EQUIP_DATA[0].Equipement.length;x++)
@@ -89,11 +76,6 @@ function EQUIP_AfficherListe(Id, Etat = true)
         let Ptr = EQUIP_DATA[x].Equipement[Id];
         AfficherObjet(Ptr.PtrLigne, Ptr.Etat && Etat);
     }    
-}
-function EQUIP_SelectionnerObjet(Id, Index, x)
-{
-    EQUIP_DATA[Id].Equipement[x].PtrSelect.value = Index;
-    EQUIP_NouveauObjet(EQUIP_DATA[Id].Equipement[x].PtrSelect, Id, x);
 }
 function EQUIP_TesterObjet(Erreur = 1)
 {

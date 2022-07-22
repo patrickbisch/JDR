@@ -16,7 +16,7 @@ class PERSO_Interface{
     Gras(Index) {return(this.Lettre(Index) + ". <strong>" + this.Nom(Index) + "</strong>");}
     Mort(Index) {return(PERSO_DATA[Index].Mort);}
     Bloque(Index) {return(PERSO_DATA[Index].Bloque);}
-    //ChangerEtat(Index, Mort) {PERSO_ChangerEtat(Index, Mort);}
+    ChangerEtat(Index, Mort) {PERSO_ChangerEtat(Index, Mort);}
 
     BonusAvant(Index) {return(PERSO_DATA[Index].BonusAvant);}
 
@@ -24,14 +24,14 @@ class PERSO_Interface{
     AffecterNombreAction(Index, NbAction) {PERSO_AffecterAction(Index, NbAction);}
     NbAction(Index) {return(PERSO_DATA[Index].NbAction);}
     NbActionMaxi(Index) {return(PERSO_DATA[Index].NbActionMaxi);}
-    //UtiliserAction(Index) {PERSO_SupprimerAction(Index);}
+    UtiliserAction(Index) {PERSO_SupprimerAction(Index);}
 
-    //NombreAdversaire(Index) {return(PERSO_NombreAdversaire(Index));}
+    NombreAdversaire(Index) {return(PERSO_NombreAdversaire(Index));}
     //Suivant() {return(PERSO_SuivantActif());}
 
-    //Arme(Index, Numero) {return(PERSO_BASE[Index].Armes[Numero]);}
-    //NombreArme(Index) {return(PERSO_BASE[Index].Armes.length);}
-    //Bouclier(Index, Numero) {return(PERSO_BASE[Index].Boucliers[Numero]);}
+    Arme(Index, Numero) {return(PERSO_BASE[Index].Armes[Numero]);}
+    NombreArme(Index) {return(PERSO_BASE[Index].Armes.length);}
+    Bouclier(Index, Numero) {return(PERSO_BASE[Index].Boucliers[Numero]);}
 }
 var Perso            = new PERSO_Interface();
 
@@ -218,6 +218,12 @@ function PERSO_Actualiser(Id, AfficherLigne)
         Objet.Afficher(PERSO_DATA[Id].PtrLigne, true);
         return(0);
     }
+    if(Cible.Active == Id)
+    {
+        Objet.Couleur(PERSO_DATA[Id].PtrLigne, 3);
+        Objet.Afficher(PERSO_DATA[Id].PtrLigne, true);
+        return(0);
+    }
     if(Perso.Mort(Id))
     {
         Objet.Couleur(PERSO_DATA[Id].PtrLigne, 2);
@@ -254,8 +260,48 @@ function PERSO_AffecterAction(Index, NombreAction)
     {
         PERSO_DATA[Index].NbAction = 0;
     }
+    PERSO_AfficherNombreAction(Index);
+}
+function PERSO_AfficherNombreAction(Index)
+{
     PERSO_DATA[Index].PtrLabelAction.innerHTML = Perso.NbAction(Index) +
                                         "/" + Perso.NbActionMaxi(Index);
+}
+function PERSO_NombreAdversaire(Index)
+{
+    let Nb = 0;
+    let Id = Perso.TypeFonction(Index);
+    for(let x = 0;x < PERSO_BASE.length;x++)
+    {
+        if(((Id == 0) && (Perso.TypeFonction(x) != Id)) ||
+            ((Id != 0) && (Perso.TypeFonction(x) == 0)))
+        {
+            if(!Perso.Mort(x))
+            {
+                Nb++;
+            }
+        }
+    }
+    return(Nb);
+}
+function PERSO_SupprimerAction(Index)
+{
+    PERSO_DATA[Index].NbAction--;
+    if(Perso.NbAction(Index) < 0)
+    {
+        PERSO_DATA[Index].NbAction = 0;
+    } 
+    if(Perso.NbAction(Index) == 0)
+    {
+        PERSO_DATA[Index].Bloque = true;
+    }
+    PERSO_AfficherNombreAction(Index);
+}
+function PERSO_ChangerEtat(Index, Mort = true)
+{
+    PERSO_DATA[Index].Mort = Mort;
+    CouleurObjet(PERSO_DATA[Index].PtrLigne, 2);
+    PERSO_ActualiserListe();
 }
 /***************************************************************************************/
 /***************************************************************************************/
