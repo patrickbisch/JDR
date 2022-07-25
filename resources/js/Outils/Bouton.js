@@ -3,24 +3,31 @@ class BOUTON_Gestion{
     Etat = false;
     Valide = true;
 }
+class BOUTON_VALIDER{
+    Module = "";
+    Afficher(Etat) {BOUTON_Afficher(PtrBtnValider, Etat);}
+    Demarrer(NouveauModule) {BOUTON_VALIDER_Demarrer(NouveauModule);}
+    Activer(Etat) {BOUTON_Activer(PtrBtnValider, Etat);}
+    Desactiver() {BOUTON_Activer(PtrBtnValider, false);}
+}
 class BOUTON_Interface{
+    Valider = new BOUTON_VALIDER();
+
     Initialiser() {BOUTON_Initialiser();}
     Afficher(Obj, Etat) {BOUTON_Afficher(Obj, Etat);}
     Activer(Obj, Etat) {BOUTON_Activer(Obj, Etat);}
-    Phase(Nouvelle) {return(BOUTON_Phase(Nouvelle));}
 }
 var Bouton          = new BOUTON_Interface();
-var BtnValider;
-var BoutonPhase = ""
+let PtrBtnValider;
 /*******************************************************************/
 /*  Gestion des boutons du formulaire
 /*  LancerDe, ouvrir et fermer les listes deroulantes (PNJ, PJ et Init)
 /*******************************************************************/
 function BOUTON_Initialiser()
 {
-    BtnValider = document.querySelector("#BtnValider");
-    Bouton.Afficher(BtnValider, false);
-    BtnValider.addEventListener('click', function(e){
+    PtrBtnValider = document.querySelector("#BtnValider");
+    Bouton.Valider.Afficher(false);
+    PtrBtnValider.addEventListener('click', function(e){
                 e.preventDefault();
                 BOUTON_ValiderDe();
     });
@@ -30,27 +37,34 @@ function BOUTON_Initialiser()
 /*******************************************************************/
 function BOUTON_ValiderDe()
 {
-    switch(BoutonPhase)
+    MSG.Historique("BOUTON_ValiderDe = Phase de tour [" + Bouton.Valider.Module + "] !!");
+    switch(Bouton.Valider.Module)
     {
         case "INIT":
             INIT_ValiderDE();
             break;
         case "EQUIP":
-        case "EQUIPEMENT":
             EQUIP_ValiderDe();
             break;
+        case "ACTION":
+            ACTION_ValiderDe();
+            break;
+        case "ATTAQUE":
+            ATTAQUE_ValiderDE();
+            break;
         default:
-            MSG.Erreur("BOUTON_ValiderDe = Phase de tour [" + BoutonPhase + "] INCONNUE !!");
+            MSG.Erreur("BOUTON_ValiderDe = Phase de tour [" + Bouton.Valider.Module + "] INCONNUE !!");
     }
 }
-function BOUTON_Phase(Nouvelle = "")
+function BOUTON_VALIDER_Demarrer(NouveauModule)
 {
-    if(Nouvelle != "")
-    {
-        BoutonPhase = Nouvelle;
-    }
-    return(BoutonPhase);
+    Bouton.Valider.Module = NouveauModule;
+    BOUTON_Afficher(PtrBtnValider, true);
+    BOUTON_Activer(PtrBtnValider, true);
 }
+/*******************************************************************/
+/*  Gestion pour les boutons
+/*******************************************************************/
 function BOUTON_Afficher(Obj, Etat = true)
 {
     if(Etat)

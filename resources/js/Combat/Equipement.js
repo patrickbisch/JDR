@@ -6,8 +6,10 @@ class EQUIP_Interface  {
     AffecterArme(Id, IdArme) {EQUIP_Affecter(Id, 0, IdArme);}
     AfficherArmureNaturelle(Id) {EQUIP_ArmureNaturelle(Id);}
     ArmeSelectionne(Index) {return(EQUIP_DATA[Index].Equipement[0].PtrSelect.value);}
+    BouclierSelectionne(Index) {return(EQUIP_DATA[Index].Equipement[2].PtrSelect.value);}
     CouleurArme(Index, Couleur) {Objet.Couleur(EQUIP_DATA[Index].Equipement[0].PtrLigne, Couleur);}
     ChoisirArmePrincipale(Index) {EQUIP_Affecter(Index, 0, 0)}
+    Protection(Index) {return(EQUIP_Protection(Index));}
 }
 var Equipement = new EQUIP_Interface();
 let EQUIP_DATA = new Array();
@@ -32,34 +34,43 @@ function EQUIP_EquiperPersonnage()
     MSG.Message("Gestion de l'equipement des perosnnage.", true);
     MSG.Journal("Gestion de l'equipement.");
     Perso.Actif = -1;
-    Initiative.EtatBouton(false, false);
+    Init.EtatBouton(false, false);
     Perso.Liste[0].Etat = false;
     Perso.Liste[1].Etat = false;
     Perso.Liste[0].Valide = false;
     Perso.Liste[1].Valide = false;
     JDR_AfficherDE(-1);
     PERSO_ActualiserListe();
-    Bouton.Phase("EQUIPEMENT");
     Equipement.AfficherListe(true);
-    Bouton.Afficher(BtnValider, true);
     Tao.AfficherListe("EQUIP");
-    EQUIP_ControlerAffectation();
-    MSG.Message("Affecter l'equipement, puis <strong>validez</strong>.");
+    Bouton.Valider.Demarrer("EQUIP");
 /*********************************************************************************************/
 /*********************************************************************************************/
+EQUIP_ControlerAffectation();
 EQUIP_Affecter(5, 0, 0);
 EQUIP_Affecter(6, 0, 0);
 EQUIP_Affecter(8, 2, -2);
 EQUIP_Affecter(8, 0, 0);
+EQUIP_Affecter(9, 0, 1);
 EQUIP_Affecter(9, 1, 0);
 EQUIP_Affecter(9, 2, -2);
-EQUIP_Affecter(9, 0, 1);
 EQUIP_Affecter(10, 1, 2);
 EQUIP_Affecter(13, 1, 1);
 EQUIP_Affecter(13, 2, -2);
-EQUIP_ControlerAffectation();
 /*********************************************************************************************/
 /*********************************************************************************************/
+    for(let x = 0;x < EQUIP_DATA.length;x++)
+    {
+        if(PERSO_DATA[x].Vigilant)
+        {
+            if(parseInt(EQUIP_DATA[x].Equipement[0].PtrSelect.value) < 0)
+            {
+                EQUIP_Affecter(x, 0, 0);
+            }
+        }
+    }
+    EQUIP_ControlerAffectation();
+    MSG.Message("Affecter l'equipement, puis <strong>validez</strong>.");
 }
 /*********************************************************************************************/
 /*  Initialisation du module
@@ -67,7 +78,7 @@ EQUIP_ControlerAffectation();
 function EQUIP_Initialiser(Taille)
 {
     MSG.Historique("Initialisation de l'équipement.", 1);
-    Bouton.Phase("EQUIPEMENT");
+    Bouton.Valider.Module = "EQUIP";
     for(let x = 0;x < Taille;x++)
     {
         let Ptr = new EQUIP_Donnee();
@@ -225,7 +236,7 @@ function EQUIP_Affecter(Id, Type, Indice)
 function EQUIP_NouveauObjet(Obj, Id, x)
 {
     let Nb = Obj.value;
-    let Mode = Bouton.Phase();
+    let Mode = Bouton.Valider.Module;
     switch(parseInt(Nb))
     {
         case -1:
@@ -299,7 +310,7 @@ function EQUIP_Commentaire(Id, Cmds, Nom)
 {
     switch(Cmds)
     {
-        case "EQUIPEMENT/0/-2":
+        case "EQUIP/0/-2":
         case "INIT/0/-2":
             MSG.Historique(Perso.Gras(Id) + " n'a aucune arme.", 1);
             MSG.Journal(Perso.Gras(Id), 1);
@@ -309,7 +320,7 @@ function EQUIP_Commentaire(Id, Cmds, Nom)
             MSG.Historique("n'a aucune arme.", 1);
             MSG.Journal("n'a aucune arme.", 1);
             break;
-        case "EQUIPEMENT/1/-2":
+        case "EQUIP/1/-2":
         case "INIT/1/-2":
             MSG.Historique(Perso.Gras(Id) + " n'a aucune armure.", 1);
             MSG.Journal(Perso.Gras(Id), 1);
@@ -319,7 +330,7 @@ function EQUIP_Commentaire(Id, Cmds, Nom)
             MSG.Historique("n'a aucune armure.", 1);
             MSG.Journal("n'a aucune armure.", 1);
             break;
-        case "EQUIPEMENT/2/-2":
+        case "EQUIP/2/-2":
         case "INIT/2/-2":
             MSG.Historique(Perso.Gras(Id) + " n'a aucun bouclier.", 1);
             MSG.Journal(Perso.Gras(Id), 1);
@@ -329,7 +340,7 @@ function EQUIP_Commentaire(Id, Cmds, Nom)
             MSG.Historique("n'a aucun bouclier.", 1);
             MSG.Journal("n'a aucun bouclier.", 1);
             break;
-        case "EQUIPEMENT/0":
+        case "EQUIP/0":
         case "INIT/0":
             MSG.Historique(Perso.Gras(Id) + " s'equipe avec : <strong>" + Nom + "</strong>", 1);
             MSG.Journal(Perso.Gras(Id), 1);
@@ -339,7 +350,7 @@ function EQUIP_Commentaire(Id, Cmds, Nom)
             MSG.Historique("s'equipe avec : <strong>" + Nom + "</strong>", 1);
             MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 1);
             break;
-        case "EQUIPEMENT/1":
+        case "EQUIP/1":
         case "INIT/1":
             MSG.Historique(Perso.Gras(Id) + " s'equipe avec : <strong>" + Nom + "</strong>", 1);
             MSG.Journal(Perso.Gras(Id), 1);
@@ -349,7 +360,7 @@ function EQUIP_Commentaire(Id, Cmds, Nom)
             MSG.Historique("s'equipe avec : <strong>" + Nom + "</strong>", 1);
             MSG.Journal("s'equipe avec : <strong>" + Nom + "</strong>", 1);
             break;
-        case "EQUIPEMENT/2":
+        case "EQUIP/2":
         case "INIT/2":
             MSG.Historique(Perso.Gras(Id) + " s'equipe avec : <strong>" + Nom + "</strong>", 1);
             MSG.Journal(Perso.Gras(Id), 1);
@@ -385,7 +396,7 @@ function EQUIP_AfficherListe(Etat = false)
         {
             let Ptr = EQUIP_DATA[x].Equipement[y];
             Objet.Afficher(Ptr.PtrLigne, Ptr.Etat && Etat);
-            if(Bouton.Phase() == "EQUIPEMENT")
+            if(Bouton.Valider.Module == "EQUIP")
             {
                 Ptr.PtrSelect.disabled = false;
             }
@@ -415,10 +426,28 @@ function EQUIP_ControlerAffectation()
             }
         }
     }
-    Bouton.Activer(BtnValider, !Erreur);
+    Bouton.Valider.Activer(!Erreur);
+    return(Erreur);
 }
 function EQUIP_ValiderDe()
 {
     Mode = "AUTRE";
     Moteur.LancerModule("Tour INIT");
+}
+function EQUIP_Protection(Id)
+{
+    let Retour = Perso.Base(Id).ArmureNaturelle + PERSO_DATA[Id].BonusProtection;
+    let Nb = EQUIP_DATA[Id].Equipement[1].PtrSelect.value;
+    if(parseInt(Nb) >= 0)
+    {
+        let Ptr = Perso.Armure(Id, Nb);
+        Retour += Ptr.Protection;
+    }
+    Nb = EQUIP_DATA[Id].Equipement[2];PtrSelect.value;
+    if(parseInt(Nb) >= 0)
+    {
+        let Ptr = Perso.Bouclier(Id, Nb);
+        Retour += Ptr.Protection;
+    }
+    return(Retour);
 }

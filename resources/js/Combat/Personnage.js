@@ -17,6 +17,7 @@ class PERSO_Interface{
     Mort(Index) {return(PERSO_DATA[Index].Mort);}
     Bloque(Index) {return(PERSO_DATA[Index].Bloque);}
     ChangerEtat(Index, Mort) {PERSO_ChangerEtat(Index, Mort);}
+    AjouterAttaque(Index, AttaqueCaC) {PERSO_AjouterAttaque(Index, AttaqueCaC);}
 
     BonusAvant(Index) {return(PERSO_DATA[Index].BonusAvant);}
 
@@ -32,6 +33,7 @@ class PERSO_Interface{
     Arme(Index, Numero) {return(PERSO_BASE[Index].Armes[Numero]);}
     NombreArme(Index) {return(PERSO_BASE[Index].Armes.length);}
     Bouclier(Index, Numero) {return(PERSO_BASE[Index].Boucliers[Numero]);}
+    Armure(Index, Numero) {return(PERSO_BASE[Index].Armures[Numero]);}
 }
 var Perso            = new PERSO_Interface();
 
@@ -47,6 +49,17 @@ class PERSO_Donnee{
     //  Definition pour les données complementaires du personnage
     Mort = false;
     Bloque = false;
+
+    //  Aptitudes pour le combat
+    Vigilant = false;
+    BonusProtection = 0;
+    BonusAttaqueCC = 0;
+    BonusAttaqueD = 0;
+    BonusDefense = 0;
+    BonusDegat = 0;
+
+    AttaqueCC = 0;
+    AttaqueDis = 0;
 
     //  Definition pour les actions
     PtrLabelAction;
@@ -125,7 +138,7 @@ function PERSO_Initialiser()
     Action.Initialiser(Perso.Taille);
     Attaque.Initialiser(Perso.Taille);
     Defense.Initialiser(Perso.Taille);
-    Initiative.Initialiser(Perso.Taille);
+    Init.Initialiser(Perso.Taille);
     PV.Initialiser(Perso.Taille);
     Cible.Initialiser(Perso.Taille);
     Tao.Initialiser(Perso.Taille);
@@ -143,7 +156,6 @@ PERSO_DATA[3].MalusPV = -1;
 PERSO_DATA[5].MalusPV = -3;
 PERSO_DATA[6].MalusPV = -5;
 PERSO_ActualiserListe();
-//Moteur.LancerModule("Tour INIT");
 Moteur.LancerModule("Equipement");
 /***************************************************************************************/
 /***************************************************************************************/
@@ -266,6 +278,30 @@ function PERSO_AfficherNombreAction(Index)
 {
     PERSO_DATA[Index].PtrLabelAction.innerHTML = Perso.NbAction(Index) +
                                         "/" + Perso.NbActionMaxi(Index);
+}
+function PERSO_AjouterAttaque(Index, AttaqueCC)
+{
+    let TypeAtt = PERSO_DATA[Index].AttaqueCC - PERSO_DATA[Index].AttaqueDis;
+    if(AttaqueCC)
+    {
+        PERSO_DATA[Index].AttaqueCC++;
+    }
+    else
+    {
+        PERSO_DATA[Index].AttaqueDis++;
+    }
+    if(TypeAtt == 0)
+    {
+        let Nb = EQUIP_DATA[Index].Equipement[0].PtrSelect.value;
+        if(AttaqueCC)
+        {
+            Perso.AffecterNombreAction(Index, Perso.Base(Index).Armes[Nb].MaitriseCC + 1);
+        }
+        else
+        {
+            Perso.AffecterNombreAction(Index, Perso.Base(Index).Armes[Nb].MaitriseD + 1);
+        }
+    }
 }
 function PERSO_NombreAdversaire(Index)
 {

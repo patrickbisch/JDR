@@ -111,7 +111,7 @@ function ACTION_Valider()
     {
         case "3":
             Equip.CouleurArme(Id, 0);
-            ACTION_Terminer(Id);
+            Action.Termine(Id);
             break;
         case "4":
             JDR_GestionAttaque(Id, true);
@@ -161,23 +161,23 @@ function ACTION_NouvelleAction(Obj, Id)
                     let Arme = Perso.Arme(Id, Nb);
                     Arme.Quantite = Arme.QuantiteMaxi;
                 }
-                ACTION_Terminer(Id);
+                Action.Termine(Id);
                 break;
             case "8":       // DEGAINER LA SEUL ARME
                 Equip.ChoisirArmePrincipale(Id);
-                ACTION_Terminer(Id);
+                Action.Termine(Id);
                 break;
             case "2":       // SE DEPLACER
                 MSG.Journal("Il se <strong>déplace</strong>.", 1);
-                ACTION_Terminer(Id);
+                Action.Termine(Id);
                 break;
             case "1":       // PASSER SON TOUR
                 MSG.Journal("Il passe son tour.", 1);
-                ACTION_Terminer(Id);
+                Action.Termine(Id);
                 break;
             default:
                 MSG.Erreur("ACTION ["+Obj.value+"] NON GEREE !!");
-                ACTION_Terminer(Id);
+                Action.Termine(Id);
                 break;
         }
     }

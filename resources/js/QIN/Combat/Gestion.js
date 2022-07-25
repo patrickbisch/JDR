@@ -62,7 +62,20 @@ function JDR_InitialiserDE()
     LstDE = new Array([document.querySelector("#De0-0"), document.querySelector("#De0-1")],
                         [document.querySelector("#De1-0"), document.querySelector("#De1-1")],
                     );
+    LstDE[0][1].addEventListener('change', function(){
+        NouvelleValeurDE();    
+    });
+    LstDE[1][1].addEventListener('change', function(){
+        NouvelleValeurDE();    
+    });
+
     JDR_AfficherDE(-1);
+}
+function NouvelleValeurDE()
+{
+    let Double = false;
+    if(LstDE[0][1].value == LstDE[1][1].value) {Double = true;}
+    JDR_ValeurDE(parseInt(LstDE[0][1].value), parseInt(LstDE[1][1].value), Double);
 }
 function JDR_ValeurDE(Yang, Yin, JetDouble = false)
 {

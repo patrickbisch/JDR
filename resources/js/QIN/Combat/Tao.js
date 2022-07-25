@@ -46,6 +46,7 @@ function TAO_Initialiser(Taille)
             Ptr.Etat = false;
         }
     }
+    TAO_AfficherListe("");
 }
 function TAO_InitialiserBonusMaxi(Id)
 {
@@ -136,19 +137,19 @@ function TAO_ChargerTable(Id, Indice)
             let Ajout = false;
             switch(Indice)
             {
-                case 0:
+                case "EQUIP":
                     if(PERSO_BASE[Id].Taos[x].equipement > 0)
                     {
                         Ajout = true;
                     }
                     break;
-                case 1:
+                case "INIT":
                     if(PERSO_BASE[Id].Taos[x].initiative > 0)
                     {
                         Ajout = true;
                     }
                     break;
-                case 2:
+                case "COMBAT":
                     if(PERSO_BASE[Id].Taos[x].combat > 0)
                     {
                         switch(PERSO_BASE[Id].Taos[x].id_tao)
@@ -157,6 +158,10 @@ function TAO_ChargerTable(Id, Indice)
                                 if((INIT_ORDRE[0] != Id) && (Perso.NbAction(INIT_ORDRE[0]) == Perso.NbActionMaxi(INIT_ORDRE[0]))) 
                                 {
                                     Ajout = true;
+                                    let BE = BonusExceptionnel.Ajouter(Id);
+                                    BE.IdTao = 30;
+                                    BE.NbAction = 1;
+                                    BE.Bonus = Indice;
                                 }
                                 break;
                             default:
@@ -164,8 +169,20 @@ function TAO_ChargerTable(Id, Indice)
                         }
                     }
                     break;
-                case 3:
+                case "ACTION":
                     if(PERSO_BASE[Id].Taos[x].action > 0)
+                    {
+                        Ajout = true;
+                    }
+                    break;
+                case "ATTAQUE":
+                    if(PERSO_BASE[Id].Taos[x].attaque > 0)
+                    {
+                        Ajout = true;
+                    }
+                    break;
+                case "DEFENSE":
+                    if(PERSO_BASE[Id].Taos[x].defense > 0)
                     {
                         Ajout = true;
                     }
@@ -188,7 +205,7 @@ function TAO_TrierTable(Indice, Tab)
         {
             switch(Indice)
             {
-                case 0:
+                case "EQUIP":
                     if(Tab[y].equipement < Tab[y-1].equipement)
                     {
                         let Tmp = Tab[y];
@@ -197,7 +214,7 @@ function TAO_TrierTable(Indice, Tab)
                         Fini = false;
                     }
                     break;
-                case 1:
+                case "INIT":
                     if(Tab[y].initiative < Tab[y-1].initiative)
                     {
                         let Tmp = Tab[y];
@@ -206,7 +223,43 @@ function TAO_TrierTable(Indice, Tab)
                         Fini = false;
                     }
                     break;
-            }
+                case "COMBAT":
+                    if(Tab[y].combat < Tab[y-1].combat)
+                    {
+                        let Tmp = Tab[y];
+                        Tab[y] = Tab[y-1];
+                        Tab[y-1] = Tmp;
+                        Fini = false;
+                    }
+                    break;
+                case "ACTION":
+                    if(Tab[y].combat < Tab[y-1].combat)
+                    {
+                        let Tmp = Tab[y];
+                        Tab[y] = Tab[y-1];
+                        Tab[y-1] = Tmp;
+                        Fini = false;
+                    }
+                    break;
+                case "ATTAQUE":
+                    if(Tab[y].attaque < Tab[y-1].attaque)
+                    {
+                        let Tmp = Tab[y];
+                        Tab[y] = Tab[y-1];
+                        Tab[y-1] = Tmp;
+                        Fini = false;
+                    }
+                    break;
+                case "DEFENSE":
+                    if(Tab[y].defense < Tab[y-1].defense)
+                    {
+                        let Tmp = Tab[y];
+                        Tab[y] = Tab[y-1];
+                        Tab[y-1] = Tmp;
+                        Fini = false;
+                    }
+                    break;
+                }
         }
         if(Fini){return(0);}
     }
@@ -230,19 +283,16 @@ function TAO_Afficher(Id, Module)
     {
         switch(Module)
         {
+            case "":
+                Etat = false;
+                break;
             case "EQUIP":
-            case "EQUIPEMENT":
-                Tab = TAO_InitialiserSelect(Id, 0);
-                break;
             case "INIT":
-            case "INITIALISATION":
-                Tab = TAO_InitialiserSelect(Id, 1);
-                break;
             case "COMBAT":
-                Tab = TAO_InitialiserSelect(Id, 2);
-                break;
             case "ACTION":
-                Tab = TAO_InitialiserSelect(Id, 3);
+            case "ATTAQUE":
+            case "DEFENSE":
+                Tab = TAO_InitialiserSelect(Id, Module);
                 break;
             default:
                 MSG.Erreur("TAO_Afficher (Module : "+Module+") NON GERE");
@@ -314,13 +364,16 @@ function TAO_Executer(Id, IdTao, Cout)
             TAO_CuirasseDePeau(Id, true, 0);
             break;
         case 27:    //  Vigilance
-            if(EQUIP_DATA[Id].Equipement[0].PtrSelect.value < 0)
-            {
-                Equipement.AffecterArme(Id, 0);
-            }
+            TAO_Vigilant(Id, true);
             break;
         case 28:    //  Rapidité
             INIT_DATA[Id].BonusMagie = Cout;
+            break;
+        case 29:    //  Vitesse d'execution
+            ACTION_Ajouter(-1);
+            break;
+        case 30:    //  Anticipation
+            TAO_PremierPersonnage(Id);
             break;
         case 69:    //  Coup de chance
             JDR_AugmenterUnDE();
@@ -345,8 +398,6 @@ function TAO_Executer(Id, IdTao, Cout)
     {
         Objet.Afficher(TAO_DATA[Id].PtrLigne, false);
     }
-    let Obj = TAO_Retourner(Id, IdTao);
-    Obj.actif = true;
 }
 function TAO_Termine(Id, IdTao, Bonus)
 {
@@ -356,6 +407,9 @@ function TAO_Termine(Id, IdTao, Bonus)
         case 9:
             TAO_CuirasseDePeau(Id, false, Bonus);
             break;
+        case 30:
+            TAO_Afficher(Id, Bonus);
+            break;
         default:
             MSG.Erreur("Le TAO [" + IdTao + "] (terminé) N'EST PAS GERE.");
             return(-1);
@@ -364,6 +418,8 @@ function TAO_Termine(Id, IdTao, Bonus)
     {
         TAO_Commentaire(Id, IdTao, 0, false);
     }
+    let Obj = TAO_Retourner(Id, IdTao);
+    Obj.actif = false;
 }
 function TAO_SupprimerOption(Id, IdTao)
 {
@@ -390,15 +446,17 @@ function TAO_Commentaire(Id, IdTao, Cout, Debut = true)
     }
     if(Debut)
     {
-        switch(Bouton.Phase())
+        switch(Bouton.Valider.Module)
         {
+            case "COMBAT":
+                MSG.Journal(Perso.Gras(Id) + " Tao : <strong>" + Obj.nom + "</strong> (" + Cout + ")", 2);
+                break;
             case "INIT":
             case "EQUIP":
-            case "EQUIPEMENT":
                 MSG.Journal(Perso.Gras(Id), 1);
-                break;
+            default:
+                MSG.Journal("Tao : <strong>" + Obj.nom + "</strong> (" + Cout + ")", 2);
         }
-        MSG.Journal("Tao : <strong>" + Obj.nom + "</strong> (" + Cout + ")", 2);
     }
     else
     {
@@ -418,8 +476,8 @@ function TAO_CuirasseDePeau(Id, Ajout, Bonus)
         Ptr.Bonus = Perso.Base(Id).Metal;
         Perso.Base(Id).ArmureNaturelle += Ptr.Bonus;
         Ptr.IdTao = 9;
-        Obj.actif = true;
         Ptr.NbTour = Obj.niveau;
+        Obj.actif = true;
     }
     else
     {
@@ -427,4 +485,38 @@ function TAO_CuirasseDePeau(Id, Ajout, Bonus)
         Perso.Base(Id).ArmureNaturelle -= Bonus;
     }
     Equipement.AfficherArmureNaturelle(Id);
+}
+function TAO_Vigilant(Id, Ajout)
+{
+    let Obj = TAO_Retourner(Id, 27);
+    if(Ajout)
+    {
+        let Ptr = BonusExceptionnel.Ajouter(Id);
+        Ptr.IdTao = 27;
+        Ptr.NbHeure = Perso.Base(Id).Bois;
+        Obj.actif = true;
+        PERSO_DATA[Id].Vigilant = true;
+        if(EQUIP_DATA[Id].Equipement[0].PtrSelect.value < 0)
+        {
+            Equipement.AffecterArme(Id, 0);
+        }
+    }
+    else
+    {
+        Obj.actif = false;
+        PERSO_DATA[Id].Vigilant = false;
+    }
+}
+function TAO_PremierPersonnage(Id)
+{
+    if(Perso.Actif >= 0)
+    {
+        Action.Afficher(Perso.Actif, false);
+    }
+    Perso.Actif = -1;
+    Cible.Active = -1
+    Init.Actif = -1;
+    INIT_DATA[Id].Valeur = parseInt(2000);
+    INIT_Trier();
+    Moteur.LancerModule("Nouveau Personnage");
 }

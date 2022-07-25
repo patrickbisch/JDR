@@ -77,6 +77,8 @@
                     </div>
                 @endfor
                 <div id="LignePV-{{$Cle}}" class="LignePerso DonneeDef">
+                </div>
+                <div id="LigneCible-{{$Cle}}" class="LignePerso DonneeDef">
                     <div class="Colonne2-3 Droite">........ :</div>
                     <div class="DonneeLab">{{__("QIN/Combat.Libre")}}</div>
                     <div id="Libre-{{$Cle}}" class="Trait Colonne4 Numerique Centre " enabled>X</div>

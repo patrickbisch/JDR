@@ -32,12 +32,13 @@ MSG.AfficherJournal(true);
             break;
         case "Initialisation":
             console.info("Lancement de l'initalisation.");
+            Bouton.Valider.Afficher(false);
             TimerMoteur = setInterval(Perso.Initialiser , 100);
             break;
         case "Tour INIT":
             console.info("Lancement d'un tour d'initialisation.");
             Objet.AfficherFamille("LignePerso", false);
-            TimerMoteur = setInterval(Initiative.NouveauTour, 100);
+            TimerMoteur = setInterval(Init.NouveauTour, 100);
             break;
         case "Equipement":
             console.info("Lancement de l'equipement des pesonnages");
@@ -51,7 +52,13 @@ MSG.AfficherJournal(true);
             break;
         case "Nouveau Personnage":
             console.info("Nouveau personnage");
+            Bouton.Valider.Afficher(false);
             TimerMoteur = setInterval(Combat.NouveauPersonnage, 100);
+            break;
+        case "ATTAQUE":
+            console.info("Nouvelle attaque");
+            Bouton.Valider.Afficher(false);
+            TimerMoteur = setInterval(Attaque.Gerer, 100);
             break;
         default:
             console.error("MOTEUR_LancerModule : Module [" + NomModule + "] NON GERE !")

@@ -2,16 +2,27 @@ class ACTION_Interface  {
     Initialiser(Taille) {ACTION_Initialiser(Taille);}
     AfficherListe(Etat) {OBJET_AfficherListe(ACTION_DATA, Etat);}
     Activer(Id) {ACTION_Activer(Id);}
+    ActiverSelection(Id, Etat) {ACTION_DATA[Id].PtrSelect.disabled = !Etat;}
     Afficher(Id, Etat) {OBJET_Afficher(ACTION_DATA[Id].PtrLigne, Etat);}
+    Termine(Id) {ACTION_Terminer(Id);}
 }
 var Action = new ACTION_Interface();
 let ACTION_DATA = new Array();
-let LstAction = new Array();
 
 class ACTION_Donnee{
     PtrLigne;
     PtrSelect;
     Etat = false;
+}
+
+let LstAction = new Array();
+class ACTION_Liste{
+    constructor(Action, Gratuit = false, Touche = 0, Degat = 0) {
+        this.Action = Action;
+        this.Gratuit = Gratuit;
+        this.Touche = Touche;
+        this.Degat = Degat;
+    }
 }
 
 function ACTION_Initialiser(Taille)
@@ -36,6 +47,7 @@ function ACTION_Activer(Id)
     ACTION_InitialiserSelect(Id);
     LstAction = new Array();
     let Ptr = ACTION_DATA[Id];
+    Cible.Activer(Id, true);
     Ptr.PtrSelect.disabled = false;
     Ptr.PtrSelect.value = "";
     Objet.Couleur(Ptr.PtrLigne, 2);
@@ -106,6 +118,7 @@ function ACTION_InitialiserSelect(Id)
         }
         Ptr.add(Opt);
     }
+    Cible.Recharger(Id);
 }
 function ACTION_Couleur(Id, Etat = 0)
 {
@@ -122,25 +135,33 @@ function ACTION_Nouvelle(Obj, Id)
     switch(Obj.value)
     {
         case "3":       // CHANGER D'ARME
+            ACTION_Ajouter(3);
             MSG.Message(Perso.Gras(Id) + " peut changer <strong>d'arme</strong> et/ou <strong>de bouclier</strong>, puis valider ...");
             MSG.Historique(Perso.Gras(Id) + " peut changer d'arme et/ou de bouclier.");
             Equipement.CouleurArme(Id, 2);
             Equipement.Activer(Id, true);
-            ActiverBouton("BtnValider", true);
+            Bouton.Valider.Activer(true);
             break;
-        case "4OLD":
+        case "4":
+            ACTION_Ajouter(4);
             MSG.Journal("Il fait une attaque de <strong>corps à corps</strong>.", 1);
-            ACTION_Attaquer(Id, "ACTION");
+            Attaque.InitialiserManoeuvre(Id, Obj.value);
+            ACTION_Attaquer(Id);
             break;
-        case "5OLD":
+        case "5":
+            ACTION_Ajouter(5);
             MSG.Journal("Il <strong>lance</strong> son arme.", 1);
-            ACTION_Attaquer(Id, "ACTION");
+            Attaque.InitialiserManoeuvre(Id, Obj.value);
+            ACTION_Attaquer(Id);
             break;
-        case "6OLD":
+        case "6":
+            ACTION_Ajouter(6);
             MSG.Journal("Il <strong>tire</strong> avec son arme à distance.", 1);
-            ACTION_Attaquer(Id, "ACTION");
+            Attaque.InitialiserManoeuvre(Id, Obj.value);
+            ACTION_Attaquer(Id);
             break;
         case "7":       // RECHARGER
+            ACTION_Ajouter(7);
             MSG.Journal("Il <strong>recharge</strong> son arme.", 1);
             Nb = Equipement.ArmeSelectionne(Id);
             if(parseInt(Nb) >= 0)
@@ -148,37 +169,107 @@ function ACTION_Nouvelle(Obj, Id)
                 let Arme = Perso.Arme(Id, Nb);
                 Arme.Quantite = Arme.QuantiteMaxi;
             }
-            ACTION_Terminer(Id);
+            Action.Termine(Id);
             break;
         case "8":       // DEGAINER LA SEUL ARME
+            ACTION_Ajouter(8);
+            Equipement.Activer(Id, true);
             Equipement.ChoisirArmePrincipale(Id);
-            ACTION_Terminer(Id);
+            if(!EQUIP_ControlerAffectation())
+            {
+                Action.Termine(Id);
+            }
             break;
         case "2":       // SE DEPLACER
+            ACTION_Ajouter(2);
             MSG.Journal("Il se <strong>déplace</strong>.", 1);
-            ACTION_Terminer(Id);
+            Action.Termine(Id);
             break;
         case "1":       // PASSER SON TOUR
+            ACTION_Ajouter(1);
             MSG.Journal("Il passe son tour.", 1);
-            ACTION_Terminer(Id);
+            Action.Termine(Id);
             break;
         default:
-            MSG.Erreur("ACTION ["+Obj.value+"] NON GEREE !!");
-            ACTION_Terminer(Id);
+            ACTION_Couleur(Id, 2);
+            MSG.Erreur("ACTION [" + Obj.value + "] NON GEREE !!");
+            Action.Termine(Id);
             break;
+    }
+}
+function ACTION_Ajouter(Action, Gratuit = false, Touche = 0, Degat = 0)
+{
+    LstAction.push(new ACTION_Liste(Action, Gratuit, Touche, Degat));
+}
+function ACTION_Attaquer(Id)
+{
+    if(Id != Perso.Actif)
+    {
+        return(0);
+    }
+    switch(ACTION_DATA[Id].PtrSelect.value)
+    {
+        case "4":
+        case "5":
+        case "6":
+            break;
+        default:
+            return(0);
+    }
+    let Nb = Cible.Selectionne(Id);
+    console.debug("ACTION_Attaquer : "+Id+"/"+Nb);
+    if(Nb == "")
+    {
+        Cible.Couleur(Id, 2);
+        Attaque.Afficher(Id, false);
+    }
+    else
+    {
+        Cible.Couleur(Id, 0);
+        Attaque.Couleur(Id, 2);
+        Attaque.Afficher(Id, true);
+    }
+}
+function ACTION_ValiderDe()
+{
+    switch(LstAction[0].Action)
+    {
+        case 3:
+        case 8:
+            Action.Termine(Perso.Actif);
+            break;
+        default:
+            MSG.Erreur("VALIDATION de l'Action : "+LstAction[0].Action+" NON GEREE");
     }
 }
 function ACTION_Terminer(Id)
 {
-    MSG.Erreur("GERE PLUSIEURS ACTION DANS UN  TABLEAU");
+    if(LstAction[0].Action == -1)
+    {
+        ACTION_Ajouter(-1);
+        LstAction.splice(0,1);
+    }
+    if(!LstAction[0].Gratuit)
+    {
+        Perso.UtiliserAction(Id);
+    }
+    LstAction.splice(0,1);
+    BonusExceptionnel.ActionTermine();
     if(LstAction.length == 0)
     {
         Action.Afficher(Id, false);
-        Perso.UtiliserAction(Id);
         Moteur.LancerModule("Nouveau Personnage");
     }
-    return(0);
-    JDR_CacherLigneAttaque(Index);
-    Equip.Activer(Index, false);
-    ActiverBouton("BtnValider", false);
+    else
+    {
+        switch(parseInt(LstAction[0].Action))
+        {
+            case -1:
+            default:
+                LstAction.splice(0,1);
+                ACTION_InitialiserSelect(Id);
+                Objet.Couleur(ACTION_DATA[Id].PtrLigne, 2);
+                break;
+        }
+    }
 }

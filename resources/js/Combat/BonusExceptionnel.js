@@ -41,7 +41,7 @@ function TE_Ajouter(Id)
 /**************************************************************************/
 function TE_HeureTermine()
 {
-    MSG.Historique("Fin d'une heure.", 1)
+    MSG.Historique("Fin d'une heure.");
     for(let x = BE_DATA.length - 1;x >= 0;x--)
     {
         let Ptr = BE_DATA[x];
@@ -61,7 +61,7 @@ function TE_HeureTermine()
 }
 function TE_TourTermine()
 {
-    MSG.Historique("Fin d'un tour.", 1)
+    MSG.Historique("Fin d'un tour.");
     for(let x = BE_DATA.length - 1;x >= 0;x--)
     {
         let Ptr = BE_DATA[x];
@@ -81,7 +81,7 @@ function TE_TourTermine()
 }
 function TE_PasseTermine()
 {
-    MSG.Historique("Fin d'une passe d'arme.", 1)
+    MSG.Historique("Fin d'une passe d'arme.");
     for(let x = BE_DATA.length - 1;x >= 0;x--)
     {
         let Ptr = BE_DATA[x];
@@ -101,7 +101,7 @@ function TE_PasseTermine()
 }
 function TE_ActionTermine()
 {
-    MSG.Historique("Fin d'une action.", 1)
+    MSG.Historique("Fin d'une action.");
     for(let x = BE_DATA.length - 1;x >= 0;x--)
     {
         let Ptr = BE_DATA[x];

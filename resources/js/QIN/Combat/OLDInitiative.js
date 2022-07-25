@@ -105,7 +105,6 @@ function DeInitiative()
         }
     }
     INIT_TrierListe();
-    INIT_AfficherListe();
     INIT_ActualiserListe();
     if(parseInt(NbErreur) == 0)
     {

@@ -4,10 +4,11 @@ class INIT_Interface  {
 
     Initialiser(Taille) {INIT_Initialiser(Taille);}
     NouveauTour() {INIT_NouveauTour();}
-    AfficherListe(Etat) {OBJET_AfficherListe(INIT_DATA, Etat);}
     EtatBouton(Etat, Actif) {INIT_ChangerEtatBouton(Etat, Actif);}
+    AfficherListe(Etat) {OBJET_AfficherListe(INIT_DATA, Etat);}
+    ActualiserListe() {INIT_ActualiserListe();}
 }
-var Initiative = new INIT_Interface();
+var Init = new INIT_Interface();
 var INIT_DATA = new Array();
 
 class INIT_Donnee{
@@ -63,23 +64,23 @@ function INIT_Initialiser(Taille)
     }
 
     let Obj = document.querySelector("#Init-Bas");
-    Initiative.Liste.PtrBouton.push(Obj);
+    Init.Liste.PtrBouton.push(Obj);
     Obj.addEventListener('click', function(e){
         e.preventDefault();
-        INIT_ChangerEtatListe(Initiative.Liste);
+        INIT_ChangerEtatListe(Init.Liste);
     });
     BOUTON_Activer(Obj, true);
 
     Obj = document.querySelector("#Init-Haut");
-    Initiative.Liste.PtrBouton.push(Obj);
+    Init.Liste.PtrBouton.push(Obj);
     Obj.addEventListener('click', function(e){
         e.preventDefault();
-        INIT_ChangerEtatListe(Initiative.Liste);
+        INIT_ChangerEtatListe(Init.Liste);
     });
     BOUTON_Activer(Obj, true);
-    Initiative.Liste.Etat = false;
-    Initiative.Liste.Valide = true;
-    Initiative.AfficherListe(false);
+    Init.Liste.Etat = false;
+    Init.Liste.Valide = true;
+    INIT_ActualiserListe();
 }
 function INIT_NouveauTour()
 {
@@ -89,11 +90,11 @@ function INIT_NouveauTour()
     MSG.Message("Nouveau tour d'initiative.", true);
     MSG.Journal("Nouveau tour d'initiative.");
     JDR_InitialiserBonusInitiative();
-    Initiative.AfficherListe(true);
     BonusAvant.AfficherListe(true);
     Caracteristique.AfficherListe(true);
     BonusAvant.Activer(-1, true);
     PV.AfficherListe(true);
+    Init.AfficherListe(true);
     INIT_ORDRE = new Array();
     for(let x = 0;x < PERSO_DATA.length;x++)
     {
@@ -128,16 +129,13 @@ INIT_DATA[13].PtrSelectInit.value = "A";
     Perso.Liste[1].Etat = false;
     Perso.Liste[0].Valide = false;
     Perso.Liste[1].Valide = false;
-    Initiative.Liste.Etat = false;
-    Initiative.Liste.Valide = false;
-    Initiative.AfficherListe(true);
+    Init.Liste.Etat = true;
+    Init.Liste.Valide = false;
     JDR_AfficherDE(-1);
     PERSO_ActualiserListe();
     INIT_ActualiserListe();
-    Bouton.Phase("INIT");
-    Bouton.Afficher(BtnValider, true);
-    INIT_AfficherListe();
     Tao.AfficherListe("INIT");
+    Bouton.Valider.Demarrer("INIT");
     MSG.Message("Selectionnez les initiatives des <strong>PNJ</strong> et <stong>PJ</strong>, puis <strong>validez</strong>.");
 }
 /***********************************************************************************/
@@ -150,58 +148,54 @@ function INIT_ChangerEtatListe(Ptr)
 }
 function INIT_ChangerEtatBouton(Etat, Actif)
 {
-    Initiative.Liste.Etat = Etat;
-    Initiative.Liste.Valide = Actif;
-    INIT_ActualiserBouton();
+    Init.Liste.Etat = Etat;
+    Init.Liste.Valide = Actif;
+    INIT_ActualiserListe();
 }
 function INIT_ActualiserListe()
 {
     let x;
     for(x = 0;x < INIT_ORDRE.length;x++)
     {
-        Objet.Afficher(INIT_DATA[x].PtrLigneInit, true)
-    }
-    for(;x < INIT_DATA.length;x++)
-    {
-        Objet.Afficher(INIT_DATA[x].PtrLigneInit, false)
-    }
-    Initiative.AfficherListe(true);
-    INIT_ActualiserBouton();
-}
-function INIT_ActualiserBouton()
-{
-    Bouton.Activer(Initiative.Liste.PtrBouton[0], !Initiative.Liste.Etat && Initiative.Liste.Valide);
-    Bouton.Activer(Initiative.Liste.PtrBouton[1], Initiative.Liste.Etat && Initiative.Liste.Valide);
-}
-function INIT_AfficherListe()
-{
-    let x;
-    for(x = 0;x < INIT_ORDRE.length;x++)
-    {
-        INIT_DATA[x].PtrLabelNum.innerHTML = Perso.Lettre(INIT_ORDRE[x]);
-        INIT_DATA[x].PtrLabelNom.innerHTML = Perso.Nom(INIT_ORDRE[x]);
-        INIT_DATA[x].PtrLabelFormat.innerHTML = INIT_DATA[INIT_ORDRE[x]].Format;
-        if(Initiative.Actif == x)
+        let Id = INIT_ORDRE[x];
+        INIT_DATA[x].PtrLabelNum.innerHTML = Perso.Lettre(Id);
+        INIT_DATA[x].PtrLabelNom.innerHTML = Perso.Nom(Id);
+        INIT_DATA[x].PtrLabelFormat.innerHTML = INIT_DATA[Id].Format;
+        if(Id == Perso.Actif)
         {
+            Objet.Afficher(INIT_DATA[x].PtrLigneInit, true);
             Objet.Couleur(INIT_DATA[x].PtrLigneInit, 1);
         }
         else
         {
-            if(parseInt(INIT_DATA[INIT_ORDRE[x]].Valeur) == -66)
+            if(Perso.Mort(Id))
             {
                 Objet.Couleur(INIT_DATA[x].PtrLigneInit, 2);
             }
             else
             {
-                Objet.Couleur(INIT_DATA[x].PtrLigneInit, 0);
+                if(Perso.NbAction(Id) == 0)
+                {
+                    Objet.Couleur(INIT_DATA[x].PtrLigneInit, -1);
+                }
+                else
+                {
+                    Objet.Couleur(INIT_DATA[x].PtrLigneInit, 0);
+                }
             }
+            Objet.Afficher(INIT_DATA[x].PtrLigneInit, Init.Liste.Etat)
         }
-        Objet.Afficher(INIT_DATA[x].PtrLigneInit, true)
     }
     for(;x < INIT_DATA.length;x++)
     {
         Objet.Afficher(INIT_DATA[x].PtrLigneInit, false)
     }
+    INIT_ActualiserBouton();
+}
+function INIT_ActualiserBouton()
+{
+    Bouton.Activer(Init.Liste.PtrBouton[0], !Init.Liste.Etat && Init.Liste.Valide);
+    Bouton.Activer(Init.Liste.PtrBouton[1], Init.Liste.Etat && Init.Liste.Valide);
 }
 /***********************************************************************************/
 /*  Traitement des differents type d'initiative
@@ -237,6 +231,10 @@ function INIT_GererDE(x)
         if(AncienDE.Erreur)
         {
             AncienDE = JDR_LancerDE("A");
+            if((AncienDE.Yang == 0) && (AncienDE.Yin == 0))
+            {
+                AncienDE.Double = false;
+            }
         }
         JDR_ValeurDE(AncienDE.Yang, AncienDE.Yin, AncienDE.Double);
         JDR_AfficherDE(0);
@@ -299,6 +297,8 @@ function INIT_TraiterRetour(x, InitDE)
         INIT_DATA[x].Valeur = Nb + "." + INIT_DATA[x].BonusCarac;
         INIT_DATA[x].Format = Nb;
     }
+    console.log("Init : "+x+"/"+InitDE.Double+"/"+InitDE.Yang+"/"+InitDE.Yin+"/"+INIT_DATA[x].Valeur+"/"+INIT_DATA[x].Format);
+    INIT_DATA[x].BonusMagie = 0;
     PERSO_DATA[x].Bloque = true;
     PERSO_DATA[x].Afficher = false;
     Ptr.disabled = true;
@@ -311,7 +311,7 @@ function INIT_ValiderDE()
         Ptr = INIT_DATA[Perso.Actif].PtrSelectInit;
         if(Ptr.value == "")
         {
-            Bouton.Activer(BtnValider, false);
+            Bouton.Valider.Desactiver();
             JDR_AfficherDE(-1);
             return(0);
         }
@@ -331,11 +331,11 @@ function INIT_ValiderDE()
     INIT_TraiterDE();
     if(Perso.Actif < 0)
     {
-        Bouton.Activer(BtnValider, false);
+        Bouton.Valider.Desactiver();
     }
     PERSO_ActualiserListe();
     INIT_Trier();
-    INIT_AfficherListe();
+    INIT_ActualiserListe();
     if(INIT_ControlerFin() > 0)
     {
         MSG.Message("Tour d'initialisation terminé.", true);

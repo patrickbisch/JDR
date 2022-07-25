@@ -13,11 +13,13 @@ function COMBAT_Lancer()
     MSG.Journal("Lancement du combat.");
 
     Perso.Actif = -1;
-    Cible.Actif = -1;
-    Initiative.Actif = -1;
+    Cible.Active = -1;
+    Init.Actif = -1;
     for(let x = 0;x < PERSO_DATA.length;x++)
     {
         PERSO_DATA[x].NbAction = PERSO_DATA[x].NbActionMaxi;
+        PERSO_DATA[x].AttaqueCC = 0;
+        PERSO_DATA[x].AttaqueDis = 0;
         PERSO_DATA[x].Bloque = false;
         PERSO_DATA[x].Afficher = false;
         Perso.AffecterNombreAction(x, PERSO_DATA[x].NbActionMaxi);
@@ -25,6 +27,7 @@ function COMBAT_Lancer()
     BonusAvant.AfficherListe(true);
     Caracteristique.AfficherListe(true);
     BonusAvant.Activer(-1, true);
+    Cible.AfficherListe(true);
     PV.AfficherListe(true);
     DefensePassive.AfficherListe(true);
     Equipement.AfficherListe(true);
@@ -33,8 +36,8 @@ function COMBAT_Lancer()
     Perso.Liste[1].Etat = false;
     Perso.Liste[0].Valide = true;
     Perso.Liste[1].Valide = true;
-    Bouton.Phase("COMBAT");
     PERSO_ActualiserListe();
+    Init.EtatBouton(false, true);
     Moteur.LancerModule("Nouveau Personnage");
 }
 function COMBAT_NouveauPersonnage()
@@ -44,19 +47,19 @@ function COMBAT_NouveauPersonnage()
     {
         Action.Afficher(Perso.Actif, false);
     }
-    Initiative.Actif = COMBAT_PersonnageSuivant(Initiative.Actif + 1);
-    if(Initiative.Actif < 0)
+    Init.Actif = COMBAT_PersonnageSuivant(Init.Actif + 1);
+    if(Init.Actif < 0)
     {
         BonusExceptionnel.PasseArmeTermine();
-        Initiative.Actif = COMBAT_PersonnageSuivant(0);
+        Init.Actif = COMBAT_PersonnageSuivant(0);
     }
-    INIT_AfficherListe();
-    if(Initiative.Actif < 0)
+    if(Init.Actif < 0)
     {
         Perso.Actif = -1;
         PERSO_ActualiserListe();
+        Init.EtatBouton(false, false);
         BonusExceptionnel.TourTermine();
-        if(Initiative.Actif == -1)
+        if(Init.Actif == -1)
         {
             MSG.Message("Fin du Tour de combat.", true);
             MSG.Erreur("FIN DU TOUR DE COMBAT");
@@ -69,8 +72,9 @@ function COMBAT_NouveauPersonnage()
     }
     else
     {
-        Bouton.Phase("ACTION");
-        Perso.Actif = INIT_ORDRE[Initiative.Actif];
+        Bouton.Valider.Demarrer("ACTION");
+        Bouton.Valider.Desactiver();
+        Perso.Actif = INIT_ORDRE[Init.Actif];
         Tao.Afficher(Perso.Actif, "ACTION");
         Action.Activer(Perso.Actif);
         MSG.Historique(Perso.Gras(Perso.Actif) + " est le nouveau personnage actif");
@@ -78,6 +82,7 @@ function COMBAT_NouveauPersonnage()
         MSG.Journal(Perso.Gras(Perso.Actif) + " est actif");
         MSG.Message(Perso.Gras(Perso.Actif) + " doit choisir une action, puis <strong>Valider</strong>.");
         PERSO_ActualiserListe();
+        Init.ActualiserListe();
     }
 }
 function COMBAT_PersonnageSuivant(Debut)
