@@ -1,8 +1,8 @@
 class TAO_Interface  {
     Initialiser(Taille) {TAO_Initialiser(Taille);}
-    AfficherListe(Module) {TAO_AfficherListe(Module);}
-    Afficher(Id, Module) {TAO_Afficher(Id, Module);}
-    Termine(Id, IdTao, Bonus) {TAO_Termine(Id, IdTao, Bonus);}
+    AfficherListe(Module, AvecYinYang) {TAO_AfficherListe(Module, AvecYinYang);}
+    Afficher(Id, Module, AvecYinYang) {TAO_Afficher(Id, Module, AvecYinYang);}
+    Termine(Id, IdTao, Bonus, AvecYinYang) {TAO_Termine(Id, IdTao, Bonus, AvecYinYang);}
 }
 var Tao  = new TAO_Interface ();
 class TAO_Donnee {
@@ -62,7 +62,7 @@ function TAO_InitialiserBonusMaxi(Id)
     }
     return(Tab);
 }
-function TAO_InitialiserSelect(Id, Indice)
+function TAO_InitialiserSelect(Id, Indice, AvecYinYang)
 {
     let Ptr = TAO_DATA[Id].PtrSelect;
     Ptr.options.length = 0;
@@ -72,7 +72,7 @@ function TAO_InitialiserSelect(Id, Indice)
     Opt.disabled = true;
     Ptr.add(Opt);
 
-    let Tab = TAO_ChargerTable(Id, Indice);
+    let Tab = TAO_ChargerTable(Id, Indice, AvecYinYang);
     TAO_TrierTable(Indice, Tab);
     for(let x = 0;x < Tab.length;x++)
     {
@@ -127,7 +127,7 @@ function TAO_RetournerBonusMaxi(Id, IdTao)
     }
     return(new Array());
 }
-function TAO_ChargerTable(Id, Indice)
+function TAO_ChargerTable(Id, Indice, AvecYinYang)
 {
     let Tab = new Array();
     for(let x = 0;x < PERSO_BASE[Id].Taos.length;x++)
@@ -187,6 +187,33 @@ function TAO_ChargerTable(Id, Indice)
                         Ajout = true;
                     }
                     break;
+            }
+            if(Ajout)
+            {
+                switch(PERSO_BASE[Id].Taos[x].id_tao)
+                {
+                    case 29:
+                        if((INIT_ORDRE[0] != Id) || (Perso.NbAction(Id) != Perso.NbActionMaxi(Id))) 
+                        {
+                            Ajout = false;
+                        }
+                        break;
+                }
+            }
+            if(Ajout && !AvecYinYang)
+            {
+                switch(PERSO_BASE[Id].Taos[x].id_tao)
+                {
+                    case 68:
+                    case 69:
+                    case 70:
+                    case 71:
+                    case 72:
+                    case 73:
+                    case 74:
+                        Ajout = false;
+                        break;
+                }
             }
             if(Ajout)
             {
@@ -267,14 +294,14 @@ function TAO_TrierTable(Indice, Tab)
 /******************************************************************************************/
 /*  Procedures d'affichage
 /******************************************************************************************/
-function TAO_AfficherListe(Module)
+function TAO_AfficherListe(Module, AvecYinYang)
 {
     for(let x = 0;x < TAO_DATA.length;x++)
     {
-        TAO_Afficher(x, Module);
+        TAO_Afficher(x, Module, AvecYinYang);
     }
 }
-function TAO_Afficher(Id, Module)
+function TAO_Afficher(Id, Module, AvecYinYang = true)
 {
     let Ptr = TAO_DATA[Id];
     let Etat = Ptr.Etat;
@@ -292,7 +319,7 @@ function TAO_Afficher(Id, Module)
             case "ACTION":
             case "ATTAQUE":
             case "DEFENSE":
-                Tab = TAO_InitialiserSelect(Id, Module);
+                Tab = TAO_InitialiserSelect(Id, Module, AvecYinYang);
                 break;
             default:
                 MSG.Erreur("TAO_Afficher (Module : "+Module+") NON GERE");
@@ -363,6 +390,9 @@ function TAO_Executer(Id, IdTao, Cout)
         case 9:     //  Cuirasse de peau
             TAO_CuirasseDePeau(Id, true, 0);
             break;
+        case 13:    //  Brise legere
+            TAO_BriseLegere(Id, true, Cout);
+            break;
         case 27:    //  Vigilance
             TAO_Vigilant(Id, true);
             break;
@@ -374,6 +404,12 @@ function TAO_Executer(Id, IdTao, Cout)
             break;
         case 30:    //  Anticipation
             TAO_PremierPersonnage(Id);
+            break;
+        case 34:    //  Defense renforcee
+            TAO_DefenseRenforce(Id, true, Cout);
+            break;
+        case 35:    //  Defense CHI
+            TAO_DefenseCHI(Id, true, Cout);
             break;
         case 69:    //  Coup de chance
             JDR_AugmenterUnDE();
@@ -407,8 +443,20 @@ function TAO_Termine(Id, IdTao, Bonus)
         case 9:
             TAO_CuirasseDePeau(Id, false, Bonus);
             break;
+        case 13:
+            TAO_BriseLegere(Id, false, Bonus);
+            Commentaire = false;
+            break;
         case 30:
             TAO_Afficher(Id, Bonus);
+            Commentaire = false;
+            break;
+        case 34:
+            TAO_DefenseRenforce(Id, false, Bonus);
+            Commentaire = false;
+            break;
+        case 35:
+            TAO_DefenseCHI(Id, false, Bonus);
             break;
         default:
             MSG.Erreur("Le TAO [" + IdTao + "] (terminé) N'EST PAS GERE.");
@@ -519,4 +567,62 @@ function TAO_PremierPersonnage(Id)
     INIT_DATA[Id].Valeur = parseInt(2000);
     INIT_Trier();
     Moteur.LancerModule("Nouveau Personnage");
+}
+function TAO_DefenseCHI(Id, Ajout, Cout)
+{
+    let Obj = TAO_Retourner(Id, 35);
+    if(Ajout)
+    {
+        let Ptr = BonusExceptionnel.Ajouter(Id);
+        Ptr.IdTao = 35;
+        Ptr.NbPasse = 1;
+        Ptr.Bonus = Cout;
+        Obj.actif = true;
+        DefensePassive.Ajout(Id, Cout);
+        if(Id == Cible.Active)
+        {
+            Defense.NouvelleDefensePassive(Id);
+        }
+    }
+    else
+    {
+        Obj.actif = false;
+        DefensePassive.Ajout(Id, -Cout);
+    }
+}
+function TAO_DefenseRenforce(Id, Ajout, Cout)
+{
+    let Obj = TAO_Retourner(Id, 34);
+    if(Ajout)
+    {
+        let Ptr = BonusExceptionnel.Ajouter(Id);
+        Ptr.IdTao = 34;
+        Ptr.NbAction = 1;
+        Ptr.Bonus = Cout;
+        Obj.actif = true;
+        PERSO_DATA[Id].BonusProtection = Cout;
+    }
+    else
+    {
+        Obj.actif = false;
+        PERSO_DATA[Id].BonusProtection = 0;
+    }
+}
+function TAO_BriseLegere(Id, Ajout, Cout)
+{
+    let Obj = TAO_Retourner(Id, 13);
+    if(Ajout)
+    {
+        let Ptr = BonusExceptionnel.Ajouter(Id);
+        Ptr.IdTao = 13;
+        Ptr.NbAction = 1;
+        Ptr.Bonus = Cout;
+        Obj.actif = true;
+        PERSO_DATA[Id].BonusDegat = Cout;
+    }
+    else
+    {
+        Obj.actif = false;
+        PERSO_DATA[Id].BonusDegat = 0;
+    }
 }

@@ -4,6 +4,7 @@ class TD_Interface  {
     NouveauTour() {TD_NouveauTour();}
     Afficher(Id, Etat) {Objet.Afficher(TD_DATA[Id].PtrLigne, Etat);}
     Activer(Id) {TD_Activer(Id);}
+    NouvelleDefensePassive(Id) {TD_NouvelleDefensePassive(Id);}
 }
 var Defense = new TD_Interface();
 let TD_DATA = new Array();
@@ -62,7 +63,8 @@ function TD_Nouvelle(Obj, Id)
 }
 function TD_Jet(Ptr, Id)
 {
-
+    TD_DATA[Id].PtrSelectTypeDefense.disabled = true;
+    Tao.Afficher(Id, "DEFENSE", true);
 }
 function TD_ControlerTaoActif(Id)
 {
@@ -84,12 +86,13 @@ function TD_ControlerTaoActif(Id)
 function TD_Activer(Id)
 {
     Defense.Afficher(Id, true);
-    Tao.Afficher(Id, "DEFENSE");
+    Tao.Afficher(Id, "DEFENSE", false);
+    TD_DATA[Id].PtrSelectTypeDefense.disabled = false;
     TD_DATA[Id].PtrSelectJetDefense.disabled = true;
     TD_DATA[Id].PtrSelectJetDefense.value = "";
     Objet.Couleur(TD_DATA[Id].PtrLigne, 2);
     let AucuneDefense = false;
-    if(TD_InitialiserSelection(Id) < 2)
+    if(TD_InitialiserSelection(Id) < 3)
     {
         if(TD_ControlerTaoActif(Id) == 0)
         {
@@ -167,7 +170,9 @@ function TD_InitialiserSelection(Id)
                     Opt = document.createElement("option");
                     Opt.text = PERSO_BASE[Id].Manoeuvres[x].nom;
                     Opt.value = PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre;
-                    Ptr.add(Opt);
+                    let Ajout = true;
+                    if((PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre == 2) && !LstAttaque[0].CorpsCorps){Ajout = false;}
+                    if(Ajout){Ptr.add(Opt);}
                 }
             }
         }
@@ -185,6 +190,7 @@ function TD_InitialiserSelection(Id)
 }
 function TD_AucuneDefense(Id)
 {
+    TD_DATA[Id].PtrSelectTypeDefense.disabled = true;
     TD_CalculerDegat(Id, "Aucune défense, ");
 }
 function TD_CalculerDegat(Id, MsgTexte)
@@ -210,8 +216,17 @@ function TD_CalculerDegat(Id, MsgTexte)
         MSG.Journal(MsgTexte + CA + " => -" + PV + " PV",3);
         MSG.Historique(MsgTexte + " protection : " + CA + " => -" + PV + " PV",2);
     }
-    JDR_BlesserPersonnage(Id, PV, QIN_LstAttaque[0].Cible);
+    JDR_BlesserPersonnage(Id, PV, LstAttaque[0].Cible);
     TD_Termine(Id);
+}
+function TD_NouvelleDefensePassive(Id)
+{
+    if(Perso.Base(Id).DefensePassive > LstAttaque[0].Touche)
+    {
+        MSG.Journal("Le coup a raté",3);
+        MSG.Historique("Le coup a raté",2);
+        TD_Termine(Id);
+    }
 }
 function TD_Termine(Id)
 {

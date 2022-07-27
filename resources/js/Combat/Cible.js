@@ -4,9 +4,11 @@ class CIBLE_Interface  {
     AfficherListe(Etat) {CIBLE_AfficherListe(Etat);}
     Afficher(Id, Etat) {Objet.Afficher(CIBLE_DATA[Id].PtrLigne, Etat);}
     Activer(Id, Etat) {CIBLE_Activer(Id, Etat);}
-    Couleur(Id, Code) {Objet.Couleur(CIBLE_DATA[Id].PtrLigne, Code);}
-    Selectionne(Id) {return(CIBLE_DATA[Id].PtrSelectCible.value);}
+    Couleur(Id, Code) {CIBLE_Couleur(Id, Code);}
     Recharger(Id) {CIBLE_ChargerListe(Id);}
+    ActualiserListeGroupe() {CIBLE_ActualiserListeGroupe();}
+    Selectionne(Id) {return(CIBLE_Selectionne(Id));}
+    AffecterDefaut(Id) {CIBLE_Defaut(Id);}
 }
 var Cible = new CIBLE_Interface();
 let CIBLE_DATA = new Array();
@@ -97,9 +99,57 @@ function CIBLE_Initialiser(Taille)
 }
 function CIBLE_Activer(Id, Etat)
 {
-    if(!CIBLE_DATA[Id].Groupe)
+    if(Id == ""){return(-1);}
+    if(parseInt(Id) < 0){return(-1);}
+    if(CIBLE_DATA[Id].Groupe)
     {
-        CIBLE_DATA[Id].PtrSelectCible.disabled = !Etat
+        for(let y = 0;y < CIBLE_DATA[Id].TabGroupe.length;y++)
+        {
+            let OK = Etat;
+            if(Etat && (CIBLE_DATA[Id].TabGroupe[y].Nb == 0))
+            {
+                OK = false;
+            }
+            Bouton.Activer(CIBLE_DATA[Id].TabGroupe[y].PtrMoins, OK);
+        }
+    }
+    else
+    {
+        CIBLE_DATA[Id].PtrSelectCible.disabled = !Etat;
+    }
+    if(Id == Perso.Actif)
+    {
+        let Tab = (Cible.Active + "-0").split("-");
+        CIBLE_Activer(Tab[0], Etat);
+    }
+}
+function CIBLE_Couleur(Index, Couleur)
+{
+    if(CIBLE_DATA[Index].Groupe)
+    {
+        for(let y = 0;y < CIBLE_DATA[Index].TabGroupe.length;y++)
+        {
+            CouleurObjet(CIBLE_DATA[Index].TabGroupe[y].PtrNb, Couleur);
+        }
+        return(Nb);
+    }
+    else
+    {
+        CouleurObjet(CIBLE_DATA[Index].PtrLigne, Couleur);
+    }
+}
+function CIBLE_Couleur(Id, Couleur)
+{
+    if(CIBLE_DATA[Id].Groupe)
+    {
+        for(let y = 0;y < CIBLE_DATA[Id].TabGroupe.length;y++)
+        {
+            Objet.Couleur(CIBLE_DATA[Id].TabGroupe[y].PtrNb, Couleur);
+        }
+    }
+    else
+    {
+        Objet.Couleur(CIBLE_DATA[Id].PtrLigne, Couleur);
     }
 }
 /*********************************************************************************/
@@ -114,6 +164,16 @@ function CIBLE_ChargerListe(Id)
     else
     {
         CIBLE_ChargerListeSeul(Id);
+    }
+}
+function CIBLE_ActualiserListeGroupe()
+{
+    for(let x = 0;x < PERSO_BASE.length;x++)
+    {
+        if(CIBLE_DATA[x].Groupe)
+        {   
+            CIBLE_ChargerListeGroupe(x);
+        }
     }
 }
 function CIBLE_ChargerListeGroupe(Id)
@@ -160,6 +220,10 @@ function CIBLE_ChargerListeSeul(Id)
                             let Opt = document.createElement("option");
                             Opt.value = x + "-" + y;
                             Opt.text = Perso.Lettre(x) + "." + String.fromCharCode(97+y) + " " + Perso.Nom(x);
+                            if(Opt.value == AncienCible)
+                            {
+                                Opt.selected = true;
+                            }
                             Ptr.add(Opt);
                         }
                     }
@@ -169,6 +233,10 @@ function CIBLE_ChargerListeSeul(Id)
                     let Opt = document.createElement("option");
                     Opt.value = x;
                     Opt.text = Perso.Lettre(x) + ". " + Perso.Nom(x);
+                    if(Opt.value == AncienCible)
+                    {
+                        Opt.selected = true;
+                    }
                     Ptr.add(Opt);
                 }
             }
@@ -191,7 +259,10 @@ function CIBLE_ChargerListeSeul(Id)
                 let Opt = document.createElement("option");
                 Opt.value = x;
                 Opt.text = Perso.Lettre(x) + ". " + Perso.Nom(x);
-                Opt.selected = true;
+                if(Opt.value == AncienCible)
+                {
+                    Opt.selected = true;
+                }
                 Ptr.add(Opt);
             }
         }
@@ -201,23 +272,16 @@ function CIBLE_ChargerListeSeul(Id)
     Opt.text = Perso.Lettre(Id) + ". " + Perso.Nom(Id);
     Ptr.add(Opt);
 
-    Opt = document.createElement("option");
-    Opt.text = "";
-    Opt.value = "-1";
-    Opt.selected = true;
-    Opt.disabled = true;
-    //Ptr.add(Opt);
-
-    Ptr.value = AncienCible;
-    if(Ptr.value == "")
+    if(Ptr.value != AncienCible)
     {
-        Ptr.value = "-1";
+        Ptr.value = "";
     }
     switch(Bouton.Valider.Module)
     {
         case "ACTION":
             ACTION_Attaquer(Id);
             break;
+        default:
     }
 }
 /***********************************************************************************/
@@ -301,7 +365,6 @@ function CIBLE_Nouvelle(Obj, Id)
             Cible.Couleur(Id, 2);
         }
         PERSO_ActualiserListe();
-        console.debug("CIBLE_Nouvelle : "+Id+"/"+Bouton.Valider.Module);
         switch(Bouton.Valider.Module)
         {
             case "ACTION":
@@ -348,4 +411,36 @@ function CIBLE_GroupeMoins(x, y)
     CIBLE_ChargerListe(Perso.Actif);
     CIBLE_AfficherGroupe(x);
     return(0);
+}
+function CIBLE_Defaut(Id)
+{
+    Cible.Active = -1;
+    if(CIBLE_DATA[Id].Groupe){return(0);}
+    if(CIBLE_DATA[Id].PtrSelectCible.length > 0)
+    {
+        let Retour = CIBLE_DATA[Id].PtrSelectCible.value + "-x";
+        let Tab = Retour.split("-");
+        if(Tab[0] != "")
+        {
+            if(parseInt(Tab[0]) >= 0)
+            {
+                Cible.Active = Tab[0];
+            }
+        }
+    }
+}
+function CIBLE_Selectionne(Id)
+{
+    if(CIBLE_DATA[Id].Groupe)
+    {
+        for(let y = 0;y < CIBLE_DATA[Id].TabGroupe.length;y++)
+        {
+            if(CIBLE_DATA[Id].TabGroupe[y].Nb > 0)
+            {
+                return(Perso.IndexPJ[y]);
+            }
+        }
+        return("");
+    }
+    return(CIBLE_DATA[Id].PtrSelectCible.value);
 }

@@ -101,7 +101,6 @@ function TE_PasseTermine()
 }
 function TE_ActionTermine()
 {
-    MSG.Historique("Fin d'une action.");
     for(let x = BE_DATA.length - 1;x >= 0;x--)
     {
         let Ptr = BE_DATA[x];

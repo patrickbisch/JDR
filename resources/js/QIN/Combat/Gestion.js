@@ -8,7 +8,6 @@ class RetourDE{
 }
 let LstDE = new Array;
 let TirageDE = new RetourDE();
-
 function JDR_LancerDE(TypeLance = "")
 {
     let Nb = 0;
@@ -95,13 +94,23 @@ function JDR_AugmenterUnDE()
 {
     let Encore = !TirageDE.Double;
     if((TirageDE.Yang == 0) && (TirageDE.Yin == 0)){return(-1);}
-    if(Math.abs(TirageDE.Yang - TirageDE.Yin) == 9)
+    if(TirageDE.Yang == TirageDE.Yin){return(0);}
+    let Delta = Math.abs(TirageDE.Yang - TirageDE.Yin);
+    if(Delta == 9){return(0);}
+    if(Delta == 1)
     {
-        Encore = false;
-    }
-    if(TirageDE.Yang == TirageDE.Yin)
-    {
-        Encore = false;
+        if((TirageDE.Yang > 2) || (TirageDE.Yin > 2))
+        {
+            if(TirageDE.Yang > TirageDE.Yin)
+            {
+                TirageDE.Yin++;
+            }
+            else
+            {
+                TirageDE.Yang++;
+            }
+            Encore = false;
+        }
     }
     if(Encore && (TirageDE.Yang > TirageDE.Yin) && (TirageDE.Yang < 9))
     {

@@ -19,7 +19,6 @@ class PERSO_InterfaceOLD{
     InitialiserNombreAction() {PERSO_InitialiserNombreAction();}
     AffecterNombreAction(Index, NbAction) {PERSO_AffecterAction(Index, NbAction);}
     NbAction(Index) {return(PERSO_DATA[Index].NbAction);}
-    NbActionMaxi(Index) {return(PERSO_DATA[Index].NbActionMaxi);}
     UtiliserAction(Index) {PERSO_SupprimerAction(Index);}
 
     NombreAdversaire(Index) {return(PERSO_NombreAdversaire(Index));}
@@ -98,15 +97,6 @@ function PERSO_SuivantActif()
         return(Index);
     }
     return(Init.Suivant());
-}
-function PERSO_InitialiserNombreAction()
-{
-    for(let x = 0;x < PERSO_DATA.length;x++)
-    {
-        PERSO_DATA[x].NbAction = Perso.NbActionMaxi(x);
-        Action.AfficherValeur(x, Perso.NbAction(x)
-                             + "/" + Perso.NbActionMaxi(x));
-    }
 }
 function PERSO_VisualiserListeActif(Bouton, Sens)
 {

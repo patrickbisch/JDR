@@ -156,21 +156,6 @@ function CIBLE_Valide(Index)
         return(CIBLE_DATA[Index].Cible);
     }
 }
-function CIBLE_Couleur(Index, Couleur)
-{
-    if(CIBLE_DATA[Index].Groupe)
-    {
-        for(let y = 0;y < CIBLE_DATA[Index].TabGroupe.length;y++)
-        {
-            CouleurObjet(CIBLE_DATA[Index].TabGroupe[y].PtrNb, Couleur);
-        }
-        return(Nb);
-    }
-    else
-    {
-        CouleurObjet(CIBLE_DATA[Index].PtrLigne, Couleur);
-    }
-}
 function CIBLE_Active(Index, Etat = false)
 {
     if(!CIBLE_DATA[Index].Groupe)

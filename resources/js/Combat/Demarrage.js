@@ -18,7 +18,7 @@ function MOTEUR_LancerModule(NomModule, NomProcedure)
             MSG.Initialiser();
             MSG.Message("Lancement de l'application.", true);
             Objet.AfficherFamille("Ligne", false);
-            TimerMoteur = setInterval(MOTEUR_RecupererBaseDonnee , 500);
+            TimerMoteur = setInterval(MOTEUR_RecupererBaseDonnee, 500);
 /**************************************************************************************/
 /**************************************************************************************/
 /*****     MODE DEBUG                                                             *****/
@@ -33,32 +33,30 @@ MSG.AfficherJournal(true);
         case "Initialisation":
             console.info("Lancement de l'initalisation.");
             Bouton.Valider.Afficher(false);
-            TimerMoteur = setInterval(Perso.Initialiser , 100);
+            TimerMoteur = setInterval(Perso.Initialiser, 50);
             break;
         case "Tour INIT":
             console.info("Lancement d'un tour d'initialisation.");
             Objet.AfficherFamille("LignePerso", false);
-            TimerMoteur = setInterval(Init.NouveauTour, 100);
+            TimerMoteur = setInterval(Init.NouveauTour, 50);
             break;
         case "Equipement":
             console.info("Lancement de l'equipement des pesonnages");
             Objet.AfficherFamille("LignePerso", false);
-            TimerMoteur = setInterval(Equipement.Personnage , 100);
+            TimerMoteur = setInterval(Equipement.Personnage, 50);
             break;
         case "COMBAT":
             console.info("Lancement du combat");
             Objet.AfficherFamille("LignePerso", false);
-            TimerMoteur = setInterval(Combat.Lancer, 100);
+            TimerMoteur = setInterval(Combat.Lancer, 50);
             break;
         case "Nouveau Personnage":
             console.info("Nouveau personnage");
-            Bouton.Valider.Afficher(false);
-            TimerMoteur = setInterval(Combat.NouveauPersonnage, 100);
+            TimerMoteur = setInterval(Combat.NouveauPersonnage, 50);
             break;
         case "ATTAQUE":
             console.info("Nouvelle attaque");
-            Bouton.Valider.Afficher(false);
-            TimerMoteur = setInterval(Attaque.Gerer, 100);
+            TimerMoteur = setInterval(Attaque.Gerer, 50);
             break;
         default:
             console.error("MOTEUR_LancerModule : Module [" + NomModule + "] NON GERE !")

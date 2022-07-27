@@ -85,7 +85,7 @@ function ACTION_InitialiserSelect(Id)
                 TabAction.push(["7", "Recharger"]);
             }
         }
-        if(parseInt(Perso.NombreArme(Id)) > 1)
+        if(parseInt(Perso.NombreArme(Id)) + parseInt(Perso.NombreBouclier(Id)) > 1)
         {
             TabAction.push(["3", "Changer d'arme"],);
         }
@@ -132,35 +132,35 @@ function ACTION_Nouvelle(Obj, Id)
         return(0);
     }
     ACTION_Couleur(Id, 0);
-    switch(Obj.value)
+    Obj.disabled = true;
+    switch(parseInt(Obj.value))
     {
-        case "3":       // CHANGER D'ARME
+        case 3:       // CHANGER D'ARME
             ACTION_Ajouter(3);
             MSG.Message(Perso.Gras(Id) + " peut changer <strong>d'arme</strong> et/ou <strong>de bouclier</strong>, puis valider ...");
             MSG.Historique(Perso.Gras(Id) + " peut changer d'arme et/ou de bouclier.");
-            Equipement.CouleurArme(Id, 2);
             Equipement.Activer(Id, true);
-            Bouton.Valider.Activer(true);
+            EQUIP_ControlerAffectation();
             break;
-        case "4":
+        case 4:
             ACTION_Ajouter(4);
             MSG.Journal("Il fait une attaque de <strong>corps à corps</strong>.", 1);
             Attaque.InitialiserManoeuvre(Id, Obj.value);
             ACTION_Attaquer(Id);
             break;
-        case "5":
+        case 5:
             ACTION_Ajouter(5);
             MSG.Journal("Il <strong>lance</strong> son arme.", 1);
             Attaque.InitialiserManoeuvre(Id, Obj.value);
             ACTION_Attaquer(Id);
             break;
-        case "6":
+        case 6:
             ACTION_Ajouter(6);
             MSG.Journal("Il <strong>tire</strong> avec son arme à distance.", 1);
             Attaque.InitialiserManoeuvre(Id, Obj.value);
             ACTION_Attaquer(Id);
             break;
-        case "7":       // RECHARGER
+        case 7:       // RECHARGER
             ACTION_Ajouter(7);
             MSG.Journal("Il <strong>recharge</strong> son arme.", 1);
             Nb = Equipement.ArmeSelectionne(Id);
@@ -171,21 +171,25 @@ function ACTION_Nouvelle(Obj, Id)
             }
             Action.Termine(Id);
             break;
-        case "8":       // DEGAINER LA SEUL ARME
+        case 8:       // DEGAINER LA SEUL ARME
             ACTION_Ajouter(8);
             Equipement.Activer(Id, true);
-            Equipement.ChoisirArmePrincipale(Id);
-            if(!EQUIP_ControlerAffectation())
+            if(Equipement.ChoisirArmePrincipale(Id, false))
             {
+                Bouton.Valider.Activer(true);
+            }
+            else
+            {
+                Equipement.Activer(Id, false);
                 Action.Termine(Id);
             }
             break;
-        case "2":       // SE DEPLACER
+        case 2:       // SE DEPLACER
             ACTION_Ajouter(2);
             MSG.Journal("Il se <strong>déplace</strong>.", 1);
             Action.Termine(Id);
             break;
-        case "1":       // PASSER SON TOUR
+        case 1:       // PASSER SON TOUR
             ACTION_Ajouter(1);
             MSG.Journal("Il passe son tour.", 1);
             Action.Termine(Id);
@@ -197,31 +201,36 @@ function ACTION_Nouvelle(Obj, Id)
             break;
     }
 }
-function ACTION_Ajouter(Action, Gratuit = false, Touche = 0, Degat = 0)
-{
-    LstAction.push(new ACTION_Liste(Action, Gratuit, Touche, Degat));
-}
 function ACTION_Attaquer(Id)
 {
     if(Id != Perso.Actif)
     {
         return(0);
     }
-    switch(ACTION_DATA[Id].PtrSelect.value)
+    let Nb = Cible.Selectionne(Id);
+    switch(parseInt(ACTION_DATA[Id].PtrSelect.value))
     {
-        case "4":
-        case "5":
-        case "6":
+        case 4:
+        case 5:
+        case 6:
             break;
         default:
+            if((Nb == "") && (Cible.Active >= 0))
+            {
+                Cible.Active = -1;
+                PERSO_ActualiserListe();
+            }
             return(0);
     }
-    let Nb = Cible.Selectionne(Id);
-    console.debug("ACTION_Attaquer : "+Id+"/"+Nb);
     if(Nb == "")
     {
         Cible.Couleur(Id, 2);
         Attaque.Afficher(Id, false);
+        if(Cible.Active >= 0)
+        {
+            Cible.Active = -1;
+            PERSO_ActualiserListe();
+        }
     }
     else
     {
@@ -232,28 +241,40 @@ function ACTION_Attaquer(Id)
 }
 function ACTION_ValiderDe()
 {
-    switch(LstAction[0].Action)
+    switch(parseInt(LstAction[0].Action))
     {
         case 3:
         case 8:
+            Equipement.Activer(Perso.Actif, false);
             Action.Termine(Perso.Actif);
             break;
         default:
             MSG.Erreur("VALIDATION de l'Action : "+LstAction[0].Action+" NON GEREE");
     }
 }
-function ACTION_Terminer(Id)
+function ACTION_Ajouter(Action, Gratuit = false, Touche = 0, Degat = 0)
 {
+    LstAction.push(new ACTION_Liste(Action, Gratuit, Touche, Degat));
+}
+function ACTION_ControlerEnCours()
+{
+    if(LstAction.length == 0){return(0);}
     if(LstAction[0].Action == -1)
     {
         ACTION_Ajouter(-1);
         LstAction.splice(0,1);
     }
+    return(1)
+}
+function ACTION_Terminer(Id)
+{
+    ACTION_ControlerEnCours();
     if(!LstAction[0].Gratuit)
     {
         Perso.UtiliserAction(Id);
     }
     LstAction.splice(0,1);
+    ACTION_ControlerEnCours();
     BonusExceptionnel.ActionTermine();
     if(LstAction.length == 0)
     {
@@ -264,9 +285,27 @@ function ACTION_Terminer(Id)
     {
         switch(parseInt(LstAction[0].Action))
         {
+            case 4:
+            case 5:
+            case 6:
+                if(Perso.Mort(Cible.Active))
+                {
+                    ACTION_Terminer(Id);
+                }
+                else
+                {
+                    BonusAvant.Activer(Id, true);
+                    ACTION_DATA[Id].PtrSelect.value = LstAction[0].Action;
+                    ACTION_DATA[Id].PtrSelect.disabled = true;
+                    Attaque.AutoriserNouveauJet(Id);
+                }
+                break;
             case -1:
             default:
+                BonusAvant.Activer(Id, true);
                 LstAction.splice(0,1);
+                ACTION_DATA[Id].PtrSelect.disabled = false;
+                Cible.Activer(Id, true);
                 ACTION_InitialiserSelect(Id);
                 Objet.Couleur(ACTION_DATA[Id].PtrLigne, 2);
                 break;

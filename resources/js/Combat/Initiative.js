@@ -94,18 +94,17 @@ function INIT_NouveauTour()
     Caracteristique.AfficherListe(true);
     BonusAvant.Activer(-1, true);
     PV.AfficherListe(true);
-    Init.AfficherListe(true);
     INIT_ORDRE = new Array();
     for(let x = 0;x < PERSO_DATA.length;x++)
     {
-        if(PERSO_DATA[x].Mort)
+        PERSO_DATA[x].Bloque = Perso.Mort(x);
+        if(PERSO_DATA[x].Bloque)
         {
             INIT_ORDRE.push(x);
             INIT_DATA[x].Format = "Mort";
-            INIT_DATA[x].Valeur = -66;
+            INIT_DATA[x].Valeur = -200;
         }
-        PERSO_DATA[x].Bloque = PERSO_DATA[x].Mort;
-        PERSO_DATA[x].Afficher = !PERSO_DATA[x].Mort;
+        PERSO_DATA[x].Afficher = !PERSO_DATA[x].Bloque;
         if(Perso.TypeFonction(x) == 0)
         {
             INIT_DATA[x].PtrSelectInit.value = "";
@@ -113,8 +112,12 @@ function INIT_NouveauTour()
         }
         INIT_DATA[x].PtrSelectInit.disabled = false;
         INIT_DATA[x].BonusMagie = 0;
+        PERSO_DATA[x].NbAction = Perso.NbActionMaxi(x);
+        PERSO_AfficherNombreAction(x);
     }
+    Init.AfficherListe(true);
     Perso.Actif = -1;
+    Cible.Active = -1;
     AncienDE = new RetourDE();
 /***********************************************************************************/
 /***********************************************************************************/
@@ -134,7 +137,7 @@ INIT_DATA[13].PtrSelectInit.value = "A";
     JDR_AfficherDE(-1);
     PERSO_ActualiserListe();
     INIT_ActualiserListe();
-    Tao.AfficherListe("INIT");
+    Tao.AfficherListe("INIT", false);
     Bouton.Valider.Demarrer("INIT");
     MSG.Message("Selectionnez les initiatives des <strong>PNJ</strong> et <stong>PJ</strong>, puis <strong>validez</strong>.");
 }
@@ -218,6 +221,7 @@ function INIT_GererDE(x)
     let Ptr = INIT_DATA[x].PtrSelectInit;
     if(Ptr.value == "L")
     {
+        Tao.Afficher(x, "INIT", true);
         Perso.Actif = x;
         JDR_ValeurDE(0, 0);
         JDR_AfficherDE(1);
@@ -250,6 +254,7 @@ function INIT_GererDE(x)
         INIT_TraiterRetour(x, InitDE);
         return(1);
     }
+    Tao.Afficher(x, "INIT", true);
     Perso.Actif = x;
     MSG.Message("Valider l'initiative.");
     return(-1);
@@ -266,7 +271,7 @@ function INIT_TraiterRetour(x, InitDE)
         {
             MSG.Historique(Perso.Gras(x) + " <strong>DOUBLE "+ InitDE.Yang + "</strong>", 1);
             MSG.Journal("<strong>DOUBLE "+ InitDE.Yang + "</strong>",2);
-            INIT_DATA[x].Valeur = parseInt(100) + parseInt(10 * InitDE.Yang) + INIT_DATA[x].BonusCarac;
+            INIT_DATA[x].Valeur = parseInt(100) + parseInt(10 * InitDE.Yang) + parseInt(INIT_DATA[x].BonusCarac);
             INIT_DATA[x].Format = InitDE.Yang + "x" + InitDE.Yang;
             BonusAvant.Ajouter(x, InitDE.Yang);
         }
@@ -274,7 +279,7 @@ function INIT_TraiterRetour(x, InitDE)
         {
             MSG.Historique(Perso.Gras(x) + " <strong>ECHEC CRITIQUE "+ InitDE.Yang + "</strong>", 1);
             MSG.Journal("<strong>ECHEC CRITIQUE "+ InitDE.Yang + "</strong>",2);
-            INIT_DATA[x].Valeur = -10 + INIT_DATA[x].Bonus;
+            INIT_DATA[x].Valeur = parseInt(INIT_DATA[x].BonusCarac) - parseInt(100);
             INIT_DATA[x].Format = "0x0";
             BonusAvant.Ajouter(x, -5);
         }
@@ -294,10 +299,9 @@ function INIT_TraiterRetour(x, InitDE)
         if(Bonus > 0) {Chaine += " ["+Bonus+"]";}
         MSG.Historique(Perso.Gras(x) + Chaine, 1);
         MSG.Journal("Initiative : "+ Nb, 2);
-        INIT_DATA[x].Valeur = Nb + "." + INIT_DATA[x].BonusCarac;
+        INIT_DATA[x].Valeur = parseInt(10 * Nb) + INIT_DATA[x].BonusCarac;
         INIT_DATA[x].Format = Nb;
     }
-    console.log("Init : "+x+"/"+InitDE.Double+"/"+InitDE.Yang+"/"+InitDE.Yin+"/"+INIT_DATA[x].Valeur+"/"+INIT_DATA[x].Format);
     INIT_DATA[x].BonusMagie = 0;
     PERSO_DATA[x].Bloque = true;
     PERSO_DATA[x].Afficher = false;
@@ -377,18 +381,18 @@ function INIT_Trier()
 /***********************************************************************************/
 /*  Selection d'une nouvelle initiative
 /***********************************************************************************/
-function INIT_Nouvelle(Obj, x)
+function INIT_Nouvelle(Obj, Id)
 {
     Bouton.Activer(BtnValider, true);
-    BonusAvant.Activer(x, false);
+    BonusAvant.Activer(Id, false);
     Obj.disabled = true;
     if(Obj.value != "")
     {
-        Objet.Couleur(INIT_DATA[x].PtrLigne, 0);
+        Objet.Couleur(INIT_DATA[Id].PtrLigne, 0);
     }
-    if((Perso.Actif < 0) || (Perso.Actif == x))
+    if((Perso.Actif < 0) || (Perso.Actif == Id))
     {
-        if(INIT_GererDE(x) > 0)
+        if(INIT_GererDE(Id) > 0)
         {   
             INIT_ValiderDE();
         }

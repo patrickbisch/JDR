@@ -45,6 +45,7 @@ function COMBAT_NouveauPersonnage()
     Moteur.ArreterModule();
     if(Perso.Actif >= 0)
     {
+        Tao.Afficher(Perso.Actif, "");
         Action.Afficher(Perso.Actif, false);
     }
     Init.Actif = COMBAT_PersonnageSuivant(Init.Actif + 1);
@@ -56,18 +57,18 @@ function COMBAT_NouveauPersonnage()
     if(Init.Actif < 0)
     {
         Perso.Actif = -1;
+        Cible.Active = -1;
         PERSO_ActualiserListe();
         Init.EtatBouton(false, false);
         BonusExceptionnel.TourTermine();
-        if(Init.Actif == -1)
-        {
-            MSG.Message("Fin du Tour de combat.", true);
-            MSG.Erreur("FIN DU TOUR DE COMBAT");
-        }
-        else
+        if(COMBAT_Termine())
         {
             MSG.Message("Fin du combat.", true);
             MSG.Erreur("FIN DU COMBAT");
+        }
+        else
+        {
+            Moteur.LancerModule("Tour INIT");
         }
     }
     else
@@ -75,6 +76,7 @@ function COMBAT_NouveauPersonnage()
         Bouton.Valider.Demarrer("ACTION");
         Bouton.Valider.Desactiver();
         Perso.Actif = INIT_ORDRE[Init.Actif];
+        Cible.AffecterDefaut(Perso.Actif);
         Tao.Afficher(Perso.Actif, "ACTION");
         Action.Activer(Perso.Actif);
         MSG.Historique(Perso.Gras(Perso.Actif) + " est le nouveau personnage actif");
@@ -106,4 +108,23 @@ function COMBAT_PersonnageSuivant(Debut)
         }
     }
     return(-1);
+}
+function COMBAT_Termine()
+{
+    for(let x = 0;x < INIT_DATA.length;x++)
+    {
+        let Id = INIT_ORDRE[x];
+        if(!Perso.Mort(Id))
+        {
+            if(Perso.NombreAdversaire(Id) > 0)
+            {
+                return(false);
+            }
+            else
+            {
+                return(true);
+            }
+        }
+    }
+    return(true);
 }

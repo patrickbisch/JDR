@@ -3,12 +3,12 @@ class EQUIP_Interface  {
     Personnage() {EQUIP_EquiperPersonnage();}
     AfficherListe(Etat) {EQUIP_AfficherListe(Etat);}
     Activer(Index, Etat) {EQUIP_Activer(Index, Etat);}
-    AffecterArme(Id, IdArme) {EQUIP_Affecter(Id, 0, IdArme);}
+    AffecterArme(Id, IdArme) {return(EQUIP_Affecter(Id, 0, IdArme));}
     AfficherArmureNaturelle(Id) {EQUIP_ArmureNaturelle(Id);}
     ArmeSelectionne(Index) {return(EQUIP_DATA[Index].Equipement[0].PtrSelect.value);}
     BouclierSelectionne(Index) {return(EQUIP_DATA[Index].Equipement[2].PtrSelect.value);}
     CouleurArme(Index, Couleur) {Objet.Couleur(EQUIP_DATA[Index].Equipement[0].PtrLigne, Couleur);}
-    ChoisirArmePrincipale(Index) {EQUIP_Affecter(Index, 0, 0)}
+    ChoisirArmePrincipale(Index, GererBouton) {return(EQUIP_Affecter(Index, 0, 0, GererBouton));}
     Protection(Index) {return(EQUIP_Protection(Index));}
 }
 var Equipement = new EQUIP_Interface();
@@ -226,12 +226,12 @@ function EQUIP_ObjetModifie(Obj, Id, x)
     EQUIP_NouveauObjet(Obj, Id, x)
     EQUIP_ControlerAffectation();
 }
-function EQUIP_Affecter(Id, Type, Indice)
+function EQUIP_Affecter(Id, Type, Indice, GererBouton)
 {
     let Ptr = EQUIP_DATA[Id].Equipement[Type].PtrSelect;
     Ptr.value = Indice;
     EQUIP_NouveauObjet(Ptr, Id, Type);
-    EQUIP_ControlerAffectation();
+    return(EQUIP_ControlerAffectation(GererBouton));
 }
 function EQUIP_NouveauObjet(Obj, Id, x)
 {
@@ -407,7 +407,7 @@ function EQUIP_AfficherListe(Etat = false)
         }
     }
 }
-function EQUIP_ControlerAffectation()
+function EQUIP_ControlerAffectation(GererBouton = true)
 {
     let Erreur = false;
     for(let x = 0;x < EQUIP_DATA.length;x++)
@@ -426,7 +426,10 @@ function EQUIP_ControlerAffectation()
             }
         }
     }
-    Bouton.Valider.Activer(!Erreur);
+    if(GererBouton)
+    {
+        Bouton.Valider.Activer(!Erreur);
+    }
     return(Erreur);
 }
 function EQUIP_ValiderDe()
@@ -436,18 +439,18 @@ function EQUIP_ValiderDe()
 }
 function EQUIP_Protection(Id)
 {
-    let Retour = Perso.Base(Id).ArmureNaturelle + PERSO_DATA[Id].BonusProtection;
+    let Retour = parseInt(Perso.Base(Id).ArmureNaturelle) + parseInt(PERSO_DATA[Id].BonusProtection);
     let Nb = EQUIP_DATA[Id].Equipement[1].PtrSelect.value;
     if(parseInt(Nb) >= 0)
     {
         let Ptr = Perso.Armure(Id, Nb);
-        Retour += Ptr.Protection;
+        Retour += parseInt(Ptr.Protection);
     }
-    Nb = EQUIP_DATA[Id].Equipement[2];PtrSelect.value;
+    Nb = EQUIP_DATA[Id].Equipement[2].PtrSelect.value;
     if(parseInt(Nb) >= 0)
     {
         let Ptr = Perso.Bouclier(Id, Nb);
-        Retour += Ptr.Protection;
+        Retour += parseInt(Ptr.Protection);
     }
     return(Retour);
 }

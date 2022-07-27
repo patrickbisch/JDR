@@ -37,7 +37,6 @@ function BOUTON_Initialiser()
 /*******************************************************************/
 function BOUTON_ValiderDe()
 {
-    MSG.Historique("BOUTON_ValiderDe = Phase de tour [" + Bouton.Valider.Module + "] !!");
     switch(Bouton.Valider.Module)
     {
         case "INIT":

@@ -6,6 +6,7 @@ class TA_Interface  {
     Couleur(Id, Code) {Objet.Couleur(TA_DATA[Id].PtrLigne, Code);}
     Gerer() {ATTAQUE_Gerer();}
     Termine() {ATTAQUE_Termine();}
+    AutoriserNouveauJet(Id) {ATTAQUE_NouveauJet(Id);}
 }
 var Attaque = new TA_Interface();
 let TA_DATA = new Array();
@@ -97,28 +98,33 @@ function TA_TraiterRetour(Id, DEValide)
     {
         return(-1);
     }
-    let BoAv  = PERSO_DATA[Id].BonusAvant.Bonus;
+    Tao.Afficher(Id, "");
+    Bouton.Valider.Activer(false);
+    let BoAv  = Perso.BonusAvant(Id).Bonus;
     BonusAvant.Utiliser(Id);
     let Arme = Perso.Arme(Id, Nb);
     let TACO = Arme.Attaquer;
     let CorpsCorps = true;
-    switch(LstAction[0].Action)
+    ACTION_ControlerEnCours();
+    switch(parseInt(LstAction[0].Action))
     {
-        case "4":
+        case 4:
             break;
-        case "5":
-        case "6":
-        default:
+        case 5:
+        case 6:
             CorpsCorps = false;
             Arme.Quantite--;
             TACO = Arme.Lancer;
             break;
+        default:
+            MSG.Erreur("TYPE D'ACTION ["+LstAction[0].Action+"] NON GERE");
+            return(-1);
     }
     Perso.AjouterAttaque(Id, CorpsCorps);
     let Double = 0;
-    if(TirageDE.Double)
+    if(DEValide.Double)
     {
-        if(TirageDE.Yang == 0)
+        if(DEValide.Yang == 0)
         {
             BonusAvant.Ajouter(Id, -5);
             MSG.Message("<strong>ECHEC CRITIQUE !!</strong>");
@@ -129,24 +135,39 @@ function TA_TraiterRetour(Id, DEValide)
         }
         else
         {
-            BonusAvant.Ajouter(Id, TirageDE.Yang);
-            Double = TirageDE.Yang;
+            BonusAvant.Ajouter(Id, DEValide.Yang);
+            Double = DEValide.Yang;
         }
     }
-    let Touche = parseInt(TACO) +
-                parseInt(PERSO_BASE[Id].Metal) +
-                parseInt(BoAv) +
-                parseInt(PERSO_DATA[Id].MalusPV) +
-                Math.abs(parseInt(TirageDE.Yang) - parseInt(TirageDE.Yin)) + 
-                parseInt(Double) +
-                parseInt(LstAction[0].Touche);
+    let Touche  = Math.abs(parseInt(DEValide.Yang) - parseInt(DEValide.Yin));
+    if(parseInt(DEValide.Yang) == parseInt(DEValide.Yin))
+    {
+        Touche = parseInt(DEValide.Yang);
+    }
+    Touche +=parseInt(TACO) +
+            parseInt(PERSO_BASE[Id].Metal) +
+            parseInt(BoAv) +
+            parseInt(PERSO_DATA[Id].MalusPV) +
+            parseInt(LstAction[0].Touche);
+
+MSG.Historique("Taco : "+parseInt(TACO)+" Metal :"+parseInt(PERSO_BASE[Id].Metal)+" BA : "+parseInt(BoAv)+
+" Malus :"+parseInt(PERSO_DATA[Id].MalusPV)+" Yang/Yin : "+parseInt(TirageDE.Yang)+"/"+parseInt(TirageDE.Yin)+ 
+" BonusTouche : "+parseInt(LstAction[0].Touche));
+
     let Degat = parseInt(TirageDE.Yang) - parseInt(TirageDE.Yin);
     if(parseInt(Degat) < 0)
     {
         Degat = 0;
     }
-    Degat += parseInt(PERSO_BASE[Id].Metal) + parseInt(Arme.Degat) + parseInt(Double) +
-                parseInt(LstAction[0].Degat);
+    else
+    {
+        if(Degat == 0)
+        {
+            Degat = parseInt(TirageDE.Yang);
+        }
+    }
+    Degat += parseInt(PERSO_BASE[Id].Metal) + parseInt(Arme.Degat) +
+                parseInt(LstAction[0].Degat) + parseInt(PERSO_DATA[Id].BonusDegat);
 
     LstAttaque.length = 0;
     var LstCible = new Array();
@@ -171,26 +192,37 @@ function TA_TraiterRetour(Id, DEValide)
     for(let x = 0;x < LstCible.length;x++)
     {
         let Source = LstCible[x];
-        switch(TA_DATA[Id].PtrSelectTypeAttaque.value)
+        switch(parseInt(TA_DATA[Id].PtrSelectTypeAttaque.value))
         {
-            case "0":   // Attaque normale
+            case 0:   // Attaque normale
                 Ptr = new ATTAQUE_Liste(Source.Source, Source.Touche, Double, Source.Degat, Source.Cible, CorpsCorps, 0);
                 LstAttaque.push(Ptr);
                 break;
-            case "8":   // Coup double
+            case 8:   // Coup double
                 Ptr = new ATTAQUE_Liste(Source.Source, Source.Touche-1, Double, Source.Degat-1, Source.Cible, CorpsCorps, 0);
                 LstAttaque.push(Ptr);
-                ACTION_Ajouter(LstAction[0].Action, true, -1, -1);
+                if(!LstAction[0].Gratuit)
+                {
+                    ACTION_Ajouter(LstAction[0].Action, true, -1, -1);
+                }
                 break;
-            case "9":   // Coup precis
+            case 9:   // Coup precis
+            case 24:    //  Coup de maitre
                 Ptr = new ATTAQUE_Liste(Source.Source, Source.Touche-1, Double, Source.Degat, Source.Cible, CorpsCorps, -2);
                 LstAttaque.push(Ptr);
+                break;
+            case 27:   // Double trait
+                Ptr = new ATTAQUE_Liste(Source.Source, Source.Touche-1, Double, Source.Degat-1, Source.Cible, CorpsCorps, 0);
+                LstAttaque.push(Ptr);
+                if(!LstAction[0].Gratuit)
+                {
+                    ACTION_Ajouter(LstAction[0].Action, true, -2, 0);
+                }
                 break;
             default:
                 MSG.Erreur("TA_TraiterRetour = " + Id + "/" + TA_DATA[Id].PtrSelectTypeAttaque.value + " ==> NON GERE");
                 Action.Termine(Id);
                 return(0);
-                break;
         }
     }
     Moteur.LancerModule("ATTAQUE");
@@ -210,7 +242,7 @@ function ATTAQUE_Gerer()
         }
         if(Ptr.Double == "0")
         {
-            if(parseInt(Ptr.Touche) > parseInt(PERSO_BASE[Id].DefensePassive))
+            if(parseInt(Ptr.Touche) >= parseInt(PERSO_BASE[Id].DefensePassive))
             {
                 MSG.Journal("Touché : "+ Ptr.Touche + " / " + PERSO_BASE[Id].DefensePassive + 
                                 " (" + Perso.Lettre(Id) + ". " + Perso.Nom(Id) + ") Dégâts : " + Ptr.Degat, 2);
@@ -249,6 +281,8 @@ function ATTAQUE_Gerer()
 }
 function ATTAQUE_Termine()
 {
+    Attaque.Afficher(Perso.Actif, false)
+    Tao.Afficher(Perso.Actif, "");
     LstAttaque.splice(0, 1);
     Moteur.LancerModule("ATTAQUE");
 }
@@ -297,7 +331,15 @@ function TA_InitialiserManoeuvre(Id, TypeAttaque)
                 (PERSO_BASE[Id].Manoeuvres[x].distance == Distance) &&
                 (PERSO_BASE[Id].Manoeuvres[x].type == 1))
             {
-                TabOpt.push([PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre, PERSO_BASE[Id].Manoeuvres[x].nom]);
+                let Ajout = true;
+                if((PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre == 27) && (Arme.Quantite < 2))
+                {
+                    Ajout = false;
+                }
+                if(Ajout)
+                {
+                    TabOpt.push([PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre, PERSO_BASE[Id].Manoeuvres[x].nom]);
+                }
             }
         }
     }
@@ -319,4 +361,12 @@ function TA_InitialiserManoeuvre(Id, TypeAttaque)
     {
         Ptr.disabled = true;
     }
+}
+function ATTAQUE_NouveauJet(Id)
+{
+    Attaque.Afficher(Id, true);
+    Attaque.Couleur(Id, 2);
+    TA_DATA[Id].PtrSelectTypeAttaque.disabled = true;
+    TA_DATA[Id].PtrSelectJetAttaque.disabled = false;
+    TA_DATA[Id].PtrSelectJetAttaque.value = "";
 }

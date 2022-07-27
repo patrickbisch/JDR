@@ -39,12 +39,6 @@ function AfficherEtatPersonnage(Index)
 /*******************************************************************************/
 /*  Affiche le nombre d'action d'un personnage
 /*******************************************************************************/
-function AfficherNombreAction(Index)
-{
-    let Ptr = document.querySelector("#NbAction-" + Index);
-    Ptr.innerHTML = LstPerso[Index].NbAction + "/" + LstPerso[Index].NbActionMaxi;
-    AfficherEtatPersonnage(Index);
-}
 function AfficherCHI(Index, Bonus = 0)
 {
     let Ptr = document.querySelector("#CHI-" + Index);

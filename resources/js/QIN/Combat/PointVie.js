@@ -175,14 +175,15 @@ function JDR_BlesserPersonnage(Id, Blessures, CibleVeritable)
                     Encore = false;
                 }
             }
-            Somme = CIBLE_DATA[Id].Libre;
+            Somme = parseInt(CIBLE_DATA[Id].Libre);
             for(let x = 0;x < CIBLE_DATA[Id].TabGroupe.length;x++)
             {
-                Somme += CIBLE_DATA[Id].TabGroupe[x].Nb;
+                Somme += parseInt(CIBLE_DATA[Id].TabGroupe[x].Nb);
             }
-            if(Somme == 0)
+            if(parseInt(Somme) == 0)
             {
                 Perso.ChangerEtat(Id, true);
+                MSG.Erreur("MORT DE : "+Id);
             }
             PERSO_DATA[Id].MalusPV = Malus;
             PV_Actualiser(Id)

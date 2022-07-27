@@ -33,6 +33,7 @@ class PERSO_Interface{
     Arme(Index, Numero) {return(PERSO_BASE[Index].Armes[Numero]);}
     NombreArme(Index) {return(PERSO_BASE[Index].Armes.length);}
     Bouclier(Index, Numero) {return(PERSO_BASE[Index].Boucliers[Numero]);}
+    NombreBouclier(Index) {return(PERSO_BASE[Index].Boucliers.length);}
     Armure(Index, Numero) {return(PERSO_BASE[Index].Armures[Numero]);}
 }
 var Perso            = new PERSO_Interface();
@@ -152,9 +153,9 @@ Perso.Actif = 11;
 //PERSO_DATA[2].Mort = true
 //PERSO_DATA[4].Bloque = true;
 //PERSO_DATA[4].Afficher = false;
-PERSO_DATA[3].MalusPV = -1;
-PERSO_DATA[5].MalusPV = -3;
-PERSO_DATA[6].MalusPV = -5;
+//PERSO_DATA[3].MalusPV = -1;
+//PERSO_DATA[5].MalusPV = -3;
+//PERSO_DATA[6].MalusPV = -5;
 PERSO_ActualiserListe();
 Moteur.LancerModule("Equipement");
 /***************************************************************************************/
@@ -260,6 +261,10 @@ function PERSO_ChangerEtatListe(Ptr)
 }
 function PERSO_AffecterAction(Index, NombreAction)
 {
+    if(Perso.NbActionMaxi(Index) == NombreAction)
+    {
+        return(0);
+    }
     let Nb = Perso.NbActionMaxi(Index) - Perso.NbAction(Index);
     PERSO_DATA[Index].NbActionMaxi = NombreAction;
 
@@ -292,14 +297,19 @@ function PERSO_AjouterAttaque(Index, AttaqueCC)
     }
     if(TypeAtt == 0)
     {
-        let Nb = EQUIP_DATA[Index].Equipement[0].PtrSelect.value;
-        if(AttaqueCC)
+        let Nb = Equipement.ArmeSelectionne(Index);
+        if(Nb >= 0)
         {
-            Perso.AffecterNombreAction(Index, Perso.Base(Index).Armes[Nb].MaitriseCC + 1);
-        }
-        else
-        {
-            Perso.AffecterNombreAction(Index, Perso.Base(Index).Armes[Nb].MaitriseD + 1);
+            let Arme = Perso.Arme(Index, Nb);
+            let Maxi = Arme.MaitriseD + 1
+            if(AttaqueCC)
+            {
+                Maxi = Arme.MaitriseCC + 1;
+            }
+            if(Perso.NbActionMaxi(Index) != Maxi)
+            {
+                PERSO_AffecterAction(Index, Maxi);            
+            }
         }
     }
 }
@@ -336,7 +346,12 @@ function PERSO_SupprimerAction(Index)
 function PERSO_ChangerEtat(Index, Mort = true)
 {
     PERSO_DATA[Index].Mort = Mort;
-    CouleurObjet(PERSO_DATA[Index].PtrLigne, 2);
+    PERSO_DATA[Index].Bloque = Mort;
+    Objet.Couleur(PERSO_DATA[Index].PtrLigne, 2);
+    if(Perso.TypeFonction(Index) == 0)
+    {
+        Cible.ActualiserListeGroupe();
+    }
     PERSO_ActualiserListe();
 }
 /***************************************************************************************/
