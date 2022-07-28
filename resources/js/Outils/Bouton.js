@@ -43,13 +43,16 @@ function BOUTON_ValiderDe()
             INIT_ValiderDE();
             break;
         case "EQUIP":
-            EQUIP_ValiderDe();
+            EQUIP_ValiderDE();
             break;
         case "ACTION":
-            ACTION_ValiderDe();
+            ACTION_ValiderDE();
             break;
         case "ATTAQUE":
             ATTAQUE_ValiderDE();
+            break;
+        case "DEFENSE":
+            DEFENSE_ValiderDE();
             break;
         default:
             MSG.Erreur("BOUTON_ValiderDe = Phase de tour [" + Bouton.Valider.Module + "] INCONNUE !!");

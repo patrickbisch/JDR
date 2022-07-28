@@ -84,10 +84,8 @@ function TA_Jet(Obj, Id)
 }
 function ATTAQUE_ValiderDE()
 {
-    if(Perso.Actif < 0)
-    {
-        return(-1);
-    }
+    if(Perso.Actif == -2){Moteur.LancerModule("Tour INIT");}
+    if(Perso.Actif < 0){return(-1);}
     TA_TraiterRetour(Perso.Actif, TirageDE);
 }
 function TA_TraiterRetour(Id, DEValide)

@@ -220,13 +220,6 @@ function JDR_TexteValeurDE(Code)
     }
     return("");
 }
-function JDR_InitialiserBonusInitiative()
-{
-    for(let x = 0;x < INIT_DATA.length;x++)
-    {
-        INIT_DATA[x].BonusCarac = Perso.Base(x).Eau;
-    }
-}
 function JDR_InitialiserSelectJet(PtrSelect, Option = 0)
 {
     let TabOpt
@@ -262,6 +255,25 @@ function JDR_InitialiserSelectJet(PtrSelect, Option = 0)
             Opt.disabled = true;
         }
         PtrSelect.add(Opt);
+    }
+}
+/************************************************************************************************/
+/************************************************************************************************/
+/*      INITIALISATION DES CARACTERISTIQUES SPECIFIQUES AU JDR
+/************************************************************************************************/
+/************************************************************************************************/
+function JDR_InitialiserBonusInitiative()
+{
+    for(let x = 0;x < INIT_DATA.length;x++)
+    {
+        INIT_DATA[x].BonusCarac = Perso.Base(x).Eau;
+    }
+}
+function JDR_InitialiserBonusPersonnage()
+{
+    for(let x = 0;x < PERSO_DATA.length;x++)
+    {
+        PERSO_DATA[x].BonusCaracDefense = Perso.Base(x).Eau;
     }
 }
 

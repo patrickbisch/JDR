@@ -52,12 +52,15 @@ class PERSO_Donnee{
     Bloque = false;
 
     //  Aptitudes pour le combat
-    Vigilant = false;
-    BonusProtection = 0;
-    BonusAttaqueCC = 0;
-    BonusAttaqueD = 0;
-    BonusDefense = 0;
-    BonusDegat = 0;
+    Vigilant = false;       //  TAG indiquant si le personnage est Vigilant
+    BonusProtection = 0;    //  Bonus de protection (TAO Defense renforcee)  
+    BonusAttaqueCC = 0;     
+    BonusAttaqueD = 0;      
+    BonusDefense = 0;       //  Bonus pour la defense (TAO Parade renforcé)
+    BonusDegat = 0;         //  Bonus pour les degats (TAO Brise legere)
+    CaracAttaqueCC = 0;
+    CaracAttaqueD = 0;
+    BonusCaracDefense = 0;  //  (EAU) Bonus caracteristique pour la defense
 
     AttaqueCC = 0;
     AttaqueDis = 0;
@@ -143,6 +146,7 @@ function PERSO_Initialiser()
     PV.Initialiser(Perso.Taille);
     Cible.Initialiser(Perso.Taille);
     Tao.Initialiser(Perso.Taille);
+    JDR_InitialiserBonusPersonnage();
 /***************************************************************************************/
 /***************************************************************************************/
 /******      MODE DEBUG                                                            *****/

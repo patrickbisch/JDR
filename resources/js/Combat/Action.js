@@ -239,7 +239,7 @@ function ACTION_Attaquer(Id)
         Attaque.Afficher(Id, true);
     }
 }
-function ACTION_ValiderDe()
+function ACTION_ValiderDE()
 {
     switch(parseInt(LstAction[0].Action))
     {

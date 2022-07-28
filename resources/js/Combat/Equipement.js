@@ -432,7 +432,7 @@ function EQUIP_ControlerAffectation(GererBouton = true)
     }
     return(Erreur);
 }
-function EQUIP_ValiderDe()
+function EQUIP_ValiderDE()
 {
     Mode = "AUTRE";
     Moteur.LancerModule("Tour INIT");

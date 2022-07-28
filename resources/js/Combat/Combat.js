@@ -68,7 +68,9 @@ function COMBAT_NouveauPersonnage()
         }
         else
         {
-            Moteur.LancerModule("Tour INIT");
+            MSG.Message("Fin du tour de combat, valider pour l'initiative.", true);
+            Perso.Actif = -2;
+            Bouton.Valider.Activer(true);
         }
     }
     else

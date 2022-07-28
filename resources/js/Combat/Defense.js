@@ -18,7 +18,9 @@ class TD_Donnee{
     DefenseGratuite = false;
     LstDefense = new Array();
 }
-
+/*********************************************************************************/
+/*      Initialisation du module
+/*********************************************************************************/
 function TD_Initialiser(Taille)
 {
     MSG.Historique("Initialisation de la defense.",1)
@@ -50,6 +52,9 @@ function TD_NouveauTour()
         TD_DATA[x].DefenseGratuite = false;
     }
 }
+/*********************************************************************************/
+/*      Nouvelle selection TypeDefense ou Jet
+/*********************************************************************************/
 function TD_Nouvelle(Obj, Id)
 {
     switch(Obj.value)
@@ -57,15 +62,182 @@ function TD_Nouvelle(Obj, Id)
         case "A":
             TD_AucuneDefense(Id);
             break;
+        case "E":
+        case "B":
+        case "P":
+        case "DP2":
+        case "12":
+        case "2":
+            BonusAvant.Activer(Id, true);
+            Obj.disabled = true;
+            TD_DATA[Id].PtrSelectJetDefense.disabled = false;
+            break;
         default:
             MSG.Erreur("TD_Nouvelle : ["+Obj.value+"] NON GERE");
     }
 }
-function TD_Jet(Ptr, Id)
+function TD_Jet(Obj, Id)
 {
+    Obj.disabled = true;
     TD_DATA[Id].PtrSelectTypeDefense.disabled = true;
-    Tao.Afficher(Id, "DEFENSE", true);
+    Tao.Afficher(Id, "DEFENSE");
+    Objet.Couleur(TD_DATA[Id].PtrLigne, 0);
+    BonusAvant.Activer(Id, false);
+    if(TD_GererDE(Id, Obj.value) > 0)
+    {
+        TD_TraiterRetour(Id, TirageDE);
+    }
+    else
+    {
+        Bouton.Valider.Demarrer("DEFENSE");
+    }
 }
+/*********************************************************************************/
+/*      Gestion des DE et sa selection
+/*********************************************************************************/
+function TD_GererDE(Id, Chaine)
+{
+    if(Chaine == "L")
+    {
+        JDR_ValeurDE(0, 0);
+        JDR_AfficherDE(1);
+        return(-1);
+    }
+    JDR_LancerDE(Chaine);
+    if(Perso.BonusAvant(Id).Maxi == 0)
+    {
+        return(1);
+    }
+    MSG.Message("Valider la défense.");
+    return(-1);
+}
+function DEFENSE_ValiderDE()
+{
+    if(Cible.Active < 0)
+    {
+        return(-1);
+    }
+    TD_TraiterRetour(Cible.Active, TirageDE);
+}
+function TD_TraiterRetour(Id, DEValide)
+{
+    JDR_AfficherDE(-1);
+    Tao.Afficher(Id, "");
+    Bouton.Valider.Activer(false);
+    let BoAv  = Perso.BonusAvant(Id).Bonus;
+    BonusAvant.Utiliser(Id);
+
+    let Double = 0;
+    if(DEValide.Double)
+    {
+        if(DEValide.Yang == 0)
+        {
+            BonusAvant.Ajouter(Id, -5);
+            MSG.Message("<strong>ECHEC CRITIQUE !!</strong>");
+            MSG.Historique("<strong>ECHEC CRITIQUE !!</strong>", 2);
+            MSG.Journal("<strong>ECHEC CRITIQUE !!</strong>", 3);
+            TD_AucuneDefense(Id);
+            return(0);
+        }
+        else
+        {
+            BonusAvant.Ajouter(Id, DEValide.Yang);
+            Double = DEValide.Yang;
+        }
+    }
+
+    let Nb = 0;
+    let Chaine = "";
+    let Gratuit = false;
+    switch(TD_DATA[Id].PtrSelectTypeDefense.value)
+    {
+        case "E":
+            Chaine = "Esquive";
+            Nb = TD_DATA[Id].LstDefense[TD_DATA[Id].PtrSelectTypeDefense.value];
+            break;
+        case "B":
+            Chaine = "Parade au bouclier";
+            Nb = TD_DATA[Id].LstDefense[TD_DATA[Id].PtrSelectTypeDefense.value];
+            break;
+        case "P":
+            Chaine = "Parade";
+            Nb = TD_DATA[Id].LstDefense[TD_DATA[Id].PtrSelectTypeDefense.value];
+            break;
+        case "DP2":
+            Gratuit = true;
+            Chaine = "Parade";
+            TD_DATA[Id].DoubleParade = false;
+            Nb = TD_DATA[Id].LstDefense[TD_DATA[Id].PtrSelectTypeDefense.value];
+            break;
+        case "12":
+            Chaine = "Parade";
+            TD_DATA[Id].DoubleParade = true;
+            Nb = TD_DATA[Id].LstDefense["DP1"];
+            break;
+        case "2":
+        default:
+            MSG.Erreur("TYPE DE DEFENSE ["+TD_DATA[Id].PtrSelectTypeDefense.value+"] NON GERE");
+            return(-1);
+    }
+
+    if(!Gratuit)
+    {
+        Gratuit = TD_DATA[Id].DefenseGratuite;
+        TD_DATA[Id].DefenseGratuite = false;
+    }
+    if(!Gratuit)
+    {
+        Perso.UtiliserAction(Id);
+    }
+    if(LstAttaque[0].Double > 0)
+    {
+        if(Double > LstAttaque[0].Double)
+        {
+            MSG.Historique("<strong>" + Chaine + " CRITIQUE !!</strong> " + Double + " contre " + LstAttaque[0].Double, 2);
+            MSG.Journal("<strong>" + Chaine + " CRITIQUE !!</strong> " + Double + " / " + LstAttaque[0].Double, 3);
+            TD_Termine(Id);
+        }
+        else
+        {
+            TD_CalculerDegat(Id, Chaine + " Ratée, ");
+        }
+    }
+    else
+    {
+        if(Double > 0 )
+        {
+            MSG.Historique("<strong>" + Chaine + " CRITIQUE !!</strong> : " + Double, 2);
+            MSG.Journal("<strong>" + Chaine + " CRITIQUE !!</strong> : " + Double, 3);
+            TD_Termine(Id);
+        }
+        else
+        {
+            if(parseInt(DEValide.Yang) == parseInt(DEValide.Yin))
+            {
+                Double = DEValide.Yang;
+            }
+            Nb += parseInt(BoAv) + parseInt(PERSO_DATA[Id].BonusCaracDefense) + 
+            Math.abs(parseInt(DEValide.Yang) - parseInt(DEValide.Yin)) + 
+            parseInt(Double) + parseInt(PERSO_DATA[Id].MalusPV) +
+            parseInt(PERSO_DATA[Id].BonusDefense) 
+            if(parseInt(Nb) >= parseInt(LstAttaque[0].Touche))
+            {
+                MSG.Historique(Chaine + " réussie : " + Nb + " contre " + LstAttaque[0].Touche, 2);
+                MSG.Journal(Chaine + " réussie : " + Nb + " / " + LstAttaque[0].Touche, 3);
+                TD_Termine(Id);
+            }
+            else
+            {
+                MSG.Historique(Chaine + " ratée : " + Nb + " contre " + LstAttaque[0].Touche, 2);
+                MSG.Journal(Chaine + " ratée : " + Nb + " / " + LstAttaque[0].Touche, 3);
+                TD_CalculerDegat(Id, "");
+            }
+        }
+    }
+}
+/*********************************************************************************/
+/*      Gestion des TAO et des types de defenses
+/*********************************************************************************/
 function TD_ControlerTaoActif(Id)
 {
     let Nb = 0;
@@ -82,27 +254,6 @@ function TD_ControlerTaoActif(Id)
         }
     }
     return(Nb);
-}
-function TD_Activer(Id)
-{
-    Defense.Afficher(Id, true);
-    Tao.Afficher(Id, "DEFENSE", false);
-    TD_DATA[Id].PtrSelectTypeDefense.disabled = false;
-    TD_DATA[Id].PtrSelectJetDefense.disabled = true;
-    TD_DATA[Id].PtrSelectJetDefense.value = "";
-    Objet.Couleur(TD_DATA[Id].PtrLigne, 2);
-    let AucuneDefense = false;
-    if(TD_InitialiserSelection(Id) < 3)
-    {
-        if(TD_ControlerTaoActif(Id) == 0)
-        {
-            AucuneDefense = true;
-        }
-    }
-    if(AucuneDefense)
-    {
-        TD_AucuneDefense(Id);
-    }
 }
 function TD_InitialiserSelection(Id)
 {
@@ -156,11 +307,11 @@ function TD_InitialiserSelection(Id)
             Opt = document.createElement("option");
             Opt.text = "Parer (" + PA + ")";
             Opt.value = "P";
-            if((LstAttaque[0].CorpsCorps) || (Arme.MaitriseCC >= 3))
-            {
-                Ptr.add(Opt);
-                TD_DATA[Id].LstDefense["P"] = PA;
-            }
+            TD_DATA[Id].LstDefense["P"] = PA;
+            let Ajout = true;
+            if((!LstAttaque[0].CorpsCorps) && (Arme.MaitriseCC < 3)){Ajout = false;}
+            if(Arme.MaitriseCC == 0){Ajout = false;}
+            if(Ajout){Ptr.add(Opt);}
             for(let x = 0;x < PERSO_BASE[Id].Manoeuvres.length;x++)
             {
                 if((PERSO_BASE[Id].Manoeuvres[x].id_arme == Arme.id_arme) &&
@@ -171,7 +322,19 @@ function TD_InitialiserSelection(Id)
                     Opt.text = PERSO_BASE[Id].Manoeuvres[x].nom;
                     Opt.value = PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre;
                     let Ajout = true;
-                    if((PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre == 2) && !LstAttaque[0].CorpsCorps){Ajout = false;}
+                    if((PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre == 2) && !LstAttaque[0].CorpsCorps)
+                    {
+                        Ajout = false;
+                    }
+                    if(PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre == 12)
+                    {
+                        console.debug("Double parade : "+LstAttaque[0].CorpsCorps+"/"+Arme.MaitriseCC);
+                        if(!LstAttaque[0].CorpsCorps && (Arme.MaitriseCC < 3)){Ajout = false;}
+                        if(TD_DATA[Id].DoubleParade){Ajout = false;}
+                        let Nb  = parseInt(TD_DATA[Id].LstDefense["P"]) - 1;
+                        Opt.text += " (" + Nb + ")";
+                        TD_DATA[Id].LstDefense["DP1"] = Nb;
+                    }
                     if(Ajout){Ptr.add(Opt);}
                 }
             }
@@ -181,13 +344,41 @@ function TD_InitialiserSelection(Id)
     {
         Opt = document.createElement("option");
         let PA = TD_DATA[Id].LstDefense["P"] - 2;
-        Opt.text = "Double parade (" + PA + ")";
-        Opt.value = "DP";
+        Opt.text = "Parade gratuite (" + PA + ")";
+        Opt.value = "DP2";
         Ptr.add(Opt);
-        TD_DATA[Id].LstDefense["DP"] = PA;
+        TD_DATA[Id].LstDefense["DP2"] = PA;
     }
+    Ptr.disabled = false;
     return(Ptr.options.length);
 }
+/*********************************************************************************/
+/*      Lancement de la defense
+/*********************************************************************************/
+function TD_Activer(Id)
+{
+    Defense.Afficher(Id, true);
+    Tao.Afficher(Id, "DEFENSE", false);
+    TD_DATA[Id].PtrSelectTypeDefense.disabled = false;
+    TD_DATA[Id].PtrSelectJetDefense.disabled = true;
+    TD_DATA[Id].PtrSelectJetDefense.value = "";
+    Objet.Couleur(TD_DATA[Id].PtrLigne, 2);
+    let AucuneDefense = false;
+    if(TD_InitialiserSelection(Id) < 3)
+    {
+        if(TD_ControlerTaoActif(Id) == 0)
+        {
+            AucuneDefense = true;
+        }
+    }
+    if(AucuneDefense)
+    {
+        TD_AucuneDefense(Id);
+    }
+}
+/*********************************************************************************/
+/*      Gestion de la defense
+/*********************************************************************************/
 function TD_AucuneDefense(Id)
 {
     TD_DATA[Id].PtrSelectTypeDefense.disabled = true;
