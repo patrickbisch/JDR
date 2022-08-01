@@ -88,6 +88,45 @@ function ATTAQUE_ValiderDE()
     if(Perso.Actif < 0){return(-1);}
     TA_TraiterRetour(Perso.Actif, TirageDE);
 }
+function ATTAQUE_CalculerTouche(Id, CorpsCorps, BoAv, JetDE)
+{
+    let Nb = Equipement.ArmeSelectionne(Id);
+    if(parseInt(Nb) < 0){return(-1);}
+    let Arme = Perso.Arme(Id, Nb);
+    let TACO = Arme.Lancer;
+    if(CorpsCorps){TACO = Arme.Attaquer;}
+
+    let Touche  = Math.abs(parseInt(JetDE.Yang) - parseInt(JetDE.Yin));
+    if(parseInt(Touche) == 0){Touche = parseInt(JetDE.Yang);}
+    Touche += parseInt(TACO) +
+                parseInt(PERSO_BASE[Id].Metal) +
+                parseInt(BoAv) +
+                parseInt(PERSO_DATA[Id].MalusPV);
+    return(Touche);
+}
+function ATTAQUE_CalculerDegat(Id, JetDE)
+{
+    let Nb = Equipement.ArmeSelectionne(Id);
+    if(parseInt(Nb) < 0){return(-1);}
+    let Arme = Perso.Arme(Id, Nb);
+
+    let Degat = parseInt(JetDE.Yang) - parseInt(JetDE.Yin);
+    if(parseInt(Degat) < 0)
+    {
+        Degat = 0;
+    }
+    else
+    {
+        if(Degat == 0)
+        {
+            Degat = parseInt(JetDE.Yang);
+        }
+    }
+    Degat += parseInt(PERSO_BASE[Id].Metal) + 
+                parseInt(Arme.Degat) +
+                parseInt(PERSO_DATA[Id].BonusDegat);
+    return(Degat);
+}
 function TA_TraiterRetour(Id, DEValide)
 {
     JDR_AfficherDE(-1);

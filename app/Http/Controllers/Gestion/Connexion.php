@@ -46,7 +46,8 @@ class Connexion extends Controller
         session(['USER' => $Ptr]);
         var_dump(session('USER'));
 
-        return redirect("/$Ptr->JDR/Combat/$Ptr->Campagne/$Ptr->Rencontre");
+        return redirect("/Carte/Gestion/-1/-1");
+//        return redirect("/$Ptr->JDR/Combat/$Ptr->Campagne/$Ptr->Rencontre");
 
 //        if($request->Action == 'QIN')
 //        {

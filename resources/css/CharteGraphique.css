@@ -1,0 +1,40 @@
+body {
+    font-family: Georgia, serif;
+    font-size: 12px;
+    background-color:cyan;
+    color: black;
+}
+.EcranSelect{
+    border-radius: 8px;
+    background-color:ivory;
+    padding-left: 2px;
+    margin-top: 3px;
+    margin-bottom: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+.EcranCellule{
+    border-radius: 8px;
+    border-width: 1px;
+    border-style:inset;
+    padding-left: 2px;
+    margin-top: 3px;
+    margin-bottom: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
+    padding-top: 0px;
+    padding-bottom: 2px;
+    height: 22px;
+}
+.Numerique{
+    font-family: Verdana, sans-serif;
+}
+.Droite{
+    text-align: right;
+}
+.Gauche{
+    text-align: left;
+}
+.Centre{
+    text-align: center;
+}

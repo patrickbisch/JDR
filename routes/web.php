@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Gestion\Combat;
 use App\Http\Controllers\Gestion\Connexion;
+use App\Http\Controllers\Carte\GestionCarte;
 use App\Http\Controllers\QIN\GestionQIN;
 
 use Illuminate\Support\Facades\Route;
@@ -66,6 +67,12 @@ return redirect('/Deconnection');
         [Combat::class, 'ListeArmure']);
     Route::get('/Liste/Bouclier', 
         [Combat::class, 'ListeBouclier']);
+/*========================================================*/
+/*  Gestion pour les cartes
+/*========================================================*/   
+    Route::get('/Carte/Gestion/{id_carte}/{id_rencontre}', 
+        [GestionCarte::class, 'Carte']);
+
 /*========================================================*/
 /*  Gestion pour le JDR QIN
 /*========================================================*/   

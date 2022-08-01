@@ -9,6 +9,7 @@
     <!-- CSS And Javascript -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <link rel="stylesheet" href="{{URL::asset('../resources/css/Combat/CharteGraphique.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('../resources/css/Carte/CharteGraphique.css')}}">
     <link rel="shortcut icon" href="{{URL::asset('../resources/Images/Campagne.png') }}">
 
     @yield('FeuilleStyle')
@@ -33,11 +34,11 @@
 
         @yield('MenuHaut')
 
-        <div class="Carte">
-            <img class="" src="../resources/Cartes/Carte04.jpg" alt="Carte">
-        </div>
-
         @include('Combat.MenuBas')
+
+        <div class="FondCarte">
+            @include('Combat.Carte')
+        </div>
 
     </div>
 
@@ -53,6 +54,7 @@
     <script src="../resources/js/Combat/Cible.js"></script>
     <script src="../resources/js/Combat/BonusExceptionnel.js"></script>
     <script src="../resources/js/Combat/Combat.js"></script>
+    <script src="../resources/js/Carte/Gestion.js"></script>
     @yield('CodeJavaScript')
     <script src="../resources/js/Combat/Demarrage.js"></script>
 

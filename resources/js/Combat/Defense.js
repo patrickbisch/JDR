@@ -5,6 +5,7 @@ class TD_Interface  {
     Afficher(Id, Etat) {Objet.Afficher(TD_DATA[Id].PtrLigne, Etat);}
     Activer(Id) {TD_Activer(Id);}
     NouvelleDefensePassive(Id) {TD_NouvelleDefensePassive(Id);}
+    InitialiserSelection(Id) {TD_InitialiserSelection(Id);}
 }
 var Defense = new TD_Interface();
 let TD_DATA = new Array();
@@ -80,7 +81,14 @@ function TD_Jet(Obj, Id)
 {
     Obj.disabled = true;
     TD_DATA[Id].PtrSelectTypeDefense.disabled = true;
-    Tao.Afficher(Id, "DEFENSE");
+    if(TD_DATA[Id].PtrSelectTypeDefense.value != "2")
+    {
+        Tao.Afficher(Id, "DEFENSE");
+    }
+    else
+    {
+        Tao.Afficher(Id, "ATTAQUE");
+    }
     Objet.Couleur(TD_DATA[Id].PtrLigne, 0);
     BonusAvant.Activer(Id, false);
     if(TD_GererDE(Id, Obj.value) > 0)
@@ -175,6 +183,8 @@ function TD_TraiterRetour(Id, DEValide)
             Nb = TD_DATA[Id].LstDefense["DP1"];
             break;
         case "2":
+            TD_AttaqueSuicide(Id, BoAv);
+            return(0);
         default:
             MSG.Erreur("TYPE DE DEFENSE ["+TD_DATA[Id].PtrSelectTypeDefense.value+"] NON GERE");
             return(-1);
@@ -217,9 +227,9 @@ function TD_TraiterRetour(Id, DEValide)
                 Double = DEValide.Yang;
             }
             Nb += parseInt(BoAv) + parseInt(PERSO_DATA[Id].BonusCaracDefense) + 
-            Math.abs(parseInt(DEValide.Yang) - parseInt(DEValide.Yin)) + 
-            parseInt(Double) + parseInt(PERSO_DATA[Id].MalusPV) +
-            parseInt(PERSO_DATA[Id].BonusDefense) 
+                    Math.abs(parseInt(DEValide.Yang) - parseInt(DEValide.Yin)) + 
+                    parseInt(Double) + parseInt(PERSO_DATA[Id].MalusPV) +
+                    parseInt(PERSO_DATA[Id].BonusDefense) 
             if(parseInt(Nb) >= parseInt(LstAttaque[0].Touche))
             {
                 MSG.Historique(Chaine + " réussie : " + Nb + " contre " + LstAttaque[0].Touche, 2);
@@ -240,19 +250,22 @@ function TD_TraiterRetour(Id, DEValide)
 /*********************************************************************************/
 function TD_ControlerTaoActif(Id)
 {
+    console.debug("TD_ControlerTaoActif : "+Id);
     let Nb = 0;
     let Ptr = TAO_DATA[Id].PtrSelect;
     for(let x = 0;x < Ptr.options.length;x++)
     {
-        switch(parseInt(Ptr.value))
+        console.debug("  x = "+x+"/"+Ptr.options[x].value);
+        switch(parseInt(Ptr.options[x].value))
         {
             case 34:
             case 35:
             case 37:
-                Nb += 1;
+                Nb++;
                 break;
         }
     }
+    console.debug(" Retour : "+Nb);
     return(Nb);
 }
 function TD_InitialiserSelection(Id)
@@ -262,7 +275,6 @@ function TD_InitialiserSelection(Id)
         return(0);
     }
 
-    let LstDefense = new Array();
     let Ptr = TD_DATA[Id].PtrSelectTypeDefense;
     Ptr.options.length = 0;
 
@@ -364,13 +376,17 @@ function TD_Activer(Id)
     TD_DATA[Id].PtrSelectJetDefense.value = "";
     Objet.Couleur(TD_DATA[Id].PtrLigne, 2);
     let AucuneDefense = false;
+    console.debug("TD_Activer : "+Id);
     if(TD_InitialiserSelection(Id) < 3)
     {
+        console.debug("  1");
         if(TD_ControlerTaoActif(Id) == 0)
         {
+            console.debug("  2");
             AucuneDefense = true;
         }
     }
+    console.debug("  3 : " + AucuneDefense);
     if(AucuneDefense)
     {
         TD_AucuneDefense(Id);
@@ -384,7 +400,7 @@ function TD_AucuneDefense(Id)
     TD_DATA[Id].PtrSelectTypeDefense.disabled = true;
     TD_CalculerDegat(Id, "Aucune défense, ");
 }
-function TD_CalculerDegat(Id, MsgTexte)
+function TD_CalculerDegat(Id, MsgTexte, Termine = true)
 {
     let CA = Equipement.Protection(Id) + LstAttaque[0].Protection;
     if(CA < 0)
@@ -408,6 +424,48 @@ function TD_CalculerDegat(Id, MsgTexte)
         MSG.Historique(MsgTexte + " protection : " + CA + " => -" + PV + " PV",2);
     }
     JDR_BlesserPersonnage(Id, PV, LstAttaque[0].Cible);
+    if(Termine){TD_Termine(Id);}
+}
+function TD_AttaqueSuicide(Id, BoAv)
+{
+    let Touche = ATTAQUE_CalculerTouche(Id, true, BoAv, TirageDE);
+    let Degat = ATTAQUE_CalculerDegat(Id, TirageDE);
+    TD_CalculerDegat(Id, "", false);
+
+    console.debug("Degat : "+Degat);
+
+    let Tab = (LstAttaque[0].Source + "-0").split("-");
+    let Nb = Tab[0];
+    if((TirageDE.Double) || (Touche >= Perso.Base(Nb).DefensePassive))
+    {
+        let CA = Equipement.Protection(Nb);
+        console.debug("Cible : "+ Nb+" CA : "+CA);
+        let PV = Degat - CA;
+        console.debug("PV : "+ PV);
+        if(PV > 0)
+        {
+            JDR_BlesserPersonnage(Nb, PV, LstAttaque[0].Source);
+            MSG.Journal("Attaque suicide réussie => " + PV + " dégât",3);
+            MSG.Historique("Attaque suicide réussi => " + PV + " dégât",2);
+        }
+        else
+        {
+            MSG.Journal("Attaque suicide réussie => Aucun dégât",3);
+            MSG.Historique("Attaque suicide réussi => Aucun dégât",2);
+        }
+    }
+    else
+    {
+        MSG.Journal("Attaque suicide ratée",3);
+        MSG.Historique("Attaque suicide ratée",2);
+    }
+
+    let Gratuit = TD_DATA[Id].DefenseGratuite;
+    TD_DATA[Id].DefenseGratuite = false;
+    if(!Gratuit)
+    {
+        Perso.UtiliserAction(Id);
+    }
     TD_Termine(Id);
 }
 function TD_NouvelleDefensePassive(Id)

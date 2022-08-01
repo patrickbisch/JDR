@@ -411,6 +411,12 @@ function TAO_Executer(Id, IdTao, Cout)
         case 35:    //  Defense CHI
             TAO_DefenseCHI(Id, true, Cout);
             break;
+        case 36:    //  Parade renforcee
+            TAO_ParadeRenforce(Id, true)
+            break;
+        case 37:    //  Parade CHI
+            TAO_ParadeCHI(Id, true);
+            break;
         case 69:    //  Coup de chance
             JDR_AugmenterUnDE();
             break;
@@ -457,6 +463,14 @@ function TAO_Termine(Id, IdTao, Bonus)
             break;
         case 35:
             TAO_DefenseCHI(Id, false, Bonus);
+            break;
+        case 36:
+            TAO_ParadeRenforce(Id, false);
+            Commentaire = false;
+            break;
+        case 37:
+            TAO_ParadeCHI(Id, false);
+            Commentaire = false;
             break;
         default:
             MSG.Erreur("Le TAO [" + IdTao + "] (terminé) N'EST PAS GERE.");
@@ -606,6 +620,42 @@ function TAO_DefenseRenforce(Id, Ajout, Cout)
     {
         Obj.actif = false;
         PERSO_DATA[Id].BonusProtection = 0;
+    }
+}
+function TAO_ParadeRenforce(Id, Ajout)
+{
+    let Obj = TAO_Retourner(Id, 36);
+    if(Ajout)
+    {
+        let Ptr = BonusExceptionnel.Ajouter(Id);
+        Ptr.IdTao = 36;
+        Ptr.NbAction = 1;
+        Ptr.Bonus = PERSO_BASE[Id].Bois;
+        Obj.actif = true;
+        PERSO_DATA[Id].BonusDefense = Ptr.Bonus;
+    }
+    else
+    {
+        Obj.actif = false;
+        PERSO_DATA[Id].BonusDefense = 0;
+    }
+}
+function TAO_ParadeCHI(Id, Ajout)
+{
+    let Obj = TAO_Retourner(Id, 37);
+    if(Ajout)
+    {
+        let Ptr = BonusExceptionnel.Ajouter(Id);
+        Ptr.IdTao = 37;
+        Ptr.NbAction = 1;
+        Obj.actif = true;
+        TD_DATA[Id].DefenseGratuite = true;
+        Defense.InitialiserSelection(Id);
+    }
+    else
+    {
+        Obj.actif = false;
+        TD_DATA[Id].DefenseGratuite = false;
     }
 }
 function TAO_BriseLegere(Id, Ajout, Cout)

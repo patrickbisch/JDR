@@ -152,7 +152,7 @@ function PERSO_Initialiser()
 /******      MODE DEBUG                                                            *****/
 /***************************************************************************************/
 /***************************************************************************************/
-Perso.Actif = 11;
+//Perso.Actif = 11;
 //PERSO_DATA[1].Bloque = true;
 //PERSO_DATA[2].Mort = true
 //PERSO_DATA[4].Bloque = true;
@@ -160,8 +160,15 @@ Perso.Actif = 11;
 //PERSO_DATA[3].MalusPV = -1;
 //PERSO_DATA[5].MalusPV = -3;
 //PERSO_DATA[6].MalusPV = -5;
+Perso.Liste[0].Etat = false;
+Perso.Liste[1].Etat = false;
+for(let Id = 0;Id < Perso.Taille;Id++)
+{
+    PERSO_DATA[Id].Afficher = false;
+}
 PERSO_ActualiserListe();
 Moteur.LancerModule("Equipement");
+//CARTE_Debug();
 /***************************************************************************************/
 /***************************************************************************************/
 }

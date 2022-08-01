@@ -1,9 +1,3 @@
-body {
-    font-family: Georgia, serif;
-    font-size: 12px;
-    background-color:cyan;
-    color: black;
-}
 p{
     color: red;
     background-color: blue;
@@ -11,16 +5,6 @@ p{
 .CouleurLigne{
     background-color:wheat;
     color: black;
-}
-.Numerique{
-    font-family: Verdana, sans-serif;
-}
-.EcranSelect{
-    border-radius: 8px;
-    background-color:ivory;
-    padding-left: 2px;
-    margin-top: 1px;
-    margin-bottom: 2px;
 }
 .Trait{
     text-align: center;
@@ -32,15 +16,6 @@ p{
     padding-top: 0px;
     padding-bottom: 2px;
     height: 18px;
-}
-.Droite{
-    text-align: right;
-}
-.Gauche{
-    text-align: left;
-}
-.Centre{
-    text-align: center;
 }
 /*===== GESTION DES INFO BULLES ====*/
 .InfoBulle{
@@ -81,11 +56,10 @@ p{
     background-color: crimson;
     border-radius: 14px;
 }
-.Carte{
+.FondCarte{
     background-color: coral;
     grid-column: 1/15;
     grid-row: 4;
-    overflow: auto;
 }
 .MenuBas{
     grid-column: 1/15;
