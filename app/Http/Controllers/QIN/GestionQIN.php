@@ -26,8 +26,8 @@ class GestionQIN extends Controller
     function Combat($IdCampagne, $IdRencontre)
     {
         $User = session('USER');
-        $PtrCampagne = JDR_Campagne::Retourner($IdCampagne);
-        $PtrRencontre = Rencontre::Retourner($IdRencontre);
+        $PtrCampagne = JDR_Campagne::Element($IdCampagne);
+        $PtrRencontre = Rencontre::Element($IdRencontre);
         $DetailPNJ = RencontrePNJ::Liste($IdRencontre);
         $LstPerso = array();
         $NbPJ = 0;
@@ -47,7 +47,7 @@ class GestionQIN extends Controller
 
             for($x = 0;$x < $Boucle;$x++)
             {
-                $LstPerso[] = Personnage::Retourner($PtrPNJ->id_pnj);
+                $LstPerso[] = Personnage::Element($PtrPNJ->id_pnj);
                 $LstPerso[$NbPJ+$NbPNJ]->id_fonction = $PtrPNJ->id_fonction;
                 $LstPerso[$NbPJ+$NbPNJ]->NbPNJ = $PtrPNJ->nbpnj;
                 $LstPerso[$NbPJ+$NbPNJ]->Armes = Arme::Liste($PtrPNJ->id_pnj);

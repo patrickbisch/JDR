@@ -30,6 +30,7 @@
         </select> 
         <button name="Action" value="Combat" class="btn btn-primary">Combat</button>
         <button name="Action" value="Carte" class="btn btn-secondary">Carte</button>
+        <button name="Action" value="Rencontre" class="btn btn-secondary">Rencontre</button>
     </div>
 </form>
     <p></p>

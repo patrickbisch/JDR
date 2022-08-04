@@ -19,51 +19,67 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body>
-    <form action="{{url('Carte/Gestion')}}" method="post">
+    <form action="{{url('Carte/Gestion/'.$Carte->id)}}" method="post">
             {{csrf_field()}}
     <div class="FondPrincipal">
-        <div class="MenuHaut Titre">{{__('Carte/Gestion.TitreFenetre')}}</div>
-
-        <div class="MenuPNJ">
-            <div class="TitreLabel">{{__("Carte/Gestion.TitrePNJ")}}</div>
-            <button id="PNJ-Bas" class="Bouton BtnBas" name="Action" value="Bas" type="submit">
-                <img height="28" src="../resources/Images/Bas.png" alt="Bas">
-            </button>
-
-            <button id="PNJ-Haut" class="Bouton BtnHaut" name="Action" value="Haut" type="submit">
-                <img height="28" src="../resources/Images/Haut.png" alt="Haut">
-            </button>
+        <div class="CarteRef Colonne3">
+            <img id="DessinRef" src="" alt="CarteRef">
         </div>
-        <div class="ZonePNJ">
-            @for($x = 0; $x < 10; $x++)
-                <div id="PNJ-{{$x}}" class="Ligne">{{$x}}
+
+        <div class="MenuHaut">
+            <div class="Titre">{{__('Carte/Gestion.TitreFenetre')}}</div>
+
+            <button id="BtnModifier" class="Bouton BtnModifier" name="Action" value="Modifier" type="submit">
+                <img height="52" src="../resources/Images/Valider.png" alt="Modifier">
+            </button>
+
+            <button id="BtnAnnuler" class="Bouton BtnAnnuler" name="Action" value="Annuler" type="submit">
+                <img height="52" src="../resources/Images/Quitter.png" alt="Valider">
+            </button>
+
+
+            <div id="MenuPNJ"  class="MenuPNJ">
+                <div class="TitreLabel">{{__("Carte/Gestion.TitrePNJ")}}</div>
+                <button id="PNJ-Bas" class="Bouton BtnBas" name="Action" value="Bas" type="submit">
+                    <img height="28" src="../resources/Images/Bas.png" alt="Bas">
+                </button>
+
+                <button id="PNJ-Haut" class="Bouton BtnHaut" name="Action" value="Haut" type="submit">
+                    <img height="28" src="../resources/Images/Haut.png" alt="Haut">
+                </button>
+            </div>
+
+            <div class="MenuDetail">
+                <div class="TitreLabel">{{__("Carte/Gestion.TitreDetail")}}</div>
+                <button id="Detail-Bas" class="Bouton BtnBas" name="Action" value="Bas" type="submit">
+                    <img height="28" src="../resources/Images/Bas.png" alt="Bas">
+                </button>
+
+                <button id="Detail-Haut" class="Bouton BtnHaut" name="Action" value="Haut" type="submit">
+                    <img height="28" src="../resources/Images/Haut.png" alt="Haut">
+                </button>
+            </div>
+        </div>
+
+        <div id="ZonePNJ" class="ZonePNJ">
+            @foreach($LstPerso as $x => $Perso)
+                <div id="PNJ-{{$x}}" class="EcranLigne Ligne">
+                    <div class="Colonne1 Centre Numerique Gras">{{$Perso->Lettre}}</div>
+                    <div class="Colonne2 Gauche">{{$Perso->Nom}}</div>
+                    <div id="Loca-{{$x}}" class="Colonne3 Centre Numerique Gras"></div>
                 </div>
-            @endfor
+            @endforeach
         </div>
 
-        <button id="BtnValider" class="Bouton BtnValider" name="Action" value="Valider" type="submit">
-                <img height="52" src="../resources/Images/Valider.png" alt="Bas">
-        </button>
-
-        <div class="MenuDetail">
-            <div class="TitreLabel">{{__("Carte/Gestion.TitreDetail")}}</div>
-            <button id="Detail-Bas" class="Bouton BtnBas" name="Action" value="Bas" type="submit">
-                <img height="28" src="../resources/Images/Bas.png" alt="Bas">
-            </button>
-
-            <button id="Detail-Haut" class="Bouton BtnHaut" name="Action" value="Haut" type="submit">
-                <img height="28" src="../resources/Images/Haut.png" alt="Haut">
-            </button>
-        </div>
         <div id="ZoneDetail" class="ZoneDetail">
-            <div id="Detail-0" class="Detail">
-                <input id ="Designation" class="Colonne1-3 EcranSaisie" 
+            <div id="Detail-0" class="EcranLigne Detail">
+                <input id ="Designation" class="Colonne1-4 EcranSaisie" 
                         value="{{$Carte->designation}}" name="Designation">
             </div>
-            <div id="Detail-1" class="Detail">
+            <div id="Detail-1" class="EcranLigne Detail">
                 <div class="LabelDetail Colonne1 Droite">.... :</div>
                 <div class="LabelDetail Colonne1 Gauche">{{__("Carte/Gestion.LabelCarte")}}</div>
-                <select id="ListeCarte" class="EcranSelect Colonne2-3">
+                <select id="ListeCarte" class="EcranSelect Colonne2-4" name="ListeCarte">
                     @foreach($LstCarte as $x => $Nom)
                         @if($Nom == $Carte->carte)
                             <option value="{{$Nom}}" selected>{{$Nom}}</option>
@@ -71,24 +87,27 @@
                             <option value="{{$Nom}}">{{$Nom}}</option>
                         @endif
                     @endforeach
+                    @if($Carte->carte == "")
+                        <option value="" selected disabled></option>
+                    @endif
                 </select>
             </div>
-            <div id="Detail-2" class="Detail">
+            <div id="Detail-2" class="EcranLigne Detail">
                 <div class="LabelDetail Colonne1 Droite">... :</div>
                 <div class="LabelDetail Colonne1 Gauche">{{__("Carte/Gestion.LabelTaille")}}</div>
-                <div id="Taille" class="EcranCellule Colonne2-3 Numerique Centre"></div>
+                <div id="Taille" class="EcranCellule Colonne2-4 Numerique Centre"></div>
             </div>
-            <div id="Detail-3" class="Detail">
+            <div id="Detail-3" class="EcranLigne Detail">
                 <div class="LabelDetail Colonne1-2 Droite">... :</div>
                 <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelQuadrillage")}}</div>
-                <select id="Quadrillage" class="EcranSelect Colonne3">
+                <select id="Quadrillage" class="EcranSelect Colonne3-4" disabled>
                     <option value="Carre" selected>{{__("Carte/Gestion.QuadrillageCarre")}}</option>
                 </select>
             </div>
-            <div id="Detail-4" class="Detail">
+            <div id="Detail-4" class="EcranLigne Detail">
                 <div class="LabelDetail Colonne1-2 Droite">... :</div>
                 <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOX")}}</div>
-                <select id="NbOX" class="EcranSelect Colonne3">
+                <select id="NbOX" class="EcranSelect Colonne3 Numerique" name="NbOX">
                     @for($x = 10;$x <= 50;$x++)
                         @if($x == $Carte->nb_ox)
                             <option value="{{$x}}" selected>{{$x}}</option>
@@ -96,17 +115,20 @@
                             <option value="{{$x}}">{{$x}}</option>
                         @endif
                     @endfor
+                    @if($Carte->nb_ox == 0)
+                        <option value="0" selected disabled></option>
+                    @endif
                 </select>
             </div>
-            <div id="Detail-5" class="Detail">
+            <div id="Detail-5" class="EcranLigne Detail">
                 <div class="LabelDetail Colonne1-2 Droite">....... :</div>
                 <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelTailleOX")}}</div>
                 <div id="TailleOX" class="EcranCellule Colonne3 Numerique Centre"></div>
             </div>
-            <div id="Detail-6" class="Detail">
+            <div id="Detail-6" class="EcranLigne Detail">
                 <div class="LabelDetail Colonne1-2 Droite">........ :</div>
                 <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOY")}}</div>
-                <select id="NbOY" class="EcranSelect Colonne3">
+                <select id="NbOY" class="EcranSelect Colonne3 Numerique" name="NbOY">
                     @for($x = 10;$x <= 50;$x++)
                         @if($x == $Carte->nb_oy)
                             <option value="{{$x}}" selected>{{$x}}</option>
@@ -114,16 +136,19 @@
                             <option value="{{$x}}">{{$x}}</option>
                         @endif
                     @endfor
+                    @if($Carte->nb_oy == 0)
+                        <option value="0" selected disabled></option>
+                    @endif
                 </select>
             </div>
-            <div id="Detail-7" class="Detail">
+            <div id="Detail-7" class="EcranLigne Detail">
                 <div class="LabelDetail Colonne1-2 Droite">........ :</div>
                 <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelTailleOY")}}</div>
                 <div id="TailleOY" class="EcranCellule Colonne3 Numerique Centre"></div>
             </div>
-            <div id="Detail-8" class="Detail">
-                <div class="LabelDetail Colonne3 Gauche">{{__("Carte/Gestion.LabelZoom")}}</div>
-                <input type="range" class="EcranJauge Colonne1-2"
+            <div id="Detail-8" class="EcranLigne Detail">
+                <div class="LabelDetail Colonne4 Gauche">{{__("Carte/Gestion.LabelZoom")}}</div>
+                <input type="range" class="EcranJauge Colonne1-3"
                             id="Zoom" name="Zoom" min="-10" max="10">
             </div>
         </div>
@@ -141,10 +166,10 @@
             </div>
         </div>
 
-
-
-        <div class="MenuBas">Menu Bas
-            <img id="DessinRef" class="Colonne1" src="" alt="CarteRef">
+        <div class="MenuBas">
+            <div id="Info" class="EcranCellule Info Centre">{{$Carte->id}}/{{$Carte->id_joueur}}/{{$User->id}}/{{$Rencontre->id_rencontre}}</div>
+            <div id="LocaPNJ" class="EcranCellule LocaPNJ Numerique Gauche">{{$Rencontre->zone_pnj}}</div>
+            <div id="LocaPJ" class="EcranCellule LocaPJ Numerique Gauche">{{$Rencontre->zone_pj}}</div>
         </div>
     </div>
 

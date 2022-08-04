@@ -25,7 +25,7 @@ class Personnage extends Model
 /*========================================================*/
 /*  Retourne le personnage en fonction de l'identifiant
 /*========================================================*/   
-    static function Retourner($IdPerso)
+    static function Element($IdPerso)
     {
         $Retour = self::find($IdPerso);
         return($Retour);

@@ -55,6 +55,8 @@ return redirect('/Deconnection');
     Route::get('/Deconnection',
                 [Connexion::class, 'Deconnecter']);
 
+    Route::get('/Connecter',
+                [Connexion::class, 'Connecter']);
     Route::post('/Connecter',
                 [Connexion::class, 'Connecter']);
 
@@ -72,6 +74,8 @@ return redirect('/Deconnection');
 /*========================================================*/   
     Route::get('/Carte/Gestion/{id_carte}/{id_rencontre}', 
         [GestionCarte::class, 'Carte']);
+    Route::post('/Carte/Gestion/{id_carte?}', 
+        [GestionCarte::class, 'Gerer']);
 
 /*========================================================*/
 /*  Gestion pour le JDR QIN

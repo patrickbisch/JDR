@@ -3,13 +3,17 @@ var SessionUSER;
 ListeBtn = new Array();
 class PNJ_Donnee{
     PtrLigne;
+    PtrLoca;
+    Ox = 0;
+    Oy = 0;
     Etat = false;
 }
 ListePNJ = new Array();
 ListeCarre = new Array();
 class DETAIL_Carte{
     PtrLigne;
-    PtrBtnValider;
+    PtrLignePNJ;
+    PtrBtnModifier;
     PtrLstLigne = new Array();
     PtrDesignation;
     PtrSelectCarte;
@@ -22,6 +26,7 @@ class DETAIL_Carte{
     PtrTailleOX;
     PtrTailleOY;
     PtrZoom;
+    PtrInfoPNJ;
     TailleOX = 0;
     TailleOY = 0;
     Etat = false;
@@ -29,22 +34,31 @@ class DETAIL_Carte{
 Detail = new DETAIL_Carte;
 var VarCarte = document.querySelector(':root');
 let TimerCarte;
+var LstInfo = new Array();
 
 function InitialiserListe(Code, PtrListe)
 {
+    Detail.PtrInfoPNJ = document.querySelector("#LocaPNJ");
+    let Tab = (Detail.PtrInfoPNJ.innerHTML + "------------------------------------------------------------").split("-");
     let LstObj = document.querySelectorAll("." + Code);
     for(let x = 0; x < LstObj.length; x++)
     {
         let Ptr = new PNJ_Donnee();
         Ptr.PtrLigne = LstObj[x];
+        Ptr.PtrLoca = document.querySelector("#Loca-" + x);
         Ptr.Etat = true;
+        let Tampon = (Tab[x] + "/").split("/");
+        Ptr.Ox = Tampon[0];
+        Ptr.Oy = Tampon[1];
+        Ptr.PtrLoca.innerHTML = Ptr.Ox + "-" + Ptr.Oy;
         PtrListe.push(Ptr);
     }
 }
 function InitialiserDetail()
 {
     Detail.PtrLigne = document.querySelector("#ZoneDetail");
-    Detail.PtrBtnValider = document.querySelector("#BtnValider");
+    Detail.PtrLignePNJ = document.querySelector("#ZonePNJ");
+    Detail.PtrBtnModifier = document.querySelector("#BtnModifier");
     Detail.PtrLstLigne.push(document.querySelector("#Detail-0"));
     Detail.PtrLstLigne.push(document.querySelector("#Detail-1"));
     Detail.PtrLstLigne.push(document.querySelector("#Detail-4"));
@@ -110,6 +124,8 @@ function InitialiserCellule()
         }
         ListeCarre[Ox][Oy] = Ptr;
     }
+    let Obj = document.querySelector("#LocaPJ");
+    
     AfficherCellule();
 }
 function AfficherCellule(Ox = 0, Oy = 0, Etat = false)
@@ -134,7 +150,7 @@ function InitialiserBoutonMenu()
     ListeBtn[0].PtrBouton.push(Obj);
     Obj.addEventListener('click', function(e){
         e.preventDefault();
-        CARTE_ChangerEtatListe(0, ListePNJ);
+        CARTE_ChangerEtatListe(0);
     });
     BOUTON_Activer(Obj, true);
 
@@ -142,7 +158,7 @@ function InitialiserBoutonMenu()
     ListeBtn[0].PtrBouton.push(Obj);
     Obj.addEventListener('click', function(e){
         e.preventDefault();
-        CARTE_ChangerEtatListe(0, ListePNJ);
+        CARTE_ChangerEtatListe(0);
     });
     BOUTON_Activer(Obj, true);
 
@@ -150,7 +166,7 @@ function InitialiserBoutonMenu()
     ListeBtn[1].PtrBouton.push(Obj);
     Obj.addEventListener('click', function(e){
         e.preventDefault();
-        CARTE_ChangerEtatDetail();
+        CARTE_ChangerEtatListe(1);
     });
     BOUTON_Activer(Obj, true);
 
@@ -158,7 +174,7 @@ function InitialiserBoutonMenu()
     ListeBtn[1].PtrBouton.push(Obj);
     Obj.addEventListener('click', function(e){
         e.preventDefault();
-        CARTE_ChangerEtatDetail();
+        CARTE_ChangerEtatListe(1);
     });
     ListeBtn[1].Etat = true;
     BOUTON_Activer(Obj, true);
@@ -170,12 +186,31 @@ function InitialiserCarte()
     InitialiserCellule();
     InitialiserBoutonMenu();
 
+    LstInfo = document.querySelector("#Info").innerHTML.split("/");
+    let Bloque = true;
+    if(LstInfo[1] == "")
+    {
+        Bloque = false;
+    }
+    if(LstInfo[1] == LstInfo[2])
+    {
+        Bloque = false;
+    }
+    Detail.PtrSelectCarte.disabled = Bloque;
+    Detail.PtrSelectOX.disabled = Bloque;
+    Detail.PtrSelectOY.disabled = Bloque;
+    Detail.PtrDesignation.disabled = Bloque;
+    Bouton.Afficher(Detail.PtrBtnModifier, !Bloque);
 
-    CARTE_ChangerEtatListe(0, ListePNJ);
-    CARTE_ChangerEtatDetail();
+    if(LstInfo[3] == 0)
+    {
+        let Obj = document.querySelector("#MenuPNJ")
+        Bouton.Afficher(Obj, false);
+    }
+
+    CARTE_ChangerEtatListe(0);
+    CARTE_ChangerEtatListe(1);
     CARTE_Nouvelle(Detail.PtrSelectCarte.value);
-    console.debug(SessionUSER);
-
 }
 function ControlerDetail()
 {
@@ -216,7 +251,7 @@ function ControlerDetail()
     {
         Objet.Couleur(Detail.PtrLstLigne[3], -3);
     }
-    Bouton.Activer(Detail.PtrBtnValider, Etat);
+    Bouton.Activer(Detail.PtrBtnModifier, Etat);
 }
 function CARTE_Nouvelle(Nom)
 {
@@ -231,9 +266,30 @@ function CARTE_Modifie()
     Detail.PtrZoom.value = 0;
     Detail.TailleOX = Detail.PtrDessinRef.clientWidth;
     Detail.TailleOY = Detail.PtrDessinRef.clientHeight;
-    Detail.PtrTaille.innerHTML = Detail.TailleOX + "x" + Detail.TailleOY;
-    Detail.PtrTailleOX.innerHTML = parseInt(Detail.TailleOX) / Detail.PtrSelectOX.value+"px";
-    Detail.PtrTailleOY.innerHTML = parseInt(Detail.TailleOY) / Detail.PtrSelectOY.value+"px";
+    if(Detail.PtrSelectCarte.value != "")
+    {
+        Detail.PtrTaille.innerHTML = Detail.TailleOX + "x" + Detail.TailleOY;
+    }
+    else
+    {
+        Detail.PtrTaille.innerHTML = "";
+    }
+    if(Detail.PtrSelectOX.value > 0)
+    {
+        Detail.PtrTailleOX.innerHTML = parseInt(Detail.TailleOX) / Detail.PtrSelectOX.value+"px";
+    }
+    else
+    {
+        Detail.PtrTailleOX.innerHTML = "";
+    }
+    if(Detail.PtrSelectOY.value > 0)
+    {
+        Detail.PtrTailleOY.innerHTML = parseInt(Detail.TailleOY) / Detail.PtrSelectOY.value+"px";
+    }
+    else
+    {
+        Detail.PtrTailleOY.innerHTML = "";
+    }
 
     Detail.PtrDessin.style.width = Detail.TailleOX;
     Detail.PtrDessin.style.height = Detail.TailleOY;
@@ -266,24 +322,20 @@ function CARTE_NouveauZoom()
     Detail.PtrDessin.style.width = (parseInt(Detail.TailleOX) + 4 * parseInt(Nb) * parseInt(Detail.PtrSelectOX.value)) + "px";
     Detail.PtrDessin.style.height = (parseInt(Detail.TailleOY) + 4 * parseInt(Nb) * parseInt(Detail.PtrSelectOY.value)) + "px";
 }
-function CARTE_ChangerEtatListe(Index, PtrListe)
+function CARTE_ChangerEtatListe(Index)
 {
     ListeBtn[Index].Etat = !ListeBtn[Index].Etat;
     Bouton.Activer(ListeBtn[Index].PtrBouton[0], ListeBtn[Index].Etat);
     Bouton.Activer(ListeBtn[Index].PtrBouton[1], !ListeBtn[Index].Etat);
-    for(let x = 0;x < PtrListe.length;x++)
+    if(Index == 0)
     {
-        Objet.Afficher(PtrListe[x].PtrLigne, PtrListe[x].Etat && !ListeBtn[Index].Etat);
+        Bouton.Afficher(Detail.PtrLignePNJ, !ListeBtn[Index].Etat);
+    }
+    else
+    {
+        Bouton.Afficher(Detail.PtrLigne, Detail.Etat && !ListeBtn[Index].Etat);
     }
 }
-function CARTE_ChangerEtatDetail()
-{
-    ListeBtn[1].Etat = !ListeBtn[1].Etat;
-    Bouton.Activer(ListeBtn[1].PtrBouton[0], ListeBtn[1].Etat);
-    Bouton.Activer(ListeBtn[1].PtrBouton[1], !ListeBtn[1].Etat);
-    Bouton.Afficher(Detail.PtrLigne, Detail.Etat && !ListeBtn[1].Etat);
-}
-
 
 
 

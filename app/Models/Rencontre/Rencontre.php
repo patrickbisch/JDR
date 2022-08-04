@@ -16,7 +16,7 @@ class Rencontre extends Model
 /*========================================================*/
 /*  Retourne une nouvelle rencontre
 /*========================================================*/   
-    public static function Nouvelle()
+    public static function Nouveau()
     {
         $Ptr = new self();
         $Ptr->id_rencontre = 0;
@@ -25,7 +25,7 @@ class Rencontre extends Model
 /*========================================================*/
 /*  Retourne le personnage
 /*========================================================*/   
-    static function Retourner($IdRencontre)
+    static function Element($IdRencontre)
     {
         return(self::find($IdRencontre));
     }

@@ -44,7 +44,7 @@ class Connexion extends Controller
 
         //$User = JDR_Joueur::Rechercher($request->input('ID'));
         session(['USER' => $Ptr]);
-        var_dump(session('USER'));
+        session(['ECRAN' => '/']);
         $NbCarte = 0;
         switch($request->input('ID'))
         {
@@ -53,6 +53,9 @@ class Connexion extends Controller
                 break;
             case "David":
                 $NbCarte = 2;
+                break;
+            case "Fred":
+                $NbCarte = 3;
                 break;
         }
 
@@ -63,6 +66,9 @@ class Connexion extends Controller
                 break;
             case "Carte":
                 return redirect("/Carte/Gestion/$NbCarte/-1");
+                break;
+            case "Rencontre":
+                return redirect("/Carte/Gestion/-1/1");
                 break;
             default:
                 echo "Gestion des joueurs<br>";

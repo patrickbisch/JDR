@@ -15,14 +15,14 @@ class JDR_Campagne extends Model
 /*========================================================*/
 /*  Recherche une campagne en fonction de son identifiant
 /*========================================================*/   
-    public static function Retourner($IdCampagne)
+    public static function Element($IdCampagne)
     {
         return(self::find($IdCampagne));
     }
 /*========================================================*/
 /*  Retourne une nouvelle campagne
 /*========================================================*/   
-    public static function Nouvelle()
+    public static function Nouveau()
     {
         $Ptr = new JDR_Campagne();
         $Ptr->id_campagne = 0;

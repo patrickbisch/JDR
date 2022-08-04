@@ -29,7 +29,7 @@ class Carte extends Model
         $Retour = self::where('id', '=', $IdCarte)->get();
         return($Retour);
     }
-    static function Retourner($IdCarte)
+    static function Element($IdCarte)
     {
         $Retour = self::find($IdCarte);
         return($Retour);
