@@ -18,8 +18,8 @@ class Connexion extends Controller
         {
             $User = new Joueur();
             $User = session('USER');
-            $User->Nom = "";
-            $User->ID = 0;
+            $User->nom = "";
+            $User->id = 0;
             session(['USER' => $User]);
         }
         //$LstJoueur = JDR_Joueur::Liste("nom ASC, prenom ASC");
@@ -34,20 +34,40 @@ class Connexion extends Controller
     public function Connecter(Request $request)
     {
         $Ptr = new Joueur();
-        $Ptr->ID = 21;
-        $Ptr->Nom = 'BISCH';
-        $Ptr->Prenom = 'Patrick';
-        $Ptr->Lettre = 'PB';
-        $Ptr->JDR = 'QIN';
-        $Ptr->Campagne = 1;
-        $Ptr->Rencontre = 1;
+        $Ptr->id = 21;
+        $Ptr->nom = 'BISCH';
+        $Ptr->prenom = 'Patrick';
+        $Ptr->lettre = 'PB';
+        $Ptr->jdr = 'QIN';
+        $Ptr->campagne = 1;
+        $Ptr->rencontre = 1;
 
         //$User = JDR_Joueur::Rechercher($request->input('ID'));
         session(['USER' => $Ptr]);
         var_dump(session('USER'));
+        $NbCarte = 0;
+        switch($request->input('ID'))
+        {
+            case "Patrick":
+                $NbCarte = 1;
+                break;
+            case "David":
+                $NbCarte = 2;
+                break;
+        }
 
-        return redirect("/Carte/Gestion/-1/-1");
-//        return redirect("/$Ptr->JDR/Combat/$Ptr->Campagne/$Ptr->Rencontre");
+        switch($request->Action)
+        {
+            case "Combat":
+                return redirect("/$Ptr->jdr/Combat/$Ptr->campagne/$Ptr->rencontre");
+                break;
+            case "Carte":
+                return redirect("/Carte/Gestion/$NbCarte/-1");
+                break;
+            default:
+                echo "Gestion des joueurs<br>";
+                echo "Action : ". $request->Action ."<br>";
+        }
 
 //        if($request->Action == 'QIN')
 //        {

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Carte;
 
+use App\Models\Carte\Carte;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -25,8 +27,13 @@ class GestionCarte extends Controller
                 $LstCarte[] = $Fichier;
             }
         }
+
+        $Carte = Carte::Retourner($IdCarte);
+        session(['CARTE' => $Carte]);
         return view('Carte.Gestion.Ecran', [
+            "User"          => $User,
             "LstCarte"      => $LstCarte,
+            "Carte"         => $Carte,
         ]);
     }
 }

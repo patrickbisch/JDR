@@ -24,6 +24,7 @@ return [
     'LabelTailleOX'     => 'Taille OX',
     'LabelNbOY'         => 'Nb. ligne ',
     'LabelTailleOY'     => 'Taille OY ',
+    'LabelZoom'         => 'Zoom ',
     'QuadrillageCarre'  => 'Carre ',
 
 ];

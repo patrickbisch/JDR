@@ -41,6 +41,10 @@
             @endfor
         </div>
 
+        <button id="BtnValider" class="Bouton BtnValider" name="Action" value="Valider" type="submit">
+                <img height="52" src="../resources/Images/Valider.png" alt="Bas">
+        </button>
+
         <div class="MenuDetail">
             <div class="TitreLabel">{{__("Carte/Gestion.TitreDetail")}}</div>
             <button id="Detail-Bas" class="Bouton BtnBas" name="Action" value="Bas" type="submit">
@@ -53,60 +57,94 @@
         </div>
         <div id="ZoneDetail" class="ZoneDetail">
             <div id="Detail-0" class="Detail">
-                <div class="LabelDetail Droite">.... :</div>
-                <div class="LabelDetail Gauche">{{__("Carte/Gestion.LabelCarte")}}</div>
+                <input id ="Designation" class="Colonne1-3 EcranSaisie" 
+                        value="{{$Carte->designation}}" name="Designation">
+            </div>
+            <div id="Detail-1" class="Detail">
+                <div class="LabelDetail Colonne1 Droite">.... :</div>
+                <div class="LabelDetail Colonne1 Gauche">{{__("Carte/Gestion.LabelCarte")}}</div>
                 <select id="ListeCarte" class="EcranSelect Colonne2-3">
                     @foreach($LstCarte as $x => $Nom)
-                        <option value="{{$Nom}}">{{$Nom}}</option>
+                        @if($Nom == $Carte->carte)
+                            <option value="{{$Nom}}" selected>{{$Nom}}</option>
+                        @else
+                            <option value="{{$Nom}}">{{$Nom}}</option>
+                        @endif
                     @endforeach
                 </select>
             </div>
-            <div id="Detail-1" class="Detail">
-                <div class="LabelDetail Droite">... :</div>
-                <div class="LabelDetail Gauche">{{__("Carte/Gestion.LabelTaille")}}</div>
-                <div id="Taille" class="EcranCellule Colonne2-3 Numerique Centre">1080x765</div>
-            </div>
             <div id="Detail-2" class="Detail">
-                <div class="LabelDetail Colonne1-2 Droite">... :</div>
-                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelQuadrillage")}}</div>
-                <select id="Quadrillage" class="EcranSelect Colonne3">
-                    <option value="Carre">{{__("Carte/Gestion.QuadrillageCarre")}}</option>
-                </select>
+                <div class="LabelDetail Colonne1 Droite">... :</div>
+                <div class="LabelDetail Colonne1 Gauche">{{__("Carte/Gestion.LabelTaille")}}</div>
+                <div id="Taille" class="EcranCellule Colonne2-3 Numerique Centre"></div>
             </div>
             <div id="Detail-3" class="Detail">
                 <div class="LabelDetail Colonne1-2 Droite">... :</div>
-                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOX")}}</div>
-                <select id="NbOX" class="EcranSelect Colonne3">
-
+                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelQuadrillage")}}</div>
+                <select id="Quadrillage" class="EcranSelect Colonne3">
+                    <option value="Carre" selected>{{__("Carte/Gestion.QuadrillageCarre")}}</option>
                 </select>
             </div>
             <div id="Detail-4" class="Detail">
-                <div class="LabelDetail Colonne1-2 Droite">....... :</div>
-                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelTailleOX")}}</div>
-                <div id="TailleOX" class="EcranCellule Colonne3 Numerique Centre">45px</div>
+                <div class="LabelDetail Colonne1-2 Droite">... :</div>
+                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOX")}}</div>
+                <select id="NbOX" class="EcranSelect Colonne3">
+                    @for($x = 10;$x <= 50;$x++)
+                        @if($x == $Carte->nb_ox)
+                            <option value="{{$x}}" selected>{{$x}}</option>
+                        @else
+                            <option value="{{$x}}">{{$x}}</option>
+                        @endif
+                    @endfor
+                </select>
             </div>
             <div id="Detail-5" class="Detail">
-                <div class="LabelDetail Colonne1-2 Droite">........ :</div>
-                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOY")}}</div>
-                <select id="NbOY" class="EcranSelect Colonne3">
-
-                </select>
+                <div class="LabelDetail Colonne1-2 Droite">....... :</div>
+                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelTailleOX")}}</div>
+                <div id="TailleOX" class="EcranCellule Colonne3 Numerique Centre"></div>
             </div>
             <div id="Detail-6" class="Detail">
                 <div class="LabelDetail Colonne1-2 Droite">........ :</div>
+                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOY")}}</div>
+                <select id="NbOY" class="EcranSelect Colonne3">
+                    @for($x = 10;$x <= 50;$x++)
+                        @if($x == $Carte->nb_oy)
+                            <option value="{{$x}}" selected>{{$x}}</option>
+                        @else
+                            <option value="{{$x}}">{{$x}}</option>
+                        @endif
+                    @endfor
+                </select>
+            </div>
+            <div id="Detail-7" class="Detail">
+                <div class="LabelDetail Colonne1-2 Droite">........ :</div>
                 <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelTailleOY")}}</div>
-                <div id="TailleOY" class="EcranCellule Colonne3 Numerique Centre">45px</div>
+                <div id="TailleOY" class="EcranCellule Colonne3 Numerique Centre"></div>
+            </div>
+            <div id="Detail-8" class="Detail">
+                <div class="LabelDetail Colonne3 Gauche">{{__("Carte/Gestion.LabelZoom")}}</div>
+                <input type="range" class="EcranJauge Colonne1-2"
+                            id="Zoom" name="Zoom" min="-10" max="10">
             </div>
         </div>
 
-            <div id="Carte" class="FondCarte Carte" src>
+        <div class="FondCarte">
+            <div id="Carte" class="Carte">
+                <img id="Dessin" class="Grille" src="" alt="Carte">
+                @for($x = 1; $x <= 50; $x++)
+                    @for($y = 1; $y <= 50; $y++)
+                        <div id="Cel-{{$x}}-{{$y}}" class="Carre" 
+                            style="grid-column:{{$x}};grid-row:{{$y}};">
+                        </div>
+                    @endfor
+                @endfor
             </div>
-            <div class="FondCarte1 ">
         </div>
 
 
 
         <div class="MenuBas">Menu Bas
+            <img id="DessinRef" class="Colonne1" src="" alt="CarteRef">
         </div>
     </div>
 

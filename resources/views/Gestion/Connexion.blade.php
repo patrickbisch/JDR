@@ -28,8 +28,8 @@
                 </option>
             @endforeach
         </select> 
-        <button name="Action" value="Valider" class="btn btn-primary">Valider</button>
-        <button name="Action" value="QIN" class="btn btn-secondary">Tester</button>
+        <button name="Action" value="Combat" class="btn btn-primary">Combat</button>
+        <button name="Action" value="Carte" class="btn btn-secondary">Carte</button>
     </div>
 </form>
     <p></p>
