@@ -14,6 +14,7 @@
 return [
     'TitreOnglet'       => 'Gestion des Cartes',
     'TitreFenetre'      => 'Gestion des Cartes',
+    'TitreRencontre'    => 'Carte de la rencontre',
     'TitrePNJ'          => 'PNJ',
     'TitreDetail'       => 'Detail',
     'Separateur'        => '......... :',

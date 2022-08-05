@@ -32,9 +32,8 @@ body {
 .MenuBas{
     grid-column: 1/Fin;
     grid-row: 5;
-    grid-template-columns: 6px 60px [Info] 100px [LocaPNJ] 300px [LocaPJ] 400px 1fr [Fin];
+    grid-template-columns: 6px 60px [Info] 100px [PositionPNJ] max-content [EntrePJ] 400px 1fr [MatriceType] max-content [MatriceTaille] max-content 4px [Fin];
     font-size: 14px;
-    font-weight: bold;
     overflow: hidden;
 }
 .MenuHaut,
@@ -134,8 +133,8 @@ body {
     display: grid;
     grid-template-columns: 25px 1fr 60px [Fin];
     margin-top: 1px;
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 2px;
+    padding-bottom: 2px;
     background-color:palegoldenrod;
 }
 .Ligne:nth-child(2n){
@@ -151,9 +150,9 @@ body {
     display: grid;
     grid-template-columns: 54px 32px 56px 1fr [Fin];
 }
-.LabelDetail{
-    margin-left: 4px;
-}
+
+
+
 
 
 
@@ -194,6 +193,18 @@ body {
     grid-column: 1/TailleMaxi;
     grid-row: 1/TailleMaxi;
 }
+.CelluleCarre{
+    font-size: 16px;
+    font-weight: bold;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    z-index: 20;
+}
+.CelluleCarre:hover {
+    background:gold;
+    cursor: pointer;
+}
 .Carre{
     font-family: Verdana, sans-serif;
     font-size: 10px;
@@ -228,11 +239,22 @@ body {
     grid-column: Info;
     height: 22px;
 }
-.LocaPNJ{
-    grid-column: LocaPNJ;
+.PositionPNJ{
+    grid-column: PositionPNJ;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+.EntrePJ{
+    grid-column: EntrePJ;
     height: 22px;
 }
-.LocaPJ{
-    grid-column: LocaPJ;
-    height: 22px;
+.MatriceType{
+    grid-column: MatriceType;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+.MatriceTaille{
+    grid-column: MatriceTaille;
+    padding-left: 6px;
+    padding-right: 6px;
 }

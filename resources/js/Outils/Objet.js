@@ -38,6 +38,11 @@ function OBJET_Couleur(Ptr, Etat)
 {
     switch(parseInt(Etat))
     {
+        case 5:
+            Ptr.disabled = false;
+            Ptr.style.backgroundColor = "purple";
+            Ptr.style.color = "white";
+            break;
         case 4:
             Ptr.disabled = false;
             Ptr.style.backgroundColor = "ivory";
@@ -61,7 +66,7 @@ function OBJET_Couleur(Ptr, Etat)
         case 0:
             Ptr.disabled = false;
             Ptr.style.backgroundColor = CouleurLigne.style.backgroundColor;
-            Ptr.style.color = "black";
+            Ptr.style.color = CouleurLigne.style.color;
             break;
         case -1:
             Ptr.disabled = true;

@@ -4,13 +4,20 @@ ListeBtn = new Array();
 class PNJ_Donnee{
     PtrLigne;
     PtrLoca;
-    Ox = 0;
-    Oy = 0;
-    Etat = false;
+    Erreur = true;
+    Actif = false;
 }
 ListePNJ = new Array();
+var PNJ_Actif = -1;
 ListeCarre = new Array();
 class DETAIL_Carte{
+    PtrPositionPNJ;
+    PtrEntrePJ;
+
+
+
+
+
     PtrLigne;
     PtrLignePNJ;
     PtrBtnModifier;
@@ -26,7 +33,6 @@ class DETAIL_Carte{
     PtrTailleOX;
     PtrTailleOY;
     PtrZoom;
-    PtrInfoPNJ;
     TailleOX = 0;
     TailleOY = 0;
     Etat = false;
@@ -36,24 +42,100 @@ var VarCarte = document.querySelector(':root');
 let TimerCarte;
 var LstInfo = new Array();
 
-function InitialiserListe(Code, PtrListe)
+/*****************************************************************************************/
+/*      GESTION DE LA LISTE DES PNJ
+/*****************************************************************************************/
+function InitialiserListePNJ()
 {
-    Detail.PtrInfoPNJ = document.querySelector("#LocaPNJ");
-    let Tab = (Detail.PtrInfoPNJ.innerHTML + "------------------------------------------------------------").split("-");
-    let LstObj = document.querySelectorAll("." + Code);
+    Carte.Module = "CREATION";
+    let TM = document.querySelector("#MatriceType").innerHTML;
+    let Tab = document.querySelector("#MatriceTaille").innerHTML.split("x");
+    Carte.NouvelleMatrice(Tab[0], Tab[1], TM);
+
+    Detail.PtrPositionPNJ = document.querySelector("#PositionPNJ");
+    Detail.PtrEntrePJ = document.querySelector("#EntrePJ");
+    let LstObj = document.querySelectorAll(".Ligne");
     for(let x = 0; x < LstObj.length; x++)
     {
         let Ptr = new PNJ_Donnee();
         Ptr.PtrLigne = LstObj[x];
+        Ptr.PtrLigne.addEventListener('click', function(e){
+            e.preventDefault();
+            ActiverPNJ(x);
+        });
+    
         Ptr.PtrLoca = document.querySelector("#Loca-" + x);
-        Ptr.Etat = true;
-        let Tampon = (Tab[x] + "/").split("/");
-        Ptr.Ox = Tampon[0];
-        Ptr.Oy = Tampon[1];
-        Ptr.PtrLoca.innerHTML = Ptr.Ox + "-" + Ptr.Oy;
-        PtrListe.push(Ptr);
+        ListePNJ.push(Ptr);
+        let Lettre = document.querySelector("#Lettre-"+x).innerHTML;
+        let TF = document.querySelector("#TF-"+x).innerHTML;
+        Carte.AjouterPersonnage(Lettre, TF);
+    }
+    Carte.InitialiserPosition(Detail.PtrPositionPNJ.innerHTML);
+    for(let x = 0; x < ListePNJ.length; x++)
+    {
+        JDR_NouvellePosition(x);
+    }
+    Detail.PtrPositionPNJ.innerHTML = Carte.RetournerPosition();
+}
+function JDR_NouvellePosition(Index)
+{
+    let Posi = Carte.Position(Index);
+    ListePNJ[Index].Erreur = false;
+    if(Posi.Ox < 0){ListePNJ[Index].Erreur = true;}
+    if(Posi.Oy < 0){ListePNJ[Index].Erreur = true;}
+    if(ListePNJ[Index].Erreur)
+    {
+        ListePNJ[Index].PtrLoca.innerHTML = "";
+    }
+    else
+    {
+        ListePNJ[Index].PtrLoca.innerHTML = Posi.Ox + "-" + Posi.Oy;
     }
 }
+function ActiverPNJ(Index)
+{
+    console.debug("PNJ_Actif : "+Index);
+    if(Index == PNJ_Actif)
+    {
+        ListePNJ[PNJ_Actif].Actif = false;
+        Objet.Couleur(ListePNJ[PNJ_Actif].PtrLigne, 0);
+        Carte.Activer(PNJ_Actif, false);
+        PNJ_Actif = -1;
+    }
+    else
+    {
+        if(PNJ_Actif != -1)
+        {
+            ListePNJ[PNJ_Actif].Actif = false;
+            Objet.Couleur(ListePNJ[PNJ_Actif].PtrLigne, 0);
+            Carte.Activer(PNJ_Actif, false);
+        }
+        PNJ_Actif = Index;
+        ListePNJ[PNJ_Actif].Actif = true;
+        Objet.Couleur(ListePNJ[PNJ_Actif].PtrLigne, 2);
+        Carte.Activer(PNJ_Actif, true);
+    }
+}
+function JDR_CARTE_NouvelleSelection(Ox, Oy)
+{
+    if(PNJ_Actif >= 0)
+    {
+        Carte.EffacerPosition(PNJ_Actif);
+        Carte.ModifierPosition(PNJ_Actif, Ox, Oy);
+        Carte.Activer(PNJ_Actif, true);
+        JDR_NouvellePosition(PNJ_Actif);
+        Detail.PtrPositionPNJ.innerHTML = Carte.RetournerPosition();
+    }
+}
+/*****************************************************************************************/
+/*****************************************************************************************/
+/*****************************************************************************************/
+/*****************************************************************************************/
+/*****************************************************************************************/
+/*****************************************************************************************/
+/*****************************************************************************************/
+/*****************************************************************************************/
+/*****************************************************************************************/
 function InitialiserDetail()
 {
     Detail.PtrLigne = document.querySelector("#ZoneDetail");
@@ -125,7 +207,7 @@ function InitialiserCellule()
         ListeCarre[Ox][Oy] = Ptr;
     }
     let Obj = document.querySelector("#LocaPJ");
-    
+
     AfficherCellule();
 }
 function AfficherCellule(Ox = 0, Oy = 0, Etat = false)
@@ -181,21 +263,21 @@ function InitialiserBoutonMenu()
 }
 function InitialiserCarte()
 {
-    InitialiserListe("Ligne", ListePNJ);
+    LstInfo = document.querySelector("#Info").innerHTML.split("/");
+    if(LstInfo[3] > 0)
+    {
+        InitialiserListePNJ();
+    }
+
     InitialiserDetail();
     InitialiserCellule();
     InitialiserBoutonMenu();
 
-    LstInfo = document.querySelector("#Info").innerHTML.split("/");
     let Bloque = true;
-    if(LstInfo[1] == "")
-    {
-        Bloque = false;
-    }
-    if(LstInfo[1] == LstInfo[2])
-    {
-        Bloque = false;
-    }
+    if(LstInfo[1] == ""){Bloque = false;}
+    if(LstInfo[1] == LstInfo[2]){Bloque = false;}
+    if(LstInfo[3] > 0){Bloque = true;}
+
     Detail.PtrSelectCarte.disabled = Bloque;
     Detail.PtrSelectOX.disabled = Bloque;
     Detail.PtrSelectOY.disabled = Bloque;
@@ -206,6 +288,11 @@ function InitialiserCarte()
     {
         let Obj = document.querySelector("#MenuPNJ")
         Bouton.Afficher(Obj, false);
+    }
+    else
+    {
+        CARTE_ChangerEtatListe(0);
+        CARTE_ChangerEtatListe(1);
     }
 
     CARTE_ChangerEtatListe(0);

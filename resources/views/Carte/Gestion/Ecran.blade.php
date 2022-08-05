@@ -27,7 +27,11 @@
         </div>
 
         <div class="MenuHaut">
-            <div class="Titre">{{__('Carte/Gestion.TitreFenetre')}}</div>
+            @if($Rencontre->id_rencontre == 0)
+                <div class="Titre">{{__('Carte/Gestion.TitreFenetre')}}</div>
+            @else
+                <div class="Titre">{{__('Carte/Gestion.TitreRencontre')}}</div>
+            @endif
 
             <button id="BtnModifier" class="Bouton BtnModifier" name="Action" value="Modifier" type="submit">
                 <img height="52" src="../resources/Images/Valider.png" alt="Modifier">
@@ -64,8 +68,9 @@
         <div id="ZonePNJ" class="ZonePNJ">
             @foreach($LstPerso as $x => $Perso)
                 <div id="PNJ-{{$x}}" class="EcranLigne Ligne">
-                    <div class="Colonne1 Centre Numerique Gras">{{$Perso->Lettre}}</div>
+                    <div id="Lettre-{{$x}}" class="Colonne1 Centre Numerique Gras">{{$Perso->Lettre}}</div>
                     <div class="Colonne2 Gauche">{{$Perso->Nom}}</div>
+                    <div id="TF-{{$x}}" class="Colonne2 Droite" hidden>{{$Perso->id_fonction}}</div>
                     <div id="Loca-{{$x}}" class="Colonne3 Centre Numerique Gras"></div>
                 </div>
             @endforeach
@@ -77,9 +82,9 @@
                         value="{{$Carte->designation}}" name="Designation">
             </div>
             <div id="Detail-1" class="EcranLigne Detail">
-                <div class="LabelDetail Colonne1 Droite">.... :</div>
-                <div class="LabelDetail Colonne1 Gauche">{{__("Carte/Gestion.LabelCarte")}}</div>
-                <select id="ListeCarte" class="EcranSelect Colonne2-4" name="ListeCarte">
+                <div class="EcranLabel Colonne1 Droite">... :</div>
+                <div class="EcranLabel Colonne1 Gauche">{{__("Carte/Gestion.LabelCarte")}}</div>
+                <select id="ListeCarte" class="EcranSelect Colonne2-4 Numerique" name="ListeCarte">
                     @foreach($LstCarte as $x => $Nom)
                         @if($Nom == $Carte->carte)
                             <option value="{{$Nom}}" selected>{{$Nom}}</option>
@@ -93,20 +98,20 @@
                 </select>
             </div>
             <div id="Detail-2" class="EcranLigne Detail">
-                <div class="LabelDetail Colonne1 Droite">... :</div>
-                <div class="LabelDetail Colonne1 Gauche">{{__("Carte/Gestion.LabelTaille")}}</div>
+                <div class="EcranLabel Colonne1 Droite">... :</div>
+                <div class="EcranLabel Colonne1 Gauche">{{__("Carte/Gestion.LabelTaille")}}</div>
                 <div id="Taille" class="EcranCellule Colonne2-4 Numerique Centre"></div>
             </div>
             <div id="Detail-3" class="EcranLigne Detail">
-                <div class="LabelDetail Colonne1-2 Droite">... :</div>
-                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelQuadrillage")}}</div>
-                <select id="Quadrillage" class="EcranSelect Colonne3-4" disabled>
+                <div class="EcranLabel Colonne1-2 Droite">... :</div>
+                <div class="EcranLabel Colonne1-2 Gauche">{{__("Carte/Gestion.LabelQuadrillage")}}</div>
+                <select id="Quadrillage" class="EcranSelect Colonne3-4 Numerique" disabled>
                     <option value="Carre" selected>{{__("Carte/Gestion.QuadrillageCarre")}}</option>
                 </select>
             </div>
             <div id="Detail-4" class="EcranLigne Detail">
-                <div class="LabelDetail Colonne1-2 Droite">... :</div>
-                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOX")}}</div>
+                <div class="EcranLabel Colonne1-2 Droite">... :</div>
+                <div class="EcranLabel Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOX")}}</div>
                 <select id="NbOX" class="EcranSelect Colonne3 Numerique" name="NbOX">
                     @for($x = 10;$x <= 50;$x++)
                         @if($x == $Carte->nb_ox)
@@ -121,13 +126,13 @@
                 </select>
             </div>
             <div id="Detail-5" class="EcranLigne Detail">
-                <div class="LabelDetail Colonne1-2 Droite">....... :</div>
-                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelTailleOX")}}</div>
+                <div class="EcranLabel Colonne1-2 Droite">....... :</div>
+                <div class="EcranLabel Colonne1-2 Gauche">{{__("Carte/Gestion.LabelTailleOX")}}</div>
                 <div id="TailleOX" class="EcranCellule Colonne3 Numerique Centre"></div>
             </div>
             <div id="Detail-6" class="EcranLigne Detail">
-                <div class="LabelDetail Colonne1-2 Droite">........ :</div>
-                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOY")}}</div>
+                <div class="EcranLabel Colonne1-2 Droite">....... :</div>
+                <div class="EcranLabel Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOY")}}</div>
                 <select id="NbOY" class="EcranSelect Colonne3 Numerique" name="NbOY">
                     @for($x = 10;$x <= 50;$x++)
                         @if($x == $Carte->nb_oy)
@@ -142,12 +147,12 @@
                 </select>
             </div>
             <div id="Detail-7" class="EcranLigne Detail">
-                <div class="LabelDetail Colonne1-2 Droite">........ :</div>
-                <div class="LabelDetail Colonne1-2 Gauche">{{__("Carte/Gestion.LabelTailleOY")}}</div>
+                <div class="EcranLabel Colonne1-2 Droite">....... :</div>
+                <div class="EcranLabel Colonne1-2 Gauche">{{__("Carte/Gestion.LabelTailleOY")}}</div>
                 <div id="TailleOY" class="EcranCellule Colonne3 Numerique Centre"></div>
             </div>
             <div id="Detail-8" class="EcranLigne Detail">
-                <div class="LabelDetail Colonne4 Gauche">{{__("Carte/Gestion.LabelZoom")}}</div>
+                <div class="EcranLabel Colonne4 Gauche">{{__("Carte/Gestion.LabelZoom")}}</div>
                 <input type="range" class="EcranJauge Colonne1-3"
                             id="Zoom" name="Zoom" min="-10" max="10">
             </div>
@@ -156,25 +161,44 @@
         <div class="FondCarte">
             <div id="Carte" class="Carte">
                 <img id="Dessin" class="Grille" src="" alt="Carte">
-                @for($x = 1; $x <= 50; $x++)
-                    @for($y = 1; $y <= 50; $y++)
-                        <div id="Cel-{{$x}}-{{$y}}" class="Carre" 
-                            style="grid-column:{{$x}};grid-row:{{$y}};">
-                        </div>
+                @if($Rencontre->id_rencontre > 0)
+                    @for($x = 1; $x <= $Carte->nb_ox; $x++)
+                        @for($y = 1; $y <= $Carte->nb_oy; $y++)
+                            <div id="Cellule-{{$x}}-{{$y}}" class="CelluleCarre Numerique Centre" 
+                                style="grid-column:{{$x}};grid-row:{{$y}};">
+                            </div>
+                        @endfor
                     @endfor
-                @endfor
+                @else
+                @endif
+                    @for($x = 1; $x <= 50; $x++)
+                        @for($y = 1; $y <= 50; $y++)
+                            <div id="Cel-{{$x}}-{{$y}}" class="Carre" 
+                                style="grid-column:{{$x}};grid-row:{{$y}};">
+                            </div>
+                        @endfor
+                    @endfor
             </div>
         </div>
 
         <div class="MenuBas">
-            <div id="Info" class="EcranCellule Info Centre">{{$Carte->id}}/{{$Carte->id_joueur}}/{{$User->id}}/{{$Rencontre->id_rencontre}}</div>
-            <div id="LocaPNJ" class="EcranCellule LocaPNJ Numerique Gauche">{{$Rencontre->zone_pnj}}</div>
-            <div id="LocaPJ" class="EcranCellule LocaPJ Numerique Gauche">{{$Rencontre->zone_pj}}</div>
+            <div id="Info" class="EcranCellule Info Gras Centre">{{$Carte->id}}/{{$Carte->id_joueur}}/{{$User->id}}/{{$Rencontre->id_rencontre}}</div>
+            <div id="PositionPNJ" name="PositionPNJ" class="EcranCellule PositionPNJ Numerique">{{$Rencontre->zone_pnj}}</div>
+            <div id="EntrePJ" name="EntrePJ" class="EcranCellule EntrePJ Numerique Gauche">{{$Rencontre->zone_pj}}</div>
+            @if($Rencontre->id_rencontre > 0)
+                <div id="MatriceType" class="EcranLabel MatriceType">{{$Carte->quadrillage}}</div>
+                <div id="MatriceTaille" class="EcranCellule MatriceTaille Numerique">{{$Carte->nb_ox}}x{{$Carte->nb_oy}}</div>
+            @endif
+            <div class="DefinitionCouleur" hidden>
+                <div id="CouleurLigne" class="CouleurLigne">CouleurLigne</div>
+            </div>
         </div>
     </div>
 
     <script src="../resources/js/Outils/Objet.js"></script>
     <script src="../resources/js/Outils/Bouton.js"></script>
+    <script src="../resources/js/Carte/MatriceCarre.js"></script>
+    <script src="../resources/js/Carte/Carte.js"></script>
     <script src="../resources/js/Carte/Gestion.js"></script>
 </form>
 </body>
