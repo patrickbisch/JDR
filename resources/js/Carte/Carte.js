@@ -4,6 +4,9 @@ class CARTE_Interface  {
     RetournerPosition() {return(CARTE_FormaterPosition());}
     Position(Index) {return(CartePerso[Index].Position);}
     NouvelleMatrice(TailleOx, TailleOy, Quadrillage) {CARTE_NouvelleMatrice(TailleOx, TailleOy, Quadrillage);}
+    FiltreBloquer(Ox, Oy, Etat) {return(Matrice.FiltreBloquer(Ox, Oy, Etat));}
+    FiltreBrouillard(Ox, Oy, Etat) {return(Matrice.FiltreBrouillard(Ox, Oy, Etat));}
+    FiltreNoir(Ox, Oy, Etat) {return(Matrice.FiltreNoir(Ox, Oy, Etat));}
     Activer(Index, Etat) {Matrice.Activer(CartePerso[Index].Position, Etat);}
     ModifierPosition(Index, Ox, Oy) {CARTE_ModifierPosition(Index, Ox, Oy);}
     EffacerPosition(Index) {Matrice.EffacerPosition(CartePerso[Index]);}

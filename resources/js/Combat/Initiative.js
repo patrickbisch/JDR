@@ -69,7 +69,7 @@ function INIT_Initialiser(Taille)
         e.preventDefault();
         INIT_ChangerEtatListe(Init.Liste);
     });
-    BOUTON_Activer(Obj, true);
+    Bouton.Activer(Obj, true);
 
     Obj = document.querySelector("#Init-Haut");
     Init.Liste.PtrBouton.push(Obj);
@@ -77,7 +77,7 @@ function INIT_Initialiser(Taille)
         e.preventDefault();
         INIT_ChangerEtatListe(Init.Liste);
     });
-    BOUTON_Activer(Obj, true);
+    Bouton.Activer(Obj, true);
     Init.Liste.Etat = false;
     Init.Liste.Valide = true;
     INIT_ActualiserListe();

@@ -1,20 +1,34 @@
 class OBJET_Interface{
     Afficher(Obj, Etat) {OBJET_Afficher(Obj, Etat);}
+    Activer(Obj, Etat) {OBJET_Activer(Obj, Etat);}
     AfficherFamille(Code, Etat) {OBJET_AfficherFamille(Code, Etat);}
     AfficherListe(PtrStructure, Etat) {OBJET_AfficherListe(PtrStructure, Etat);}
     Couleur(Obj, Etat) {OBJET_Couleur(Obj, Etat);}
 }
 var Objet       = new OBJET_Interface();
 
-function OBJET_Afficher(Ptr, Etat = true)
+function OBJET_Afficher(Obj, Etat = true)
 {
-    if(Etat == true)
+    if(Etat)
     {
-        Ptr.style.height = "auto";
+        Obj.style.display = "block";
     }
     else
     {
-        Ptr.style.height = "0px";
+        Obj.style.display = "none";
+    }
+}
+function OBJET_Activer(Obj, Etat = true)
+{
+    if(Etat)
+    {
+        Obj.disabled = false;
+        Obj.style.opacity = "1";
+    }
+    else
+    {
+        Obj.disabled = true;
+        Obj.style.opacity = "0.3";
     }
 }
 function OBJET_AfficherListe(PtrStructure, Etat = false)
@@ -75,6 +89,14 @@ function OBJET_Couleur(Ptr, Etat)
             break;
         case -3:
             Ptr.style.backgroundColor = "transparent";
+            break;
+        case -4:
+            Ptr.style.backgroundColor = "black";
+            Ptr.style.color = "black";
+            break;
+        case -5:
+            Ptr.style.backgroundColor = "repeating-linear-gradient(45deg, black , transparent 10% 10px)";
+            Ptr.style.color = "black";
             break;
         case -2:
         default:

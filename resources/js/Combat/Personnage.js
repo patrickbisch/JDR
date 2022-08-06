@@ -183,7 +183,7 @@ function PERSO_InitialiserListe()
         e.preventDefault();
         PERSO_ChangerEtatListe(Perso.Liste[0]);
     });
-    BOUTON_Activer(Obj, true);
+    Bouton.Activer(Obj, true);
 
     Obj = document.querySelector("#PNJ-Haut");
     Perso.Liste[0].PtrBouton.push(Obj);
@@ -191,7 +191,7 @@ function PERSO_InitialiserListe()
         e.preventDefault();
         PERSO_ChangerEtatListe(Perso.Liste[0]);
     });
-    BOUTON_Activer(Obj, true);
+    Bouton.Activer(Obj, true);
 
     Obj = document.querySelector("#PJ-Bas");
     Perso.Liste[1].PtrBouton.push(Obj);
@@ -199,7 +199,7 @@ function PERSO_InitialiserListe()
         e.preventDefault();
         PERSO_ChangerEtatListe(Perso.Liste[1]);
     });
-    BOUTON_Activer(Obj, true);
+    Bouton.Activer(Obj, true);
 
     Obj = document.querySelector("#PJ-Haut");
     Perso.Liste[1].PtrBouton.push(Obj);
@@ -207,7 +207,7 @@ function PERSO_InitialiserListe()
         e.preventDefault();
         PERSO_ChangerEtatListe(Perso.Liste[1]);
     });
-    BOUTON_Activer(Obj, true);
+    Bouton.Activer(Obj, true);
 
     Perso.Liste[0].Etat = true;
     Perso.Liste[1].Etat = true;
@@ -229,10 +229,10 @@ function PERSO_ActualiserListe()
             PERSO_Actualiser(x, Perso.Liste[0].Etat);
         }
     }
-    BOUTON_Activer(Perso.Liste[0].PtrBouton[0], !Perso.Liste[0].Etat && Perso.Liste[0].Valide);
-    BOUTON_Activer(Perso.Liste[0].PtrBouton[1], Perso.Liste[0].Etat && Perso.Liste[0].Valide);
-    BOUTON_Activer(Perso.Liste[1].PtrBouton[0], !Perso.Liste[1].Etat && Perso.Liste[1].Valide);
-    BOUTON_Activer(Perso.Liste[1].PtrBouton[1], Perso.Liste[1].Etat && Perso.Liste[1].Valide);
+    Bouton.Activer(Perso.Liste[0].PtrBouton[0], !Perso.Liste[0].Etat && Perso.Liste[0].Valide);
+    Bouton.Activer(Perso.Liste[0].PtrBouton[1], Perso.Liste[0].Etat && Perso.Liste[0].Valide);
+    Bouton.Activer(Perso.Liste[1].PtrBouton[0], !Perso.Liste[1].Etat && Perso.Liste[1].Valide);
+    Bouton.Activer(Perso.Liste[1].PtrBouton[1], Perso.Liste[1].Etat && Perso.Liste[1].Valide);
 }
 function PERSO_Actualiser(Id, AfficherLigne)
 {

@@ -193,18 +193,40 @@ body {
     grid-column: 1/TailleMaxi;
     grid-row: 1/TailleMaxi;
 }
+/***********************************/
+/*  GESTION DES DIFFERENTS FILTRES
+/***********************************/
 .CelluleCarre{
-    font-size: 16px;
-    font-weight: bold;
     border-style: solid;
     border-width: 1px;
     border-color: black;
-    z-index: 20;
 }
-.CelluleCarre:hover {
+.FiltreMasque{
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 50;
+}
+.FiltreCellule{
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 40;
+}
+.FiltreLegende
+{
+    font-size: 14px;
+    z-index: 30;
+}
+.FiltreCellule:hover {
     background:gold;
     cursor: pointer;
 }
+.FiltreLegende:hover {
+    background:darkorange;
+    cursor: pointer;
+}
+/***********************************/
+/***********************************/
+/***********************************/
 .Carre{
     font-family: Verdana, sans-serif;
     font-size: 10px;

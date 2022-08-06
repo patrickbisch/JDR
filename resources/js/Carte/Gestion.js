@@ -116,9 +116,9 @@ function ActiverPNJ(Index)
         Carte.Activer(PNJ_Actif, true);
     }
 }
-function JDR_CARTE_NouvelleSelection(Ox, Oy)
+function JDR_CARTE_NouvelleSelection(Index, Ox, Oy)
 {
-    if(PNJ_Actif >= 0)
+    if((PNJ_Actif >= 0) && (Index == 1))
     {
         Carte.EffacerPosition(PNJ_Actif);
         Carte.ModifierPosition(PNJ_Actif, Ox, Oy);
@@ -234,7 +234,7 @@ function InitialiserBoutonMenu()
         e.preventDefault();
         CARTE_ChangerEtatListe(0);
     });
-    BOUTON_Activer(Obj, true);
+    Bouton.Activer(Obj, true);
 
     Obj = document.querySelector("#PNJ-Haut");
     ListeBtn[0].PtrBouton.push(Obj);
@@ -242,7 +242,7 @@ function InitialiserBoutonMenu()
         e.preventDefault();
         CARTE_ChangerEtatListe(0);
     });
-    BOUTON_Activer(Obj, true);
+    Bouton.Activer(Obj, true);
 
     Obj = document.querySelector("#Detail-Bas");
     ListeBtn[1].PtrBouton.push(Obj);
@@ -250,7 +250,7 @@ function InitialiserBoutonMenu()
         e.preventDefault();
         CARTE_ChangerEtatListe(1);
     });
-    BOUTON_Activer(Obj, true);
+    Bouton.Activer(Obj, true);
 
     Obj = document.querySelector("#Detail-Haut");
     ListeBtn[1].PtrBouton.push(Obj);
@@ -259,7 +259,7 @@ function InitialiserBoutonMenu()
         CARTE_ChangerEtatListe(1);
     });
     ListeBtn[1].Etat = true;
-    BOUTON_Activer(Obj, true);
+    Bouton.Activer(Obj, true);
 }
 function InitialiserCarte()
 {
@@ -267,6 +267,28 @@ function InitialiserCarte()
     if(LstInfo[3] > 0)
     {
         InitialiserListePNJ();
+/*********************************************************************/        
+/*********************************************************************/        
+/*          MODE DE DEBUG ET TEST
+/*********************************************************************/        
+/*********************************************************************/        
+Carte.FiltreNoir(10, 10, true);
+Carte.FiltreNoir(11, 10, true);
+Carte.FiltreNoir(11, 10, false);
+Carte.FiltreNoir(12, 10, true);
+
+Carte.FiltreBloquer(10, 10, true);
+Carte.FiltreBloquer(11, 11, true);
+Carte.FiltreBloquer(11, 11, false);
+Carte.FiltreBloquer(12, 11, true);
+
+Carte.FiltreBrouillard(10, 10, true);
+Carte.FiltreBrouillard(11, 12, true);
+Carte.FiltreBrouillard(11, 12, false);
+Carte.FiltreBrouillard(12, 12, true);
+
+/*********************************************************************/        
+/*********************************************************************/        
     }
 
     InitialiserDetail();
