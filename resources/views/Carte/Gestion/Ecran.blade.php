@@ -11,6 +11,7 @@
     <link rel="shortcut icon" href="{{URL::asset('../resources/Images/Carte.jpg') }}">
 
     <link rel="stylesheet" href="{{URL::asset('../resources/css/CharteGraphique.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('../resources/css/Carte/Gestion.css')}}">
     <link rel="stylesheet" href="{{URL::asset('../resources/css/Carte/CharteGraphique.css')}}">
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -19,7 +20,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body>
-    <form action="{{url('Carte/Gestion/'.$Carte->id)}}" method="post">
+    <form action="{{url('Carte/Gestion/'.$Carte->id.'/'.$Rencontre->id_rencontre)}}" method="post">
             {{csrf_field()}}
     <div class="FondPrincipal">
         <div class="CarteRef Colonne3">
@@ -29,13 +30,15 @@
         <div class="MenuHaut">
             @if($Rencontre->id_rencontre == 0)
                 <div class="Titre">{{__('Carte/Gestion.TitreFenetre')}}</div>
+                <button id="BtnModifier" class="Bouton BtnModifier" name="Action" value="Modifier" type="submit">
+                    <img height="52" src="../resources/Images/Valider.png" alt="Modifier">
+                </button>
             @else
                 <div class="Titre">{{__('Carte/Gestion.TitreRencontre')}}</div>
+                <button id="BtnModifier" class="Bouton BtnModifier" name="Action" value="Sauvegarder" type="submit">
+                    <img height="52" src="../resources/Images/Valider.png" alt="Modifier">
+                </button>
             @endif
-
-            <button id="BtnModifier" class="Bouton BtnModifier" name="Action" value="Modifier" type="submit">
-                <img height="52" src="../resources/Images/Valider.png" alt="Modifier">
-            </button>
 
             <button id="BtnAnnuler" class="Bouton BtnAnnuler" name="Action" value="Annuler" type="submit">
                 <img height="52" src="../resources/Images/Quitter.png" alt="Valider">
@@ -113,7 +116,7 @@
                 <div class="EcranLabel Colonne1-2 Droite">... :</div>
                 <div class="EcranLabel Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOX")}}</div>
                 <select id="NbOX" class="EcranSelect Colonne3 Numerique" name="NbOX">
-                    @for($x = 10;$x <= 50;$x++)
+                    @for($x = 10;$x <= 90;$x++)
                         @if($x == $Carte->nb_ox)
                             <option value="{{$x}}" selected>{{$x}}</option>
                         @else
@@ -134,7 +137,7 @@
                 <div class="EcranLabel Colonne1-2 Droite">....... :</div>
                 <div class="EcranLabel Colonne1-2 Gauche">{{__("Carte/Gestion.LabelNbOY")}}</div>
                 <select id="NbOY" class="EcranSelect Colonne3 Numerique" name="NbOY">
-                    @for($x = 10;$x <= 50;$x++)
+                    @for($x = 10;$x <= 90;$x++)
                         @if($x == $Carte->nb_oy)
                             <option value="{{$x}}" selected>{{$x}}</option>
                         @else
@@ -154,7 +157,63 @@
             <div id="Detail-8" class="EcranLigne Detail">
                 <div class="EcranLabel Colonne4 Gauche">{{__("Carte/Gestion.LabelZoom")}}</div>
                 <input type="range" class="EcranJauge Colonne1-3"
-                            id="Zoom" name="Zoom" min="-10" max="10">
+                            id="Zoom" name="Zoom" min="-10" max="10" value="0">
+            </div>
+            <div id="Detail-9" class="EcranLigne Detail PointEntre">
+                <div class="EcranLabel Colonne1-2 Droite Ligne1">... :</div>
+                <div class="EcranLabel Colonne1-2 Gauche Ligne1">{{__("Carte/Gestion.LabelZoomMini")}}</div>
+                <select id="ZoomMini" class="EcranSelect Colonne3 Ligne1 Numerique" name="ZoomMini">
+                    @for($x = 0;$x <= 10;$x++)
+                        @if($x == $Rencontre->zoom_mini)
+                            <option value="{{$x}}" selected>{{$x}}</option>
+                        @else
+                            <option value="{{$x}}">{{$x}}</option>
+                        @endif
+                    @endfor
+                </select>
+                <button id="BtnZoomMini" class="Bouton Gauche Colonne4 Ligne1" name="Action" value="ZoomMini" type="submit">
+                    <img height="20" src="../resources/Images/Sauver.png" alt="ZoomMini">
+                </button>
+
+                <div class="EcranLabel Colonne1-2 Droite Ligne2">... :</div>
+                <div class="EcranLabel Colonne1-2 Gauche Ligne2">{{__("Carte/Gestion.LabelZoomMaxi")}}</div>
+                <select id="ZoomMaxi" class="EcranSelect Colonne3 Ligne2 Numerique" name="ZoomMaxi">
+                    @for($x = 0;$x <= 10;$x++)
+                        @if($x == $Rencontre->zoom_maxi)
+                            <option value="{{$x}}" selected>{{$x}}</option>
+                        @else
+                            <option value="{{$x}}">{{$x}}</option>
+                        @endif
+                    @endfor
+                </select>
+                <button id="BtnZoomMaxi" class="Bouton Gauche Colonne4 Ligne2" name="Action" value="ZoomMaxi" type="submit">
+                    <img height="20" src="../resources/Images/Sauver.png" alt="ZoomMaxi">
+                </button>
+
+
+                <div class="Colonne1-4 Gras Centre Ligne3">{{__("Carte/Gestion.LabelPointEntre")}}</div>
+                <div class="EcranLabel Colonne1-3 Droite Ligne4">....... :</div>
+                <div class="EcranLabel Colonne1-3 Gauche Ligne4">{{__("Carte/Gestion.LabelVision")}}</div>
+                <select id="Vision" class="EcranSelect Colonne4 Ligne4 Numerique" name="Vision">
+                    @for($x = 0;$x <= 10;$x++)
+                        @if($x == $Rencontre->vision)
+                            <option value="{{$x}}" selected>{{$x}}</option>
+                        @else
+                            <option value="{{$x}}">{{$x}}</option>
+                        @endif
+                    @endfor
+                </select>
+                <div class="EcranLabel Colonne1-3 Droite Ligne5">.... :</div>
+                <div class="EcranLabel Colonne1-3 Gauche Ligne5">{{__("Carte/Gestion.LabelBrouillard")}}</div>
+                <select id="Brouillard" class="EcranSelect Colonne4 Ligne5 Numerique" name="Brouillard">
+                    @for($x = 0;$x <= 10;$x++)
+                        @if($x == $Rencontre->brouillard)
+                            <option value="{{$x}}" selected>{{$x}}</option>
+                        @else
+                            <option value="{{$x}}">{{$x}}</option>
+                        @endif
+                    @endfor
+                </select>
             </div>
         </div>
 
@@ -170,6 +229,9 @@
                             <div id="FiltreMasque-{{$x}}-{{$y}}" class="FiltreMasque CelluleCarre Numerique Centre" 
                                 style="grid-column:{{$x}};grid-row:{{$y}};">
                             </div>
+                            <div id="FiltreOmbre-{{$x}}-{{$y}}" class="FiltreOmbre CelluleCarre Numerique Centre" 
+                                style="grid-column:{{$x}};grid-row:{{$y}};">
+                            </div>
                             <div id="FiltreLegende-{{$x}}-{{$y}}" class="FiltreLegende CelluleCarre Numerique Centre" 
                                 style="grid-column:{{$x}};grid-row:{{$y}};">
                             </div>
@@ -177,8 +239,8 @@
                     @endfor
                 @else
                 @endif
-                    @for($x = 1; $x <= 50; $x++)
-                        @for($y = 1; $y <= 50; $y++)
+                    @for($x = 1; $x <= 90; $x++)
+                        @for($y = 1; $y <= 90; $y++)
                             <div id="Cel-{{$x}}-{{$y}}" class="Carre" 
                                 style="grid-column:{{$x}};grid-row:{{$y}};">
                             </div>
@@ -188,15 +250,19 @@
         </div>
 
         <div class="MenuBas">
-            <div id="Info" class="EcranCellule Info Gras Centre">{{$Carte->id}}/{{$Carte->id_joueur}}/{{$User->id}}/{{$Rencontre->id_rencontre}}</div>
-            <div id="PositionPNJ" name="PositionPNJ" class="EcranCellule PositionPNJ Numerique">{{$Rencontre->zone_pnj}}</div>
-            <div id="EntrePJ" name="EntrePJ" class="EcranCellule EntrePJ Numerique Gauche">{{$Rencontre->zone_pj}}</div>
+            <div id="Info" hidden class="EcranCellule Gras Centre">{{$Carte->id}}/{{$Carte->id_joueur}}/{{$User->id}}/{{$Rencontre->id_rencontre}}</div>
             @if($Rencontre->id_rencontre > 0)
+            <div class="EcranLabel LabelPositionPNJ">{{__("Carte/Gestion.LabelPositionPNJ")}}</div>
+            <div id="PositionPNJV" class="EcranCellule PositionPNJ Numerique"></div>
+            <input id ="PositionPNJ" hidden value="{{$Rencontre->zone_pnj}}" name="PositionPNJ">
+            <div class="EcranLabel LabelEntrePJ">{{__("Carte/Gestion.LabelEntrePJ")}}</div>
+            <div id="EntrePJV" class="EcranCellule EntrePJ Numerique"></div>
+            <input id ="EntrePJ" hidden value="{{$Rencontre->zone_pj}}" name="EntrePJ">
                 <div id="MatriceType" class="EcranLabel MatriceType">{{$Carte->quadrillage}}</div>
                 <div id="MatriceTaille" class="EcranCellule MatriceTaille Numerique">{{$Carte->nb_ox}}x{{$Carte->nb_oy}}</div>
             @endif
             <div class="DefinitionCouleur" hidden>
-                <div id="CouleurLigne" class="CouleurLigne">CouleurLigne</div>
+            <div id="CouleurLigne" class="CouleurLigne">CouleurLigne</div>
             </div>
         </div>
     </div>

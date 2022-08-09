@@ -17,7 +17,7 @@ class GestionCarte extends Controller
 /*========================================================*/
 /*  Permer de controler les cartes
 /*========================================================*/   
-    public function Gerer(Request $request, $IdCarte = 0)
+    public function Gerer(Request $request, $IdCarte = 0, $IdRencontre = 0)
     {
         switch($request->Action)
         {
@@ -29,6 +29,9 @@ class GestionCarte extends Controller
                     return(self::Ajouter($request));
                 }
                 return(self::Modifier($request, $IdCarte));
+            case 'Sauvegarder':
+                return(self::ModifierRencontre($request, $IdRencontre));
+
 /*
                 case 'Supprimer';
                 JDR_Campagne::Supprimer($IdCampagne);
@@ -40,6 +43,7 @@ class GestionCarte extends Controller
                 echo "Gestion des cartes<br>";
                 echo "Action : ". $request->Action ."<br>";
                 echo "IdCarte : ". $IdCarte."<br>";
+                echo "IdRencontre : ". $IdRencontre."<br>";
                 return view('test');
         }
     }
@@ -148,5 +152,27 @@ class GestionCarte extends Controller
             "Rencontre"     => $PtrRencontre,
             "LstPerso"      => $LstPerso,
         ]);
+    }
+/*========================================================*/
+/*  Modification d'une campagne
+/*========================================================*/   
+    private static function ModifierRencontre(Request $request, $IdRencontre)
+    {
+        $Rencontre = Rencontre::Element($IdRencontre);
+        return(self::SauvegarderRencontre($request, $Rencontre));
+    }
+/*========================================================*/
+/*  Sauvegarde des modifications pour une campagne
+/*========================================================*/   
+    private static function SauvegarderRencontre(Request $request, Rencontre $Rencontre)
+    {
+        $Rencontre->zone_pnj = $request->input('PositionPNJ');
+        $Rencontre->zone_pj = $request->input('EntrePJ');
+        $Rencontre->vision = $request->input('Vision');
+        $Rencontre->brouillard = $request->input('Brouillard');
+        $Rencontre->zoom_mini = $request->input('ZoomMini');
+        $Rencontre->zoom_maxi = $request->input('ZoomMaxi');
+        $Rencontre->save();
+        return redirect('/Deconnection');
     }
 }

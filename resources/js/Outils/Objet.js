@@ -52,6 +52,16 @@ function OBJET_Couleur(Ptr, Etat)
 {
     switch(parseInt(Etat))
     {
+        case 7:
+            Ptr.disabled = false;
+            Ptr.style.backgroundColor = "khaki";
+            Ptr.style.color = "black";
+            break;
+        case 6:
+            Ptr.disabled = false;
+            Ptr.style.backgroundColor = "lightgreen";
+            Ptr.style.color = "black";
+            break;
         case 5:
             Ptr.disabled = false;
             Ptr.style.backgroundColor = "purple";
@@ -92,10 +102,6 @@ function OBJET_Couleur(Ptr, Etat)
             break;
         case -4:
             Ptr.style.backgroundColor = "black";
-            Ptr.style.color = "black";
-            break;
-        case -5:
-            Ptr.style.backgroundColor = "repeating-linear-gradient(45deg, black , transparent 10% 10px)";
             Ptr.style.color = "black";
             break;
         case -2:

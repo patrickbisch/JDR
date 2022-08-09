@@ -74,7 +74,7 @@ return redirect('/Deconnection');
 /*========================================================*/   
     Route::get('/Carte/Gestion/{id_carte}/{id_rencontre}', 
         [GestionCarte::class, 'Carte']);
-    Route::post('/Carte/Gestion/{id_carte?}', 
+    Route::post('/Carte/Gestion/{id_carte?}/{id_rencontre?}', 
         [GestionCarte::class, 'Gerer']);
 
 /*========================================================*/

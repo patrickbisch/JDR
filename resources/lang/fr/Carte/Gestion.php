@@ -27,5 +27,12 @@ return [
     'LabelTailleOY'     => 'Taille OY ',
     'LabelZoom'         => 'Zoom ',
     'QuadrillageCarre'  => 'Carre ',
+    'LabelPointEntre'   => "Gestion des points d'entrée",
+    'LabelVision'       => 'Distance de la vision',
+    'LabelBrouillard'   => 'Distance du brouillard',
+    'LabelPositionPNJ'  => 'Position des PNJ',
+    'LabelEntrePJ'      => "Points d'entrées des PJ",
+    'LabelZoomMini'     => 'Zoom mini',
+    'LabelZoomMaxi'     => 'Zoom maxi',
 
 ];

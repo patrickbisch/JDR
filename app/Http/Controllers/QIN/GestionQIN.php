@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\QIN;
 
+use App\Models\Carte\Carte;
 use App\Models\Gestion\JDR_Campagne;
 use App\Models\Rencontre\Rencontre;
 use App\Models\Rencontre\RencontrePNJ;
@@ -29,6 +30,7 @@ class GestionQIN extends Controller
         $PtrCampagne = JDR_Campagne::Element($IdCampagne);
         $PtrRencontre = Rencontre::Element($IdRencontre);
         $DetailPNJ = RencontrePNJ::Liste($IdRencontre);
+        $Carte = Carte::Element($PtrRencontre->id_carte);
         $LstPerso = array();
         $NbPJ = 0;
         $NbPNJ = 0;
@@ -81,6 +83,7 @@ class GestionQIN extends Controller
         return view('QIN.Combat.Ecran', [
             "CampagneTitre"     => $PtrCampagne->campagne,
             "RencontreTitre"    => $PtrRencontre->rencontre,
+            "Carte"             => $Carte,
             "LstPerso"          => $LstPerso,
             "NbPJ"              => $NbPJ,
         ]);

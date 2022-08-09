@@ -34,12 +34,13 @@ class RencontrePNJ extends Model
 /*      $IdJDR = permet de retourner toutes les rencontres, si 
 /*              $IdCampagne = 0
 /*========================================================*/   
-    static function Liste($IdRencontre)
+    static function Liste($IdRencontre, $OrdreTri = "ordre")
     {
         if($IdRencontre != 0)
         {
             return(self::
             where('id_rencontre', '=', $IdRencontre)->
+            orderByRaw($OrdreTri)->
             get());
         }
         else

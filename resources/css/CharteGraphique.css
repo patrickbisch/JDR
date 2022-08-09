@@ -4,6 +4,9 @@ body {
     background-color:cyan;
     color: black;
 }
+/*********************************************************************************/
+/*      DEFINITION DES ELEMENTS D'UN ECRAN
+/*********************************************************************************/
 .EcranLigne{
     width: 100%;
     height: auto;
@@ -36,11 +39,13 @@ body {
 .EcranJauge{
     margin: 4px 4px 4px 4px;
     padding: 2px 0px 2px 2px;
-
     border-radius: 8px;
     border-width: 1px;
     border-style:inset;
 }
+/*********************************************************************************/
+/*      DEFINITION PROPRIETES PRINCIPALES ET GENERIQUES
+/*********************************************************************************/
 .Numerique{
     font-family: Verdana, sans-serif;
 }
@@ -62,7 +67,20 @@ body {
     padding: 0px;
     background-color:inherit;
 }
-
+/*============================*/
+/*  Definition DE LA COULEUR DES LIGNE PAIR ET IMPAIR
+/*============================*/
+.Ligne{
+    background-color: beige;
+    color: black;
+}
+.Ligne:nth-child(2n){
+    background-color:aquamarine;
+    color: black;
+}
+/*********************************************************************************/
+/*      DEFINITION DES COLONNES
+/*********************************************************************************/
 .Colonne1{
     grid-column: 1;
     grid-row: 1;
@@ -77,6 +95,10 @@ body {
 }
 .Colonne1-4{
     grid-column: 1/5;
+    grid-row: 1;
+}
+.Colonne1-5{
+    grid-column: 1/6;
     grid-row: 1;
 }
 .Colonne2{
@@ -99,4 +121,18 @@ body {
     grid-column: 3/5;
     grid-row: 1;
 }
-
+/*********************************************************************************/
+/*      DEFINITION DES LIGNES
+/*********************************************************************************/
+.Ligne2{
+    grid-row: 2;
+}
+.Ligne3{
+    grid-row: 3;
+}
+.Ligne4{
+    grid-row: 4;
+}
+.Ligne5{
+    grid-row: 5;
+}
