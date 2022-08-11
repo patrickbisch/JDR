@@ -81,8 +81,9 @@ class GestionQIN extends Controller
         ]);
 
         return view('QIN.Combat.Ecran', [
+            "User"              => $User,
             "CampagneTitre"     => $PtrCampagne->campagne,
-            "RencontreTitre"    => $PtrRencontre->rencontre,
+            "Rencontre"         => $PtrRencontre,
             "Carte"             => $Carte,
             "LstPerso"          => $LstPerso,
             "NbPJ"              => $NbPJ,

@@ -36,6 +36,24 @@
     grid-row: 1/TailleMaxi;
 }
 /***********************************/
+/*  INFO SUR LA DEFINITION DE LA CARTE
+/***********************************/
+.MatriceType{
+    grid-column: MatriceType;
+}
+.MatriceTaille{
+    grid-column: MatriceTaille;
+}
+.LabelPositionPNJ,
+.PositionPNJ,
+.LabelEntrePJ,
+.EntrePJ,
+.MatriceType,
+.MatriceTaille{
+    padding-left: 6px;
+    padding-right: 6px;
+}
+/***********************************/
 /*  GESTION DES DIFFERENTS FILTRES
 /***********************************/
 .CelluleCarre{

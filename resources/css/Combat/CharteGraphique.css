@@ -18,12 +18,15 @@
     border-radius: 14px;
 }
 .MenuBas{
+    font-size: 14px;
+    font-weight: bold;
     grid-column: 1/Fin;
     grid-row: 6;
     background-color: crimson;
     border-radius: 14px;
     display: grid;
-    grid-template-columns: 6px 35px [Rencontre] max-content 1fr [Campagne] max-content 6px [Fin];
+    grid-template-columns: 6px 35px [Rencontre] max-content [BtnHisto] max-content [ZoneMessage] 1fr [BtnJournal] max-content [Campagne] max-content [MatriceTaille] max-content 6px [Fin];
+    align-items: center;
 }
 /*============================*/
 /*  Definition des menus
@@ -57,17 +60,60 @@
     grid-column: 1;
     grid-row: 1;
 }
-.BtnBas{
-    grid-column: 2;
-    grid-row: 1;
+/***************************************************************/
+/*      DEFINITION DES DES
+/***************************************************************/
+.DeDef{
+    align-items: center;
+    font-weight: bold;
+    text-align: center;
+    font-family: Arial;
+    grid-column: DeDef;
+    grid-row: 1/3;
+    display: grid;
+    grid-template-columns: max-content max-content;
 }
-.BtnHaut{
-    grid-column: 3;
-    grid-row: 1;
+#De0-0,
+#De1-0,
+#De2-0{
+    font-size: 34px;
+    border-width: 2px;
+    border-style:inset;
+    width: 55Px;
+    height: 50px;
+    border-radius: 8px;
+    margin: 4px 4px 4px 4px;
 }
-/*============================*/
-/*  Definition des listes deroulantes
-/*============================*/
+#De0-1,
+#De1-1,
+#De2-1{
+    font-size: 38px;
+    width: 55Px;
+    height: 50px;
+    border-radius: 8px;
+    margin: 4px 4px 4px 4px;
+    padding-left: 6px;
+}
+.BlancNoir{
+    background-color: white;
+    color: black;
+}
+.NoirBlanc{
+    background-color: black;
+    color: white;
+}
+/***************************************************************/
+/*      DEFINITION DU BOUTON DE VALIDATION
+/***************************************************************/
+.BtnValider{
+    grid-column: BtnValider;
+    grid-row: 1/3;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+/***************************************************************/
+/*      Definition des listes deroulantes
+/***************************************************************/
 .EcranPNJ,
 .EcranPJ,
 .EcranInit{
@@ -96,9 +142,9 @@
     grid-row: 2/5;
     row-gap: 1px;
 }
-/*============================*/
+/*********************************************************/
 /*  Definition des lignes et leurs contenues
-/*============================*/
+/*********************************************************/
 .NomPNJ,
 .NomPJ,
 .NomInit{
@@ -116,13 +162,11 @@
     padding-right: 4px;
     padding-left: 4px;
 }
-/*============================*/
+/*********************************************************/
 /*  Definition du menu bas
-/*============================*/
+/*********************************************************/
 .Campagne,
 .Rencontre{
-    font-size: 14px;
-    font-weight: bold;
     padding-left: 8px;
     padding-right: 8px;
     border-width: 2px;
@@ -135,7 +179,68 @@
     grid-column: Campagne;
     grid-row: 1;
 }
+.ZoneMessage{
+    grid-column: ZoneMessage;
+    grid-row: 1;
+    font-weight: normal;
+    padding-right: 4px;
+    padding-left: 4px;
+}
+.BoutonHisto{
+    grid-column: BtnHisto;
+    grid-row: 1;
+}
+.BoutonJournal{
+    grid-column: BtnJournal;
+    grid-row: 1;
+}
+/*********************************************************/
+/*      DEFINITION DU JOURNAL ET DE L'HISTORIQUE
+/*********************************************************/
+.TexteHisto,
+.TexteJournal{
+    font-weight: normal;
+    text-align: left;
+    background-color:azure;
+    color: black;
+    border-width: 1px;
+    border-radius: 8px;
+    border-style: solid;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 4px;
 
+    z-index: 200;
+    position:fixed;
+    bottom: 20%;
+}
+.TexteHisto{
+    font-size: 14px;
+    width: minmax(40%, max-content);
+    left: 240px;
+    bottom: 35px;
+}
+.TexteJournal{
+    font-size: 10px;
+    width: 250px;
+    right: 20px;
+    bottom: 35px;
+}
+.SpanTabulation1{
+    margin-left: 1em;
+}
+.SpanTabulation2{
+    margin-left: 2em;
+}
+.SpanTabulation3{
+    margin-left: 3em;
+}
+/*********************************************************/
+/*      DEFINITION DE LA PRESENTATION DES PJ ET PNJ
+/*********************************************************/
+.PersoDef{
+    display: grid;
+}
 
 
 

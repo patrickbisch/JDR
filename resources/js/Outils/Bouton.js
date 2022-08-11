@@ -5,7 +5,7 @@ class BOUTON_Gestion{
 }
 class BOUTON_VALIDER{
     Module = "";
-    Afficher(Etat) {BOUTON_Afficher(PtrBtnValider, Etat);}
+    Afficher(Etat) {Objet.Afficher(PtrBtnValider, Etat);}
     Demarrer(NouveauModule) {BOUTON_VALIDER_Demarrer(NouveauModule);}
     Activer(Etat) {Objet.Activer(PtrBtnValider, Etat);}
     Desactiver() {Objet.Activer(PtrBtnValider, false);}
@@ -64,6 +64,3 @@ function BOUTON_VALIDER_Demarrer(NouveauModule)
     Bouton.Afficher(PtrBtnValider, true);
     Bouton.Activer(PtrBtnValider, true);
 }
-/*******************************************************************/
-/*  Gestion pour les boutons
-/*******************************************************************/

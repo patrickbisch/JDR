@@ -26,6 +26,13 @@
         <div class="FondPrincipal">
             <div class="MenuHaut"></div>
 
+            <button id="BtnValider" class="Bouton BtnValider Info" name="Action" value="Valider" type="submit">
+                <img height="52" src="../resources/Images/Valider.png" alt="Valider">
+                <span class="InfoBulle">
+                    {{__('Combat.InfoValider')}}
+                </span>
+            </button>
+
             @yield('MenuHaut')
 
             @include('Combat.Carte')
@@ -34,21 +41,7 @@
 
         </div>
 
-        <script src="../resources/js/Outils/Objet.js"></script>
-        <script src="../resources/js/Outils/Bouton.js"></script>
-        <script src="../resources/js/Outils/Message.js"></script>
-        <script src="../resources/js/Combat/Personnage.js"></script>
-        <script src="../resources/js/Combat/Equipement.js"></script>
-        <script src="../resources/js/Combat/Action.js"></script>
-        <script src="../resources/js/Combat/Attaque.js"></script>
-        <script src="../resources/js/Combat/Defense.js"></script>
-        <script src="../resources/js/Combat/Initiative.js"></script>
-        <script src="../resources/js/Combat/Cible.js"></script>
-        <script src="../resources/js/Combat/BonusExceptionnel.js"></script>
-        <script src="../resources/js/Combat/Combat.js"></script>
-        <script src="../resources/js/Carte/Gestion.js"></script>
         @yield('CodeJavaScript')
-        <script src="../resources/js/Combat/Demarrage.js"></script>
 
     </form>
 </body>

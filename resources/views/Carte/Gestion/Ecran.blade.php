@@ -252,12 +252,12 @@
         <div class="MenuBas">
             <div id="Info" hidden class="EcranCellule Gras Centre">{{$Carte->id}}/{{$Carte->id_joueur}}/{{$User->id}}/{{$Rencontre->id_rencontre}}</div>
             @if($Rencontre->id_rencontre > 0)
-            <div class="EcranLabel LabelPositionPNJ">{{__("Carte/Gestion.LabelPositionPNJ")}}</div>
-            <div id="PositionPNJV" class="EcranCellule PositionPNJ Numerique"></div>
-            <input id ="PositionPNJ" hidden value="{{$Rencontre->zone_pnj}}" name="PositionPNJ">
-            <div class="EcranLabel LabelEntrePJ">{{__("Carte/Gestion.LabelEntrePJ")}}</div>
-            <div id="EntrePJV" class="EcranCellule EntrePJ Numerique"></div>
-            <input id ="EntrePJ" hidden value="{{$Rencontre->zone_pj}}" name="EntrePJ">
+                <div class="EcranLabel LabelPositionPNJ">{{__("Carte/Gestion.LabelPositionPNJ")}}</div>
+                <div id="PositionPNJV" class="EcranCellule PositionPNJ Numerique"></div>
+                <input id ="PositionPNJ" hidden value="{{$Rencontre->zone_pnj}}" name="PositionPNJ">
+                <div class="EcranLabel LabelEntrePJ">{{__("Carte/Gestion.LabelEntrePJ")}}</div>
+                <div id="EntrePJV" class="EcranCellule EntrePJ Numerique"></div>
+                <input id ="EntrePJ" hidden value="{{$Rencontre->zone_pj}}" name="EntrePJ">
                 <div id="MatriceType" class="EcranLabel MatriceType">{{$Carte->quadrillage}}</div>
                 <div id="MatriceTaille" class="EcranCellule MatriceTaille Numerique">{{$Carte->nb_ox}}x{{$Carte->nb_oy}}</div>
             @endif

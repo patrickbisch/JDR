@@ -189,18 +189,3 @@ body {
 .EntrePJ{
     grid-column: EntrePJ;
 }
-.MatriceType{
-    grid-column: MatriceType;
-}
-.MatriceTaille{
-    grid-column: MatriceTaille;
-}
-.LabelPositionPNJ,
-.PositionPNJ,
-.LabelEntrePJ,
-.EntrePJ,
-.MatriceType,
-.MatriceTaille{
-    padding-left: 6px;
-    padding-right: 6px;
-}

@@ -2,8 +2,7 @@ body {
     background-color:seagreen;
 }
 .FondPrincipal{
-    grid-template-columns: 6px [MenuPNJ] max-content 1fr 18px [Fin];
-    grid-template-columns: 6px [MenuPNJ] 280px 6px [MenuInit] 280px 1fr [MenuPJ] 280px 20px [Fin];
+    grid-template-columns: 6px [MenuPNJ] max-content 6px [MenuInit] 280px 1fr [DeDef] max-content [BtnValider] max-content 1fr [MenuPJ] max-content 20px [Fin];
 }
 .MenuHaut{
     background-color:darkkhaki;
@@ -24,10 +23,39 @@ body {
     background-color:darkorange;
 }
 .Ligne{
-    background-color: darkkhaki;
+    background-color:khaki;
     color: black;
 }
 .Ligne:nth-child(2n){
-    background-color:khaki;
+    background-color: darkkhaki;
     color: black;
+}
+.EcranPNJ,
+.EcranPJ{
+    width: 230px;
+}
+.PersoDef{
+    grid-template-columns: 2px repeat(16, 1fr) [Fin] 2px;
+}
+.Feu{
+    background-color: red;
+}
+.Bois{
+    background-color: darkolivegreen;
+    color: white;
+}
+.Terre{
+    background-color:sienna;
+    color: white;
+}
+.Metal{
+    background-color: silver;
+}
+.Eau{
+    background-color: mediumslateblue;
+}
+
+
+.Debug{
+    font-size: 14px;
 }
