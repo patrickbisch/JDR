@@ -66,7 +66,7 @@ function PV_ActualiserPV(Id, Ligne, PtrPV)
     {
         if(x > 0)
         {
-            Chaine += " / ";
+            Chaine += "/";
         }
         Chaine+= PERSO_DATA[Id].TabPV[Ligne][x];
     }

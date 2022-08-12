@@ -3,15 +3,19 @@ class MATRICE_Carre{
 /*********************************************************************/
 /*      ACTION SUR LE MASQUE DES FILTRES                                 */
 /*********************************************************************/
+    Bloquer(Etat) {MC_Bloquer(Etat);}
     FiltreBloquer(Ox, Oy, Etat) {return(MC_FiltreBloquer(Ox, Oy, Etat));}
     FiltreBrouillard(Ox, Oy, Etat) {return(MC_FiltreBrouillard(Ox, Oy, Etat));}
+    EffacerBrouillard() {MC_EffacerBrouillard();}
     FiltreNoir(Ox, Oy, Etat) {return(MC_FiltreNoir(Ox, Oy, Etat));}
+    EffacerNoir() {MC_EffacerNoir();}
 
     AfficherLegende(Ox, Oy, Texte) {return(MC_AfficherLegende(Ox, Oy, Texte));}
     ActiverLegende(Ox, Oy) {return(MC_ActiverLegende(Ox, Oy));}
     AfficherPosition(PtrPerso, Etat) {return(MC_AfficherPosition(PtrPerso, Etat));}
     EffacerPosition(PtrPerso) {return(MC_EffacerPosition(PtrPerso));}
     Activer(Position, Etat) {return(MC_Activer(Position, Etat));}
+    RetournerFiltre(Filtre, Valeur) {return(MC_RetournerFiltre(Filtre, Valeur));}
     RetournerFiltreLegende(Valeur) {return(MC_RetournerFiltre(3, Valeur));}
 
 /*********************************************************************/
@@ -108,6 +112,16 @@ function MC_ModifierFiltre(Masque, Etat, Filtre)
         return(parseInt(Masque) & parseInt(~Filtre));
     }
 }
+function MC_Bloquer(Etat = true)
+{
+    for(let x = 0;x < Cellule.length;x++)
+    {
+        for(let y = 0;y < Cellule[0].length;y++)
+        {
+            MC_FiltreBloquer(x, y, Etat);
+        }
+    }
+}
 function MC_FiltreBloquer(Ox, Oy, Etat)
 {
     Cellule[Ox][Oy].Masque[0] = MC_ModifierFiltre(Cellule[Ox][Oy].Masque[0], Etat, 1);
@@ -118,10 +132,26 @@ function MC_FiltreBrouillard(Ox, Oy, Etat)
     Cellule[Ox][Oy].Masque[1] = MC_ModifierFiltre(Cellule[Ox][Oy].Masque[1], Etat, 2);
     MC_AfficherCellule(Ox, Oy);
 }
+function MC_EffacerBrouillard()
+{
+    let LstObj = MC_RetournerFiltre(1, 2);
+    for(let x = 0;x < LstObj.length;x++)
+    {
+        MC_FiltreBrouillard(LstObj[x].Ox, LstObj[x].Oy, false);
+    }
+}
 function MC_FiltreNoir(Ox, Oy, Etat)
 {
     Cellule[Ox][Oy].Masque[0] = MC_ModifierFiltre(Cellule[Ox][Oy].Masque[0], Etat, 4);
     MC_AfficherCellule(Ox, Oy);
+}
+function MC_EffacerNoir()
+{
+    let LstObj = MC_RetournerFiltre(0, 4);
+    for(let x = 0;x < LstObj.length;x++)
+    {
+        MC_FiltreNoir(LstObj[x].Ox, LstObj[x].Oy, false);
+    }
 }
 function MC_AfficherCellule(Ox, Oy)
 {
@@ -154,17 +184,21 @@ function MC_AfficherCelluleObjet(Obj)
             Objet.Afficher(Obj.PtrCellule[x], false);
         }
     }
-    switch(Obj.Masque[2])
+    if(Obj.Masque[2]>0)
+    {
+        console.debug("Masque USER : "+Obj.Masque[2]);
+    }
+    switch(parseInt(Obj.Masque[2]))
     {
         case 6:
         case 5:
-            Objet.Couleur(Obj.PtrCellule[2], 2);
+            Objet.Couleur(Obj.PtrCellule[2], 1);
             break;
         case 2:
             Objet.Couleur(Obj.PtrCellule[2], 5);
             break;
         case 1:
-            Objet.Couleur(Obj.PtrCellule[2], 4);
+            Objet.Couleur(Obj.PtrCellule[2], -2);
             break;
         default:
             Objet.Couleur(Obj.PtrCellule[2], 0);
@@ -193,7 +227,7 @@ function MC_AfficherPosition(PtrPerso, Etat = false)
     let PtrCel = Cellule[PtrPerso.Position.Ox][PtrPerso.Position.Oy];
     PtrCel.PtrCellule[2].innerHTML = PtrPerso.Lettre;
     MC_FiltreBloquer(PtrPerso.Position.Ox, PtrPerso.Position.Oy, true);
-    if(PtrPerso.TypeFocntion == 0)
+    if(PtrPerso.TypeFonction == 0)
     {
         PtrCel.Masque[2] = 2;
     }
@@ -206,8 +240,6 @@ function MC_AfficherPosition(PtrPerso, Etat = false)
         PtrCel.Masque[2] = PtrCel.Masque[2] | 4;
     }
     let TabCel = MC_ListeObjet(PtrPerso);
-    console.debug(PtrPerso);
-    console.debug(TabCel.length);
     for(let x = 0;x < TabCel.length;x++)
     {
         TabCel[x].Masque[3] = TabCel[x].Masque[3] | PtrPerso.Masque;

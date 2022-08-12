@@ -47,6 +47,7 @@ function COMBAT_NouveauPersonnage()
     {
         Tao.Afficher(Perso.Actif, "");
         Action.Afficher(Perso.Actif, false);
+        Carte.Activer(Perso.Actif, false);
     }
     Init.Actif = COMBAT_PersonnageSuivant(Init.Actif + 1);
     if(Init.Actif < 0)
@@ -56,6 +57,7 @@ function COMBAT_NouveauPersonnage()
     }
     if(Init.Actif < 0)
     {
+        Carte.Activer(Perso.Actif, false);
         Perso.Actif = -1;
         Cible.Active = -1;
         PERSO_ActualiserListe();
@@ -69,6 +71,7 @@ function COMBAT_NouveauPersonnage()
         else
         {
             MSG.Message("Fin du tour de combat, valider pour l'initiative.", true);
+            Carte.Activer(Perso.Actif, false);
             Perso.Actif = -2;
             Bouton.Valider.Activer(true);
         }
@@ -77,10 +80,13 @@ function COMBAT_NouveauPersonnage()
     {
         Bouton.Valider.Demarrer("ACTION");
         Bouton.Valider.Desactiver();
+        Carte.Activer(Perso.Actif, false);
         Perso.Actif = INIT_ORDRE[Init.Actif];
+        Carte.Activer(Perso.Actif, true);
         Cible.AffecterDefaut(Perso.Actif);
         Tao.Afficher(Perso.Actif, "ACTION");
         Action.Activer(Perso.Actif);
+        Carte.Activer(Perso.Actif, true);
         MSG.Historique(Perso.Gras(Perso.Actif) + " est le nouveau personnage actif");
         MSG.Journal("");
         MSG.Journal(Perso.Gras(Perso.Actif) + " est actif");

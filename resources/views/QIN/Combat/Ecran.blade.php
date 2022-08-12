@@ -58,7 +58,7 @@
     </div>
 @endsection
 
-@section('CodeJavaScript2')
+@section('CodeJavaScript')
     <script src="../resources/js/Outils/Objet.js"></script>
     <script src="../resources/js/Outils/Bouton.js"></script>
     <script src="../resources/js/Outils/Message.js"></script>
@@ -73,6 +73,7 @@
     <script src="../resources/js/Combat/Combat.js"></script>
     <script src="../resources/js/Carte/Carte.js"></script>
     <script src="../resources/js/Carte/MatriceCarre.js"></script>
+    <script src="../resources/js/Carte/Combat.js"></script>
     <script src="../resources/js/QIN/Combat/BonusAvant.js"></script>
     <script src="../resources/js/QIN/Combat/Caracteristique.js"></script>
     <script src="../resources/js/QIN/Combat/DefensePassive.js"></script>

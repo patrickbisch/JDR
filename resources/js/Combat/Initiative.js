@@ -79,8 +79,9 @@ function INIT_Initialiser(Taille)
     });
     Bouton.Activer(Obj, true);
     Init.Liste.Etat = false;
-    Init.Liste.Valide = true;
+    Init.Liste.Valide = false;
     INIT_ActualiserListe();
+    Init.AfficherListe(false);
 }
 function INIT_NouveauTour()
 {
@@ -115,6 +116,7 @@ function INIT_NouveauTour()
         PERSO_DATA[x].NbAction = Perso.NbActionMaxi(x);
         PERSO_AfficherNombreAction(x);
     }
+    Objet.AfficherFamille("EcranInit", true);
     Init.AfficherListe(true);
     Perso.Actif = -1;
     Cible.Active = -1;
@@ -342,6 +344,7 @@ function INIT_ValiderDE()
     INIT_ActualiserListe();
     if(INIT_ControlerFin() > 0)
     {
+        Init.AfficherListe(false);
         MSG.Message("Tour d'initialisation terminé.", true);
         Moteur.LancerModule("COMBAT");
     }

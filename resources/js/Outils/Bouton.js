@@ -6,7 +6,7 @@ class BOUTON_Gestion{
 class BOUTON_VALIDER{
     Module = "";
     Afficher(Etat) {Objet.Afficher(PtrBtnValider, Etat);}
-    Demarrer(NouveauModule) {BOUTON_VALIDER_Demarrer(NouveauModule);}
+    Demarrer(NouveauModule, Etat) {BOUTON_VALIDER_Demarrer(NouveauModule, Etat);}
     Activer(Etat) {Objet.Activer(PtrBtnValider, Etat);}
     Desactiver() {Objet.Activer(PtrBtnValider, false);}
 }
@@ -54,13 +54,17 @@ function BOUTON_ValiderDe()
         case "DEFENSE":
             DEFENSE_ValiderDE();
             break;
+        case "CARTO_PNJ":
+        case "CARTO_PJ":
+            CARTO_ValiderDE();
+            break;
         default:
             MSG.Erreur("BOUTON_ValiderDe = Phase de tour [" + Bouton.Valider.Module + "] INCONNUE !!");
     }
 }
-function BOUTON_VALIDER_Demarrer(NouveauModule)
+function BOUTON_VALIDER_Demarrer(NouveauModule, Etat = true)
 {
     Bouton.Valider.Module = NouveauModule;
     Bouton.Afficher(PtrBtnValider, true);
-    Bouton.Activer(PtrBtnValider, true);
+    Bouton.Activer(PtrBtnValider, Etat);
 }

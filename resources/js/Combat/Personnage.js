@@ -15,6 +15,7 @@ class PERSO_Interface{
     Lettre(Index) {return(PERSO_BASE[Index].Lettre);}
     Gras(Index) {return(this.Lettre(Index) + ". <strong>" + this.Nom(Index) + "</strong>");}
     Mort(Index) {return(PERSO_DATA[Index].Mort);}
+    BloquerPNJ(Etat) {PERSO_BloquerPNJ(Etat);}
     Bloque(Index) {return(PERSO_DATA[Index].Bloque);}
     ChangerEtat(Index, Mort) {PERSO_ChangerEtat(Index, Mort);}
     AjouterAttaque(Index, AttaqueCaC) {PERSO_AjouterAttaque(Index, AttaqueCaC);}
@@ -106,6 +107,10 @@ function PERSO_Initialiser()
 
         let Obj = document.querySelector("#Ligne-" + Id);
         Ptr.PtrLigne = Obj;
+        Ptr.PtrLigne.addEventListener('click', function(e){
+            e.preventDefault();
+            PERSO_ActiverPersonnage(Id);
+        });
 
         Obj = document.querySelector("#NbAction-" + Id);
         Ptr.PtrLabelAction = Obj;
@@ -132,8 +137,8 @@ function PERSO_Initialiser()
         }
         PERSO_DATA[Id].TabPVMaxi = PERSO_BASE[Id].PV.split("/");
     }
-
     PERSO_InitialiserListe();
+    Cartographie.Initialiser(Perso.Taille);
     BonusExceptionnel.Initialiser();
     Caracteristique.Initialiser(Perso.Taille);
     BonusAvant.Initialiser(Perso.Taille);
@@ -160,17 +165,10 @@ function PERSO_Initialiser()
 //PERSO_DATA[3].MalusPV = -1;
 //PERSO_DATA[5].MalusPV = -3;
 //PERSO_DATA[6].MalusPV = -5;
-Perso.Liste[0].Etat = false;
-Perso.Liste[1].Etat = false;
-for(let Id = 0;Id < Perso.Taille;Id++)
-{
-    PERSO_DATA[Id].Afficher = false;
-}
-PERSO_ActualiserListe();
-Moteur.LancerModule("Equipement");
 //CARTE_Debug();
 /***************************************************************************************/
 /***************************************************************************************/
+    Moteur.LancerModule("Equipement");
 }
 function PERSO_InitialiserListe()
 {
@@ -183,7 +181,7 @@ function PERSO_InitialiserListe()
         e.preventDefault();
         PERSO_ChangerEtatListe(Perso.Liste[0]);
     });
-    Bouton.Activer(Obj, true);
+    Bouton.Activer(Obj, false);
 
     Obj = document.querySelector("#PNJ-Haut");
     Perso.Liste[0].PtrBouton.push(Obj);
@@ -191,7 +189,7 @@ function PERSO_InitialiserListe()
         e.preventDefault();
         PERSO_ChangerEtatListe(Perso.Liste[0]);
     });
-    Bouton.Activer(Obj, true);
+    Bouton.Activer(Obj, false);
 
     Obj = document.querySelector("#PJ-Bas");
     Perso.Liste[1].PtrBouton.push(Obj);
@@ -199,7 +197,7 @@ function PERSO_InitialiserListe()
         e.preventDefault();
         PERSO_ChangerEtatListe(Perso.Liste[1]);
     });
-    Bouton.Activer(Obj, true);
+    Bouton.Activer(Obj, false);
 
     Obj = document.querySelector("#PJ-Haut");
     Perso.Liste[1].PtrBouton.push(Obj);
@@ -207,7 +205,7 @@ function PERSO_InitialiserListe()
         e.preventDefault();
         PERSO_ChangerEtatListe(Perso.Liste[1]);
     });
-    Bouton.Activer(Obj, true);
+    Bouton.Activer(Obj, false);
 
     Perso.Liste[0].Etat = true;
     Perso.Liste[1].Etat = true;
@@ -236,6 +234,7 @@ function PERSO_ActualiserListe()
 }
 function PERSO_Actualiser(Id, AfficherLigne)
 {
+    Objet.Afficher(PERSO_DATA[Id].PtrLigne, true);
     if(Perso.Actif == Id)
     {
         Objet.Couleur(PERSO_DATA[Id].PtrLigne, 1);
@@ -364,6 +363,29 @@ function PERSO_ChangerEtat(Index, Mort = true)
         Cible.ActualiserListeGroupe();
     }
     PERSO_ActualiserListe();
+}
+function PERSO_ActiverPersonnage(Index)
+{
+    switch(Bouton.Valider.Module)
+    {
+        case "CARTO_PNJ":
+        case "CARTO_PJ":
+            Cartographie.ActiverPersonnage(Index);
+            break;
+        default:
+            console.info("PERSO_ActiverPersonnage <"+Bouton.Valider.Module+"> : "+Index);
+            break;
+    }
+}
+function PERSO_BloquerPNJ(Etat = true)
+{
+    for(let x = 0;x < PERSO_DATA.length;x++)
+    {
+        if(Perso.TypeFonction(x) != 0)
+        {
+            PERSO_DATA[x].Bloque = Etat;
+        }
+    }
 }
 /***************************************************************************************/
 /***************************************************************************************/

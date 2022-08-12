@@ -575,6 +575,7 @@ function TAO_PremierPersonnage(Id)
     {
         Action.Afficher(Perso.Actif, false);
     }
+    Carte.Activer(Perso.Actif, false);
     Perso.Actif = -1;
     Cible.Active = -1
     Init.Actif = -1;

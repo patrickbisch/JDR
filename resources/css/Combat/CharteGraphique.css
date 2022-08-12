@@ -111,6 +111,12 @@
     padding-left: 4px;
     padding-right: 4px;
 }
+.BtnZoom{
+    grid-column: BtnZoom;
+    grid-row: 1/3;
+    padding-left: 4px;
+    padding-right: 4px;
+}
 /***************************************************************/
 /*      Definition des listes deroulantes
 /***************************************************************/
@@ -211,11 +217,11 @@
     padding-top: 4px;
 
     z-index: 200;
-    position:fixed;
+    position:absolute;
     bottom: 20%;
 }
 .TexteHisto{
-    font-size: 14px;
+    font-size: 12px;
     width: minmax(40%, max-content);
     left: 240px;
     bottom: 35px;
@@ -239,6 +245,10 @@
 /*      DEFINITION DE LA PRESENTATION DES PJ ET PNJ
 /*********************************************************/
 .PersoDef{
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    align-items: center;
     display: grid;
 }
 

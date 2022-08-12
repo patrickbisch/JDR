@@ -33,6 +33,10 @@
                 </span>
             </button>
 
+            <input type="range" class="EcranJauge BtnZoom" id="Zoom" 
+                    min="-{{$Rencontre->zoom_mini}}" max="{{$Rencontre->zoom_maxi}}" value="0">
+
+
             @yield('MenuHaut')
 
             @include('Combat.Carte')

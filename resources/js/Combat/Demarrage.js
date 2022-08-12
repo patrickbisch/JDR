@@ -17,7 +17,10 @@ function MOTEUR_LancerModule(NomModule, NomProcedure)
             Bouton.Initialiser();
             MSG.Initialiser();
             MSG.Message("Lancement de l'application.", true);
-            Objet.AfficherFamille("Ligne", false);
+            Objet.AfficherFamille("EcranPNJ", false);
+            Objet.AfficherFamille("EcranPJ", false);
+            Objet.AfficherFamille("EcranInit", false);
+            Bouton.Valider.Afficher(false);
             TimerMoteur = setInterval(MOTEUR_RecupererBaseDonnee, 500);
 /**************************************************************************************/
 /**************************************************************************************/
@@ -32,22 +35,24 @@ MSG.AfficherJournal(true);
             break;
         case "Initialisation":
             console.info("Lancement de l'initalisation.");
-            Bouton.Valider.Afficher(false);
             TimerMoteur = setInterval(Perso.Initialiser, 50);
+            break;
+        case "Equipement":
+            console.info("Lancement de l'equipement des personnages");
+            Objet.AfficherFamille("EcranPNJ", true);
+            Objet.AfficherFamille("EcranPJ", true);
+            TimerMoteur = setInterval(Equipement.Personnage, 50);
+            break;
+        case "CARTOGRAPHIE":
+            console.info("Lancement de la cartographie.");
+            TimerMoteur = setInterval(Cartographie.NouveauTour, 50);
             break;
         case "Tour INIT":
             console.info("Lancement d'un tour d'initialisation.");
-            Objet.AfficherFamille("LignePerso", false);
             TimerMoteur = setInterval(Init.NouveauTour, 50);
-            break;
-        case "Equipement":
-            console.info("Lancement de l'equipement des pesonnages");
-            Objet.AfficherFamille("LignePerso", false);
-            TimerMoteur = setInterval(Equipement.Personnage, 50);
             break;
         case "COMBAT":
             console.info("Lancement du combat");
-            Objet.AfficherFamille("LignePerso", false);
             TimerMoteur = setInterval(Combat.Lancer, 50);
             break;
         case "Nouveau Personnage":

@@ -31,7 +31,7 @@ function EQUIP_EquiperPersonnage()
     Moteur.ArreterModule();
     MSG.ViderHistorique();
     MSG.ViderJournal();
-    MSG.Message("Gestion de l'equipement des perosnnage.", true);
+    MSG.Message("Gestion de l'equipement des personnage.", true);
     MSG.Journal("Gestion de l'equipement.");
     Perso.Actif = -1;
     Init.EtatBouton(false, false);
@@ -40,17 +40,20 @@ function EQUIP_EquiperPersonnage()
     Perso.Liste[0].Valide = false;
     Perso.Liste[1].Valide = false;
     JDR_AfficherDE(-1);
-    PERSO_ActualiserListe();
     Equipement.AfficherListe(true);
+    PERSO_ActualiserListe();
+    BonusAvant.AfficherListe(true);
     Tao.AfficherListe("EQUIP");
     Bouton.Valider.Demarrer("EQUIP");
 /*********************************************************************************************/
 /*********************************************************************************************/
 EQUIP_ControlerAffectation();
-EQUIP_Affecter(5, 0, 0);
-EQUIP_Affecter(6, 0, 0);
-EQUIP_Affecter(8, 2, -2);
-EQUIP_Affecter(8, 0, 0);
+EQUIP_Affecter(0, 0, 1);
+EQUIP_Affecter(0, 1, 0);
+EQUIP_Affecter(0, 2, -2);
+EQUIP_Affecter(1, 0, 0);
+EQUIP_Affecter(3, 0, 0);
+EQUIP_Affecter(3, 2, -2);
 EQUIP_Affecter(9, 0, 1);
 EQUIP_Affecter(9, 1, 0);
 EQUIP_Affecter(9, 2, -2);
@@ -236,14 +239,15 @@ function EQUIP_Affecter(Id, Type, Indice, GererBouton)
 function EQUIP_NouveauObjet(Obj, Id, x)
 {
     let Nb = Obj.value;
+    if(Obj.value == ""){Nb = -2;}
     let Mode = Bouton.Valider.Module;
     switch(parseInt(Nb))
     {
         case -1:
-            EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML = "";
+            EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML = "0";
             break;
         case -2:
-            EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML = "";
+            EQUIP_DATA[Id].Equipement[x].PtrLabel.innerHTML = "0";
             EQUIP_Commentaire(Id, Mode + "/" + x + "/-2");
             break;
         default:
@@ -257,7 +261,7 @@ function EQUIP_NouveauObjet(Obj, Id, x)
                         if(EQUIP_DATA[Id].Equipement[2].PtrSelect.value != -2)
                         {
                             EQUIP_DATA[Id].Equipement[2].PtrSelect.value = -1;
-                            EQUIP_DATA[Id].Equipement[2].PtrLabel.innerHTML = "";
+                            EQUIP_DATA[Id].Equipement[2].PtrLabel.innerHTML = "0";
                         }
                     }
                     Perso.Base(Id).Armes[Nb].Quantite = Perso.Base(Id).Armes[Nb].QuantiteMaxi;
@@ -275,7 +279,7 @@ function EQUIP_NouveauObjet(Obj, Id, x)
                         if(Perso.Base(Id).Armes[Nb].DeuxMains)
                         {
                             EQUIP_DATA[Id].Equipement[0].PtrSelect.value = -1;
-                            EQUIP_DATA[Id].Equipement[0].PtrLabel.innerHTML = "";
+                            EQUIP_DATA[Id].Equipement[0].PtrLabel.innerHTML = "0";
                         }
                     }
                     break;
@@ -435,7 +439,7 @@ function EQUIP_ControlerAffectation(GererBouton = true)
 function EQUIP_ValiderDE()
 {
     Mode = "AUTRE";
-    Moteur.LancerModule("Tour INIT");
+    Moteur.LancerModule("CARTOGRAPHIE");
 }
 function EQUIP_Protection(Id)
 {

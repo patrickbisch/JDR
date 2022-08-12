@@ -304,7 +304,7 @@ function InitialiserCarte()
 /*          MODE DE DEBUG ET TEST
 /*********************************************************************/        
 /*********************************************************************/        
-//Carte.InitialiserBrouillard(parseInt(document.querySelector("#Vision").value),parseInt(document.querySelector("#Brouillard").value));
+Carte.InitialiserBrouillard(parseInt(document.querySelector("#Vision").value),parseInt(document.querySelector("#Brouillard").value));
 
 /*********************************************************************/        
 /*********************************************************************/ 

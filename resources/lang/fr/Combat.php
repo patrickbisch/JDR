@@ -31,4 +31,5 @@ return [
     'Bouclier'          => 'Bouclier',
     'Arme'              => 'Arme',
     'InfoValider'       => 'Permet de valider',
+    'Position'          => 'Position',
 ];

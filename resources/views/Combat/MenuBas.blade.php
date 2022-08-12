@@ -5,6 +5,10 @@
         <div id="MatriceType">{{$Carte->quadrillage}}</div>
         <div id ="PositionPNJ">{{$Rencontre->zone_pnj}}</div>
         <div id ="EntrePJ">{{$Rencontre->zone_pj}}</div>
+        <div id="ZoomMini">{{$Rencontre->zoom_mini}}</div>
+        <div id="ZoomMaxi">{{$Rencontre->zoom_maxi}}</div>
+        <div id="Vision">{{$Rencontre->vision}}</div>
+        <div id="Brouillard">{{$Rencontre->brouillard}}</div>
     </div>
 
     <div class="Rencontre EcranCellule">{{$Rencontre->rencontre}}</div>
