@@ -1,42 +1,60 @@
 class MATRICE_Carre{
     Nouvelle(TailleOx, TailleOy) {return(MC_Initialiser(TailleOx, TailleOy));}
 /*********************************************************************/
-/*      ACTION SUR LE MASQUE DES FILTRES                                 */
+/*      ACTION SUR LE MASQUE DES FILTRES                                
 /*********************************************************************/
-    Bloquer(Etat) {MC_Bloquer(Etat);}
+    Bloquer(Etat) {MC_TousBloquer(Etat);}
     FiltreBloquer(Ox, Oy, Etat) {return(MC_FiltreBloquer(Ox, Oy, Etat));}
     FiltreBrouillard(Ox, Oy, Etat) {return(MC_FiltreBrouillard(Ox, Oy, Etat));}
     EffacerBrouillard() {MC_EffacerBrouillard();}
     FiltreNoir(Ox, Oy, Etat) {return(MC_FiltreNoir(Ox, Oy, Etat));}
     EffacerNoir() {MC_EffacerNoir();}
+    MasqueAjouter(Ox, Oy, Filtre, Valeur) {return(MC_AjouterMasque(Ox, Oy, Filtre, Valeur));}
+    MasqueAjouterObjet(PtrObj, Filtre, Valeur) {return(this.MasqueAjouter(PtrObj.Ox, PtrObj.Oy, Filtre, Valeur));}
+    MasqueEnlever(Ox, Oy, Filtre, Valeur) {return(MC_EnleverMasque(Ox, Oy, Filtre, Valeur));}
+    MasqueEnleverObjet(PtrObj, Filtre, Valeur) {return(this.MasqueEnlever(PtrObj.Ox, PtrObj.Oy, Filtre, Valeur));}
+    Masque(Ox, Oy, Filtre) {return(Cellule[Ox][Oy].Masque[Filtre]);}
+    MasqueObjet(PtrObj, Filtre) {return(this.Masque(PtrObj.Ox, PtrObj.Oy, Filtre));}
+    RetournerFiltre(Filtre, Valeur) {return(MC_RetournerMasqueListe(Filtre, Valeur));}
+/*********************************************************************/
+/*      GESTION DE LA LEGENDE
+/*********************************************************************/
+    AfficherLegende(Ox, Oy, Texte, Affectation) {return(MC_AfficherLegende(Ox, Oy, Texte, Affectation));}
+    AfficherLegendeObjet(PtrObj, Texte, Affectation) {return(this.AfficherLegende(PtrObj.Ox, PtrObj.Oy, Texte, Affectation));}
+    ActiverLegende(Ox, Oy, Etat) {return(MC_ActiverLegende(Ox, Oy, Etat));}
+    RetournerFiltreLegende(Valeur) {return(MC_RetournerMasqueListe(3, Valeur));}
 
-    AfficherLegende(Ox, Oy, Texte) {return(MC_AfficherLegende(Ox, Oy, Texte));}
-    ActiverLegende(Ox, Oy) {return(MC_ActiverLegende(Ox, Oy));}
+
+
     AfficherPosition(PtrPerso, Etat) {return(MC_AfficherPosition(PtrPerso, Etat));}
     EffacerPosition(PtrPerso) {return(MC_EffacerPosition(PtrPerso));}
     Activer(Position, Etat) {return(MC_Activer(Position, Etat));}
-    RetournerFiltre(Filtre, Valeur) {return(MC_RetournerFiltre(Filtre, Valeur));}
-    RetournerFiltreLegende(Valeur) {return(MC_RetournerFiltre(3, Valeur));}
-
+    AfficherCellule(Ox, Oy) {MC_AfficherCellule(Ox, Oy);}
+    AfficherCelluleObjet(PtrObj) {this.AfficherCellule(PtrObj.Ox, PtrObj.Oy);}
 /*********************************************************************/
 /*      GESTION DU DISTANCIER
 /*********************************************************************/
     InitialiserDistancier() {MC_InitialiserDistancier();}
     AjouterDistance(Ox, Oy, Distance) {MC_AjouterDistance(Ox, Oy, Distance);}
-    LancerDistancier(Seuil) {return(MC_LancerDistancier(Seuil));}
+    LancerDistancier(Seuil, SansObstacle) {return(MC_LancerDistancier(Seuil, SansObstacle));}
+    Distance(Ox, Oy) {return(Cellule[Ox][Oy].Distance);}
+    DistanceObjet(PtrObj) {return(this.Distance(PtrObj.Ox, PtrObj.Oy));}
 }
 
 class StructureCarre{
     Ox = -1;
     Oy = -1;
     PtrCellule = new Array(4);
-    Masque = [0, 0, 0, 0];
+    Masque = [1, 2, 1, 1];
     Distance = -1;
     PremierFois = true;
 }
-Cellule = new Array();
+let Cellule = new Array();
 LstDistance = new Array();
 
+/******************************************************************************/
+/*      INITIALISATION DES OBJETS
+/******************************************************************************/
 function MC_Initialiser(TailleOx, TailleOy)
 {
     Cellule = new Array(parseInt(TailleOx));
@@ -79,6 +97,10 @@ function MC_ListeObjet(PtrPerso)
     let TabRet = new Array();
     if(PtrPerso.Grosse)
     {
+        //  0 = En haut
+        //  1 = A droite
+        //  2 = En bas
+        //  3 = A gauche
         let y1 = PtrPerso.Position.Oy - PtrPerso.Taille[0];
         let y2 = PtrPerso.Position.Oy + PtrPerso.Taille[2];
         let x1 = PtrPerso.Position.Ox - PtrPerso.Taille[3];
@@ -101,18 +123,38 @@ function MC_ListeObjet(PtrPerso)
     }
     return(TabRet);
 }
-function MC_ModifierFiltre(Masque, Etat, Filtre)
+/******************************************************************************/
+/*      GESTION SUR LES MASQUES
+/******************************************************************************/
+function MC_AjouterMasque(Ox, Oy, Filtre, Valeur)
 {
-    if(Etat)
-    {
-        return(parseInt(Masque) | parseInt(Filtre));
-    }
-    else
-    {
-        return(parseInt(Masque) & parseInt(~Filtre));
-    }
+    Cellule[Ox][Oy].Masque[Filtre] |= Valeur;
+    return(Cellule[Ox][Oy].Masque[Filtre]);
 }
-function MC_Bloquer(Etat = true)
+function MC_EnleverMasque(Ox, Oy, Filtre, Valeur)
+{
+    Cellule[Ox][Oy].Masque[Filtre] &= ~Valeur;
+    return(Cellule[Ox][Oy].Masque[Filtre]);
+}
+function MC_RetournerMasqueListe(Indice, Valeur)
+{
+    let TabObj = new Array();
+    for(let x = 0;x < Cellule.length;x++)
+    {
+        for(let y = 0;y < Cellule[0].length;y++)
+        {
+            if((Cellule[x][y].Masque[Indice] & Valeur) > 0)
+            {
+                TabObj.push(Cellule[x][y]);
+            }
+        }
+    }
+    return(TabObj);
+}
+/******************************************************************************/
+/*     GESTIO DES FILTRES STANDARDS
+/******************************************************************************/
+function MC_TousBloquer(Etat = true)
 {
     for(let x = 0;x < Cellule.length;x++)
     {
@@ -124,17 +166,31 @@ function MC_Bloquer(Etat = true)
 }
 function MC_FiltreBloquer(Ox, Oy, Etat)
 {
-    Cellule[Ox][Oy].Masque[0] = MC_ModifierFiltre(Cellule[Ox][Oy].Masque[0], Etat, 1);
+    if(Etat)
+    {
+        MC_AjouterMasque(Ox, Oy, 0, 1);
+    }
+    else
+    {
+        MC_EnleverMasque(Ox, Oy, 0, 1);
+    }
     MC_AfficherCellule(Ox, Oy);
 }
 function MC_FiltreBrouillard(Ox, Oy, Etat)
 {
-    Cellule[Ox][Oy].Masque[1] = MC_ModifierFiltre(Cellule[Ox][Oy].Masque[1], Etat, 2);
+    if(Etat)
+    {
+        MC_AjouterMasque(Ox, Oy, 1, 4);
+    }
+    else
+    {
+        MC_EnleverMasque(Ox, Oy, 1, 4);
+    }
     MC_AfficherCellule(Ox, Oy);
 }
 function MC_EffacerBrouillard()
 {
-    let LstObj = MC_RetournerFiltre(1, 2);
+    let LstObj = MC_RetournerMasqueListe(1, 4);
     for(let x = 0;x < LstObj.length;x++)
     {
         MC_FiltreBrouillard(LstObj[x].Ox, LstObj[x].Oy, false);
@@ -142,82 +198,145 @@ function MC_EffacerBrouillard()
 }
 function MC_FiltreNoir(Ox, Oy, Etat)
 {
-    Cellule[Ox][Oy].Masque[0] = MC_ModifierFiltre(Cellule[Ox][Oy].Masque[0], Etat, 4);
+    if(Etat)
+    {
+        MC_AjouterMasque(Ox, Oy, 0, 4);
+    }
+    else
+    {
+        MC_EnleverMasque(Ox, Oy, 0, 4);
+    }
     MC_AfficherCellule(Ox, Oy);
 }
 function MC_EffacerNoir()
 {
-    let LstObj = MC_RetournerFiltre(0, 4);
+    let LstObj = MC_RetournerMasqueListe(0, 4);
     for(let x = 0;x < LstObj.length;x++)
     {
         MC_FiltreNoir(LstObj[x].Ox, LstObj[x].Oy, false);
     }
 }
+/**********************************************************************************************************/
+/*  GESTION DE L'AFFICHAGE D'UNE CELLULE
+/**********************************************************************************************************/
 function MC_AfficherCellule(Ox, Oy)
 {
     MC_AfficherCelluleObjet(Cellule[Ox][Oy]);
 }
 function MC_AfficherCelluleObjet(Obj)
 {
-    for(let x = 0;x < 2;x++)
+    //  Gestion du filtre 0 ==> Blocage principal, noir, nuit
+    if((Obj.Masque[0] & 8) > 0)
     {
-        if(Obj.Masque[x] != 0)
+        Objet.Afficher(Obj.PtrCellule[0], false);
+    }
+    else
+    {
+        if((Obj.Masque[0] & 7) > 0)
         {
-            Objet.Afficher(Obj.PtrCellule[x], true);
-            if((Obj.Masque[x] & 4) > 0)
+            if((Obj.Masque[0] & 4) > 0)
             {
-                Objet.Couleur(Obj.PtrCellule[x], -4);
+                Objet.Couleur(Obj.PtrCellule[0], -4);
             }
             else
             {
-                if((Obj.Masque[x] & 2) > 0)
-                {
-                }
-                else
-                {
-                    Objet.Couleur(Obj.PtrCellule[x], 0);
-                }
+                Objet.Couleur(Obj.PtrCellule[0], 0);
             }
+            Objet.Afficher(Obj.PtrCellule[0], true);
         }
         else
         {
-            Objet.Afficher(Obj.PtrCellule[x], false);
+            Objet.Afficher(Obj.PtrCellule[0], false);
         }
     }
-    if(Obj.Masque[2]>0)
+    //  Gestion du filtre 1 ==> Hachurage
+    if((Obj.Masque[1] & 12) > 0)
     {
-        console.debug("Masque USER : "+Obj.Masque[2]);
-    }
-    switch(parseInt(Obj.Masque[2]))
-    {
-        case 6:
-        case 5:
-            Objet.Couleur(Obj.PtrCellule[2], 1);
-            break;
-        case 2:
-            Objet.Couleur(Obj.PtrCellule[2], 5);
-            break;
-        case 1:
-            Objet.Couleur(Obj.PtrCellule[2], -2);
-            break;
-        default:
-            Objet.Couleur(Obj.PtrCellule[2], 0);
-            break;
-    }
-    if(Obj.Masque[3] > 0)
-    {
-        if((Obj.Masque[3] & 1) > 0)
+        //  Gestion Temporaire (Mouvement, positionnement)
+        if((Obj.Masque[1] & 8) > 0)
         {
-            Objet.Couleur(Obj.PtrCellule[3], 7);
+            Objet.Afficher(Obj.PtrCellule[1], false);
         }
         else
         {
-            Objet.Couleur(Obj.PtrCellule[3], 4);
+            Objet.Afficher(Obj.PtrCellule[1], true);
         }
     }
     else
     {
-        Objet.Couleur(Obj.PtrCellule[3], 0);
+        //  Gestion Permanente
+        if((Obj.Masque[1] & 3) > 0)
+        {
+            if((Obj.Masque[1] & 2) > 0)
+            {
+                Objet.Afficher(Obj.PtrCellule[1], false);
+            }
+            else
+            {
+                Objet.Afficher(Obj.PtrCellule[1], true);
+            }
+            }
+    }
+    //  Gestion du filtre 2 ==> Personnage, texte
+    if((Obj.Masque[2] & 2) > 0)
+    {
+        Objet.Afficher(Obj.PtrCellule[2], false);
+    }
+    else
+    {
+        if((Obj.Masque[2] & 1) > 0)
+        {
+            if((Obj.Masque[2] & 16) > 0)
+            {
+                Objet.Couleur(Obj.PtrCellule[2], 1);
+            }
+            else
+            {
+                if((Obj.Masque[2] & 8) > 0)
+                {
+                    Objet.Couleur(Obj.PtrCellule[2], 5);
+                }
+                else
+                {
+                    if((Obj.Masque[2] & 4) > 0)
+                    {
+                        Objet.Couleur(Obj.PtrCellule[2], -2);
+                    }
+                    else
+                    {
+                        Objet.Couleur(Obj.PtrCellule[2], 0);
+                    }
+                }
+            }
+            Objet.Afficher(Obj.PtrCellule[2], true);
+        }
+    }
+    //  Gestion du filtre 3 ==> Legende, distancier
+    if((Obj.Masque[3] & 2) > 0)
+    {
+        Objet.Afficher(Obj.PtrCellule[3], false);
+    }
+    else
+    {
+        if((Obj.Masque[3] & 1) > 0)
+        {
+            if((Obj.Masque[3] & 4) > 0)
+            {
+                Objet.Couleur(Obj.PtrCellule[3], 7);
+            }
+            else
+            {
+                if(Obj.Masque[3] >= 8)
+                {
+                    Objet.Couleur(Obj.PtrCellule[3], 4);
+                }
+                else
+                {
+                    Objet.Couleur(Obj.PtrCellule[3], 0);
+                }
+            }
+            Objet.Afficher(Obj.PtrCellule[3], true);
+        }
     }
 }
 function MC_AfficherPosition(PtrPerso, Etat = false)
@@ -226,23 +345,23 @@ function MC_AfficherPosition(PtrPerso, Etat = false)
     if(PtrPerso.Position.Oy < 0 ){return(-1);}
     let PtrCel = Cellule[PtrPerso.Position.Ox][PtrPerso.Position.Oy];
     PtrCel.PtrCellule[2].innerHTML = PtrPerso.Lettre;
-    MC_FiltreBloquer(PtrPerso.Position.Ox, PtrPerso.Position.Oy, true);
+    MC_AjouterMasque(PtrPerso.Position.Ox, PtrPerso.Position.Oy, 0, 2);
     if(PtrPerso.TypeFonction == 0)
     {
-        PtrCel.Masque[2] = 2;
+        MC_AjouterMasque(PtrPerso.Position.Ox, PtrPerso.Position.Oy, 2, 8);
     }
     else
     {
-        PtrCel.Masque[2] = 1;
+        MC_AjouterMasque(PtrPerso.Position.Ox, PtrPerso.Position.Oy, 2, 4);
     }
     if(Etat)
     {
-        PtrCel.Masque[2] = PtrCel.Masque[2] | 4;
+        MC_AjouterMasque(PtrPerso.Position.Ox, PtrPerso.Position.Oy, 2, 16);
     }
     let TabCel = MC_ListeObjet(PtrPerso);
     for(let x = 0;x < TabCel.length;x++)
     {
-        TabCel[x].Masque[3] = TabCel[x].Masque[3] | PtrPerso.Masque;
+        TabCel[x].Masque[3] |= PtrPerso.Masque;
         MC_AfficherCelluleObjet(TabCel[x]);
     }
     return(1);
@@ -252,13 +371,14 @@ function MC_EffacerPosition(PtrPerso)
     if(PtrPerso.Position.Ox < 0 ){return(-1);}
     if(PtrPerso.Position.Oy < 0 ){return(-1);}
     let PtrCel = Cellule[PtrPerso.Position.Ox][PtrPerso.Position.Oy];
+    console.debug(PtrCel);
     PtrCel.PtrCellule[2].innerHTML = "";
-    PtrCel.Masque[2] = 0;
-    MC_FiltreBloquer(PtrPerso.Position.Ox, PtrPerso.Position.Oy, false);
+    MC_EnleverMasque(PtrPerso.Position.Ox, PtrPerso.Position.Oy, 0, 2);
+    MC_EnleverMasque(PtrPerso.Position.Ox, PtrPerso.Position.Oy, 2, 28);
     let TabCel = MC_ListeObjet(PtrPerso);
     for(let x = 0;x < TabCel.length;x++)
     {
-        TabCel[x].Masque[3] = TabCel[x].Masque[3] & ~PtrPerso.Masque;
+        TabCel[x].Masque[3] &= ~PtrPerso.Masque;
         MC_AfficherCelluleObjet(TabCel[x]);
     }
     return(1);
@@ -270,11 +390,11 @@ function MC_Activer(Position, Etat)
     let Ptr = Cellule[Position.Ox][Position.Oy];
     if(Etat)
     {
-        Ptr.Masque[2] = Ptr.Masque[2] | 4;
+        Ptr.Masque[2] |= 16;
     }
     else
     {
-        Ptr.Masque[2] = Ptr.Masque[2] & ~4;
+        Ptr.Masque[2] &= ~16;
     }
     MC_AfficherCelluleObjet(Ptr);
     return(1);
@@ -282,7 +402,7 @@ function MC_Activer(Position, Etat)
 /****************************************************************************************/
 /*  GESTION DU FILTRE LEGENDE
 /****************************************************************************************/
-function MC_AfficherLegende(Ox, Oy, Texte = "")
+function MC_AfficherLegende(Ox, Oy, Texte = "", AffecterMasque = true)
 {
     if(Ox < 0 ){return(-1);}
     if(Oy < 0 ){return(-1);}
@@ -290,37 +410,36 @@ function MC_AfficherLegende(Ox, Oy, Texte = "")
     if(Oy >= Cellule[0].length){return(-1);}
     let PtrCel = Cellule[Ox][Oy];
     PtrCel.PtrCellule[3].innerHTML = Texte;
-    PtrCel.Masque[3] = PtrCel.Masque[3] | 1;
+    if(AffecterMasque)
+    {
+        PtrCel.Masque[3] |= 4;
+    }
     MC_AfficherCelluleObjet(PtrCel);
     return(1);
 }
-function MC_ActiverLegende(Ox, Oy)
+function MC_ActiverLegende(Ox, Oy, Etat = 0)
 {
     let PtrCel = Cellule[Ox][Oy];
-    if((PtrCel.Masque[3] & 1) > 0)
+    switch(parseInt(Etat))
     {
-        PtrCel.Masque[3] = PtrCel.Masque[3] & ~1;
-    }
-    else
-    {
-        PtrCel.Masque[3] = PtrCel.Masque[3] | 1;
+        case 1:
+            PtrCel.Masque[3] |= 4;
+            break;
+        case -1:
+            PtrCel.Masque[3] &= ~4;
+            break;
+        default:
+            if((PtrCel.Masque[3] & 4) > 0)
+            {
+                PtrCel.Masque[3] &= ~4;
+            }
+            else
+            {
+                PtrCel.Masque[3] |= 4;
+            }
+            break;
     }
     MC_AfficherCellule(Ox,Oy);
-}
-function MC_RetournerFiltre(Index, Filtre)
-{
-    let TabObj = new Array();
-    for(let x = 0;x < Cellule.length;x++)
-    {
-        for(let y = 0;y < Cellule[0].length;y++)
-        {
-            if((Cellule[x][y].Masque[Index] & Filtre) > 0)
-            {
-                TabObj.push(Cellule[x][y]);
-            }
-        }
-    }
-    return(TabObj);
 }
 /*******************************************************************************************************/
 /*      GESTION DU DISTANCIER
@@ -331,7 +450,7 @@ function MC_InitialiserDistancier()
     {
         for(let y = 0;y < Cellule[0].length;y++)
         {
-            Cellule[x][y].Distance = 0;
+            Cellule[x][y].Distance = -1;
             Cellule[x][y].PremierFois = true;
         }
     }
@@ -341,12 +460,14 @@ function MC_AjouterDistance(Ox, Oy, Distance)
 {
     Cellule[Ox][Oy].Distance = Distance;
     LstDistance.push(Cellule[Ox][Oy]);
+    console.debug("MC_AjouterDistance : "+Ox+"/"+Oy+" Distance : "+Distance+" Taille : "+LstDistance.length);
 }
-function MC_LancerDistancier(Seuil = 0)
+function MC_LancerDistancier(Seuil = 0, SansObstacle = true)
 {
+    console.debug("MC_LancerDistancier : "+Seuil+" Sans Obstacle : "+SansObstacle+" Taille : "+LstDistance.length);
     for(;LstDistance.length != 0;)
     {
-        MC_CalculerDistance(LstDistance[0]);
+        MC_CalculerDistance(LstDistance[0], SansObstacle);
         LstDistance.splice(0,1);
     }
     let LstObj = new Array();
@@ -362,44 +483,59 @@ function MC_LancerDistancier(Seuil = 0)
     }
     return(LstObj);
 }
-function MC_CalculerDistance(Obj)
+function MC_CalculerDistance(Obj, SansObstacle)
 {
+    console.debug("Ox : "+Obj.Ox+" Oy : "+Obj.Oy+" Distance : "+Obj.Distance);
     if(Obj.Distance < 0){return(0);}
     let Distance = Obj.Distance - 1;
+    let FiltreObstacle = 28;
     if(Obj.Ox > 0)
     {
         if(Cellule[Obj.Ox-1][Obj.Oy].Distance < Distance)
         {
-            Cellule[Obj.Ox-1][Obj.Oy].Distance = Distance;
-            Cellule[Obj.Ox-1][Obj.Oy].PremierFois = Obj.PremierFois;
-            LstDistance.push(Cellule[Obj.Ox-1][Obj.Oy]);
+            console.debug("    MAsque : "+Cellule[Obj.Ox-1][Obj.Oy].Masque[2]);
+            if(((Cellule[Obj.Ox-1][Obj.Oy].Masque[2] & FiltreObstacle) == 0) || (SansObstacle))
+            {
+                Cellule[Obj.Ox-1][Obj.Oy].Distance = Distance;
+                Cellule[Obj.Ox-1][Obj.Oy].PremierFois = Obj.PremierFois;
+                LstDistance.push(Cellule[Obj.Ox-1][Obj.Oy]);
+            }
         }
     }
     if(Obj.Ox < Cellule.length - 1)
     {
         if(Cellule[Obj.Ox+1][Obj.Oy].Distance < Distance)
         {
-            Cellule[Obj.Ox+1][Obj.Oy].Distance = Distance;
-            Cellule[Obj.Ox+1][Obj.Oy].PremierFois = Obj.PremierFois;
-            LstDistance.push(Cellule[Obj.Ox+1][Obj.Oy]);
+            if(((Cellule[Obj.Ox+1][Obj.Oy].Masque[2] & FiltreObstacle) == 0) || (SansObstacle))
+            {
+                Cellule[Obj.Ox+1][Obj.Oy].Distance = Distance;
+                Cellule[Obj.Ox+1][Obj.Oy].PremierFois = Obj.PremierFois;
+                LstDistance.push(Cellule[Obj.Ox+1][Obj.Oy]);
+            }
         }
     }
     if(Obj.Oy > 0)
     {
         if(Cellule[Obj.Ox][Obj.Oy-1].Distance < Distance)
         {
-            Cellule[Obj.Ox][Obj.Oy-1].Distance = Distance;
-            Cellule[Obj.Ox][Obj.Oy-1].PremierFois = Obj.PremierFois;
-            LstDistance.push(Cellule[Obj.Ox][Obj.Oy-1]);
+            if(((Cellule[Obj.Ox][Obj.Oy-1].Masque[2] & FiltreObstacle) == 0) || (SansObstacle))
+            {
+                Cellule[Obj.Ox][Obj.Oy-1].Distance = Distance;
+                Cellule[Obj.Ox][Obj.Oy-1].PremierFois = Obj.PremierFois;
+                LstDistance.push(Cellule[Obj.Ox][Obj.Oy-1]);
+            }
         }
     }
     if(Obj.Oy < Cellule[0].length - 1)
     {
         if(Cellule[Obj.Ox][Obj.Oy+1].Distance < Distance)
         {
-            Cellule[Obj.Ox][Obj.Oy+1].Distance = Distance;
-            Cellule[Obj.Ox][Obj.Oy+1].PremierFois = Obj.PremierFois;
-            LstDistance.push(Cellule[Obj.Ox][Obj.Oy+1]);
+            if(((Cellule[Obj.Ox][Obj.Oy+1].Masque[2] & FiltreObstacle) == 0) || (SansObstacle))
+            {
+                Cellule[Obj.Ox][Obj.Oy+1].Distance = Distance;
+                Cellule[Obj.Ox][Obj.Oy+1].PremierFois = Obj.PremierFois;
+                LstDistance.push(Cellule[Obj.Ox][Obj.Oy+1]);
+            }
         }
     }
     if(!Obj.PremierFois)
@@ -410,36 +546,48 @@ function MC_CalculerDistance(Obj)
     {
         if(Cellule[Obj.Ox-1][Obj.Oy-1].Distance < Distance)
         {
-            Cellule[Obj.Ox-1][Obj.Oy-1].Distance = Distance;
-            Cellule[Obj.Ox-1][Obj.Oy-1].PremierFois = !Obj.PremierFois;
-            LstDistance.push(Cellule[Obj.Ox-1][Obj.Oy-1]);
+            if(((Cellule[Obj.Ox-1][Obj.Oy-1].Masque[2] & FiltreObstacle) == 0) || (SansObstacle))
+            {
+                Cellule[Obj.Ox-1][Obj.Oy-1].Distance = Distance;
+                Cellule[Obj.Ox-1][Obj.Oy-1].PremierFois = !Obj.PremierFois;
+                LstDistance.push(Cellule[Obj.Ox-1][Obj.Oy-1]);
+            }
         }
     }
     if((Obj.Ox < Cellule.length - 1) && (Obj.Oy > 0))
     {
         if(Cellule[Obj.Ox+1][Obj.Oy-1].Distance < Distance)
         {
-            Cellule[Obj.Ox+1][Obj.Oy-1].Distance = Distance;
-            Cellule[Obj.Ox+1][Obj.Oy-1].PremierFois = !Obj.PremierFois;
-            LstDistance.push(Cellule[Obj.Ox+1][Obj.Oy-1]);
+            if(((Cellule[Obj.Ox+1][Obj.Oy-1].Masque[2] & FiltreObstacle) == 0) || (SansObstacle))
+            {
+                Cellule[Obj.Ox+1][Obj.Oy-1].Distance = Distance;
+                Cellule[Obj.Ox+1][Obj.Oy-1].PremierFois = !Obj.PremierFois;
+                LstDistance.push(Cellule[Obj.Ox+1][Obj.Oy-1]);
+            }
         }
     }
     if((Obj.Ox > 0) && (Obj.Oy < Cellule[0].length - 1))
     {
         if(Cellule[Obj.Ox-1][Obj.Oy+1].Distance < Distance)
         {
-            Cellule[Obj.Ox-1][Obj.Oy+1].Distance = Distance;
-            Cellule[Obj.Ox-1][Obj.Oy+1].PremierFois = !Obj.PremierFois;
-            LstDistance.push(Cellule[Obj.Ox-1][Obj.Oy+1]);
+            if(((Cellule[Obj.Ox-1][Obj.Oy+1].Masque[2] & FiltreObstacle) == 0) || (SansObstacle))
+            {
+                Cellule[Obj.Ox-1][Obj.Oy+1].Distance = Distance;
+                Cellule[Obj.Ox-1][Obj.Oy+1].PremierFois = !Obj.PremierFois;
+                LstDistance.push(Cellule[Obj.Ox-1][Obj.Oy+1]);
+            }
         }
     }
     if((Obj.Ox < Cellule.length - 1) && (Obj.Oy < Cellule[0].length - 1))
     {
         if(Cellule[Obj.Ox+1][Obj.Oy+1].Distance < Distance)
         {
-            Cellule[Obj.Ox+1][Obj.Oy+1].Distance = Distance;
-            Cellule[Obj.Ox+1][Obj.Oy+1].PremierFois = !Obj.PremierFois;
-            LstDistance.push(Cellule[Obj.Ox+1][Obj.Oy+1]);
+            if(((Cellule[Obj.Ox+1][Obj.Oy+1].Masque[2] & FiltreObstacle) == 0) || (SansObstacle))
+            {
+                Cellule[Obj.Ox+1][Obj.Oy+1].Distance = Distance;
+                Cellule[Obj.Ox+1][Obj.Oy+1].PremierFois = !Obj.PremierFois;
+                LstDistance.push(Cellule[Obj.Ox+1][Obj.Oy+1]);
+            }
         }
     }
 }

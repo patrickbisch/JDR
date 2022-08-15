@@ -87,7 +87,6 @@ function JDR_NouvellePosition(Index)
 }
 function ActiverPNJ(Index)
 {
-    console.debug("PNJ_Actif : "+Index);
     if(Index == PNJ_Actif)
     {
         ListePNJ[PNJ_Actif].Actif = false;
@@ -264,7 +263,6 @@ function InitialiserBoutonMenu()
 }
 function InitialiserCarte()
 {
-    console.debug("InitialiserCarte");
     LstInfo = document.querySelector("#Info").innerHTML.split("/");
     if(LstInfo[3] > 0)
     {
@@ -292,19 +290,19 @@ function InitialiserCarte()
             e.preventDefault();
             CARTE_BorneZoom(-1);
         });
-        console.debug(ObjMini);
         let ObjMaxi = document.querySelector("#BtnZoomMaxi");
         ObjMaxi.addEventListener('click', function(e){
             e.preventDefault();
             CARTE_BorneZoom(1);
         });
-        console.debug(ObjMaxi);
+        Carte.Bloquer(false);
 /*********************************************************************/        
 /*********************************************************************/        
 /*          MODE DE DEBUG ET TEST
 /*********************************************************************/        
-/*********************************************************************/        
-Carte.InitialiserBrouillard(parseInt(document.querySelector("#Vision").value),parseInt(document.querySelector("#Brouillard").value));
+/*********************************************************************/
+//console.debug("Mode DEBUG");
+//Carte.InitialiserBrouillard(parseInt(document.querySelector("#Vision").value),parseInt(document.querySelector("#Brouillard").value));
 
 /*********************************************************************/        
 /*********************************************************************/ 
@@ -330,21 +328,18 @@ Carte.InitialiserBrouillard(parseInt(document.querySelector("#Vision").value),pa
         Bouton.Afficher(Obj, false);
         Obj = document.querySelector("#Detail-9")
         Objet.Afficher(Obj, false);
-        console.debug("Bouton : "+!Bloque);
         Bouton.Afficher(Detail.PtrBtnModifier, !Bloque);
     }
     else
     {
         CARTE_ChangerEtatListe(0);
         CARTE_ChangerEtatListe(1);
-        console.debug("Bouton2 : "+true);
         Bouton.Afficher(Detail.PtrBtnModifier, true);
     }
 
     CARTE_ChangerEtatListe(0);
     CARTE_ChangerEtatListe(1);
     CARTE_Nouvelle(Detail.PtrSelectCarte.value);
-    console.debug("Fin");
 }
 function ControlerDetail()
 {
@@ -385,7 +380,6 @@ function ControlerDetail()
     {
         Objet.Couleur(Detail.PtrLstLigne[3], -3);
     }
-    console.debug("Bouton3 : "+Etat);
     Bouton.Activer(Detail.PtrBtnModifier, Etat);
 }
 function CARTE_Nouvelle(Nom)
@@ -489,10 +483,7 @@ function CARTE_BorneZoom(Sens)
 
 function CARTE_Debug()
 {
-    console.debug("CARTE Debug");
     let Obj = document.querySelector(".Grille");
-    console.debug(Obj);
-    console.debug("W : "+Obj.clientWidth+" H : "+Obj.clientHeight);
 
 }
 

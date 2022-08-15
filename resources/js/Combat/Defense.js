@@ -250,12 +250,10 @@ function TD_TraiterRetour(Id, DEValide)
 /*********************************************************************************/
 function TD_ControlerTaoActif(Id)
 {
-    console.debug("TD_ControlerTaoActif : "+Id);
     let Nb = 0;
     let Ptr = TAO_DATA[Id].PtrSelect;
     for(let x = 0;x < Ptr.options.length;x++)
     {
-        console.debug("  x = "+x+"/"+Ptr.options[x].value);
         switch(parseInt(Ptr.options[x].value))
         {
             case 34:
@@ -265,7 +263,6 @@ function TD_ControlerTaoActif(Id)
                 break;
         }
     }
-    console.debug(" Retour : "+Nb);
     return(Nb);
 }
 function TD_InitialiserSelection(Id)

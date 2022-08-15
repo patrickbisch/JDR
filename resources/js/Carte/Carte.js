@@ -17,6 +17,8 @@ class CARTE_Interface  {
     Activer(Index, Etat) {CARTE_Activer(Index, Etat);}
     ModifierPosition(Index, Ox, Oy, Etat) {CARTE_ModifierPosition(Index, Ox, Oy, Etat);}
     EffacerPosition(Index) {Matrice.EffacerPosition(CartePerso[Index]);}
+    DistancePersonnage(Index, StructureDistance, SansObstacle) {CARTE_DistancePersonnage(Index, StructureDistance, SansObstacle);}
+    DistancePersonnageTermine() {CARTE_DistancePersonnageTermine();}
 }
 var Carte = new CARTE_Interface();
 
@@ -102,7 +104,7 @@ function CARTE_AjouterPerso(Lettre, TypeFonction, Taille = "M", Allonge = 1)
             Ptr.Grosse = false;
             break;
     }
-    let Nb = 2;
+    let Nb = 8;
     if(CartePerso.length > 0)
     {
         Nb = 2 * CartePerso[CartePerso.length - 1].Masque;
@@ -152,7 +154,7 @@ function CARTE_InitialiserPointEntre(Chaine)
 }
 function CARTE_EffacerPointEntre()
 {
-    let TabObj = Matrice.RetournerFiltreLegende(1);
+    let TabObj = Matrice.RetournerFiltreLegende(4);
     for(let x = 0;x < TabObj.length;x++)
     {
         Matrice.ActiverLegende(TabObj[x].Ox, TabObj[x].Oy);
@@ -172,7 +174,8 @@ function CARTE_ActiverPointEntre(Ox, Oy)
 }
 function CARTE_InitialiserBrouillard(Vision, Brouillard)
 {
-    let TabObj = Matrice.RetournerFiltreLegende(1);
+    Matrice.InitialiserDistancier();
+    let TabObj = Matrice.RetournerFiltreLegende(4);
     for(let x = 0;x < TabObj.length;x++)
     {
         Matrice.AjouterDistance(TabObj[x].Ox, TabObj[x].Oy, Vision + Brouillard);
@@ -197,6 +200,55 @@ function CARTE_InitialiserBrouillard(Vision, Brouillard)
                     Matrice.FiltreBloquer(TabObj[x].Ox, TabObj[x].Oy, true);
                 }
             }
+        }
+    }
+}
+function CARTE_DistancePersonnage(Index, StrDist, SansObstacle)
+{
+    console.debug("CARTE_DistancePersonnage : "+Index+" ("+StrDist.length+") "+SansObstacle);
+    let Distance = StrDist.length;
+    if(Distance == 0){return(-1);}
+    Matrice.InitialiserDistancier();
+    Matrice.AjouterDistance(CartePerso[Index].Position.Ox, CartePerso[Index].Position.Oy, Distance);    
+    let LstObj = Matrice.LancerDistancier(-1, SansObstacle);
+    console.debug("  Taille : "+LstObj.length);
+    for(let x = 0;x < LstObj.length;x++)
+    {
+        if((Matrice.MasqueObjet(LstObj[x], 0) & 2) == 0)
+        {
+            let Nb = Matrice.DistanceObjet(LstObj[x]);
+            if(Nb < 0)
+            {
+                Matrice.MasqueAjouterObjet(LstObj[x], 1, 4);
+            }
+            else
+            {
+                Matrice.MasqueAjouterObjet(LstObj[x], 0, 8);
+                Matrice.MasqueAjouterObjet(LstObj[x], 2, 2);
+                Matrice.AfficherLegendeObjet(LstObj[x], StrDist[Nb], false);
+            }
+            Matrice.AfficherCelluleObjet(LstObj[x]);
+        }
+    }
+}
+function CARTE_DistancePersonnageTermine()
+{
+    for(let x = 0;x < Cellule.length;x++)
+    {
+        for(let y = 0;y < Cellule[0].length;y++)
+        {
+            if((Matrice.Masque(x, y, 1) & 4) > 0)
+            {
+                Matrice.MasqueEnlever(x, y, 1, 4);
+                Matrice.AfficherCellule(x, y);
+            }
+            else
+            {
+                Matrice.AfficherLegende(x, y, "", false);
+                Matrice.MasqueEnlever(x, y, 0, 8);
+                Matrice.MasqueEnlever(x, y, 2,2);
+                Matrice.AfficherCellule(x, y);
+           }
         }
     }
 }

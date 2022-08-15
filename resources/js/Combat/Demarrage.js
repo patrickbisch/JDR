@@ -27,8 +27,8 @@ function MOTEUR_LancerModule(NomModule, NomProcedure)
 /*****     MODE DEBUG                                                             *****/
 /**************************************************************************************/
 /**************************************************************************************/
-MSG.AfficherHistorique(true);
-MSG.AfficherJournal(true);
+//MSG.AfficherHistorique(true);
+//MSG.AfficherJournal(true);
 //TimerMoteur = setInterval(ModeDebugTest , 1000);
 /**************************************************************************************/
 /**************************************************************************************/

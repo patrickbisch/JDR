@@ -276,5 +276,31 @@ function JDR_InitialiserBonusPersonnage()
         PERSO_DATA[x].BonusCaracDefense = Perso.Base(x).Eau;
     }
 }
+function JDR_GererDeplacement(Id, Action = true)
+{
+    Bouton.Valider.Module = "DEPLACEMENT";
+    let Distance = new Array();
+    let PtrTao = Tao.Retourner(Id, 2);
+    if(PtrTao != 0)
+    {
+        let Nb = -1 * PtrTao.niveau;
+        for(let x = 0;x < PtrTao.niveau;x++)
+        {
+            for(let y = 0;y < PERSO_BASE[Id].Eau;y++)
+            {
+                Distance.push(Nb);
+            }
+            Nb++;
+        }
+    }
+    if(Action)
+    {
+        for(let y = 0;y < PERSO_BASE[Id].Eau;y++)
+        {
+            Distance.push("");
+        }
+    }
+    Carte.DistancePersonnage(Id, Distance, false);
+}
 
 JDR_InitialiserDE();

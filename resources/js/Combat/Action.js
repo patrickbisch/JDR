@@ -187,7 +187,7 @@ function ACTION_Nouvelle(Obj, Id)
         case 2:       // SE DEPLACER
             ACTION_Ajouter(2);
             MSG.Journal("Il se <strong>déplace</strong>.", 1);
-            Action.Termine(Id);
+            JDR_GererDeplacement(Id, true);
             break;
         case 1:       // PASSER SON TOUR
             ACTION_Ajouter(1);

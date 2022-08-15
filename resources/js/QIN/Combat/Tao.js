@@ -3,6 +3,7 @@ class TAO_Interface  {
     AfficherListe(Module, AvecYinYang) {TAO_AfficherListe(Module, AvecYinYang);}
     Afficher(Id, Module, AvecYinYang) {TAO_Afficher(Id, Module, AvecYinYang);}
     Termine(Id, IdTao, Bonus, AvecYinYang) {TAO_Termine(Id, IdTao, Bonus, AvecYinYang);}
+    Retourner(Id, IdTao){return(TAO_Retourner(Id, IdTao));}
 }
 var Tao  = new TAO_Interface ();
 class TAO_Donnee {

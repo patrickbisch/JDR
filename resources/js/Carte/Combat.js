@@ -77,16 +77,20 @@ function CARTO_NouveauTour()
 }
 function CARTO_ValiderPosition()
 {
-    let ETat = false;
+    let Etat = false;
     if(Bouton.Valider.Module == "CARTO_PNJ"){Etat = true;}
     let Nb = CARTO_ErreurPosition(Etat);
-    if(Nb <= 0)
+    if(Nb < 0)
     {
         Bouton.Valider.Activer(true);
     }
-    Carte.Activer(Perso.Actif, false);
-    if(Nb >= 0) {Perso.Actif = Nb;}
-    Carte.Activer(Perso.Actif, true);
+    else
+    {
+        Bouton.Valider.Activer(false);
+        Carte.Activer(Perso.Actif, false);
+        Perso.Actif = Nb;
+        Carte.Activer(Perso.Actif, true);
+    }
     PERSO_ActualiserListe();
 }
 function CARTO_ValiderDE()
@@ -95,12 +99,11 @@ function CARTO_ValiderDE()
     {
         case "CARTO_PNJ":
             Bouton.Valider.Demarrer("CARTO_PJ", false);
+            Carte.Activer(Perso.Actif, false);
+            Perso.Actif = -1
             let Vision = document.querySelector("#Vision").innerHTML;
             let Brouillard = document.querySelector("#Brouillard").innerHTML;
             Carte.InitialiserBrouillard(parseInt(Vision), parseInt(Brouillard));
-            Carte.Activer(Perso.Actif, false);
-            Perso.Actif = CARTO_ErreurPosition(false);
-            Carte.Activer(Perso.Actif, true);
             Perso.BloquerPNJ(true);
             Objet.AfficherFamille("EcranPJ", true);
             Perso.Liste[0].Etat = false;
@@ -115,7 +118,7 @@ function CARTO_ValiderDE()
             Carte.EffacerPointEntree();
             Carte.EffacerBrouillard();
             Carte.EffacerNoir();
-            Carte.Bloquer();
+            Carte.Bloquer(true);
             Perso.BloquerPNJ(false);
             Moteur.LancerModule("Tour INIT");
             break;
@@ -159,8 +162,19 @@ function JDR_CARTE_NouvelleSelection(Indice, Ox, Oy)
             JDR_NouvellePosition(Perso.Actif);
             CARTO_ValiderPosition();
             break;
+        case "DEPLACEMENT":
+            Carte.EffacerPosition(Perso.Actif);
+            Carte.ModifierPosition(Perso.Actif, Ox, Oy, true);
+            let Nb = 
+            Carte.DistancePersonnageTermine();
+            JDR_NouvellePosition(Perso.Actif);
+
+            
+
+            Action.Termine(Perso.Actif);
+            break;
         default:
-            MSG.Erreur("JDR_CARTE_NouvelleSelection <"+Bouton.Valider.Module+"> NON GEREE !!");
+            MSG.Erreur("JDR_CARTE_NouvelleSelection ("+Bouton.Valider.Module+") NON GEREE !!");
             break;
     }
 }
