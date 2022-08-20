@@ -30,6 +30,7 @@ class CIBLE_Donnee{
     PtrLibre;
     Mort = 0;
     PtrMort;
+    Ancienne;
 }
 /*********************************************************************************/
 /*  Initialisation du module
@@ -193,11 +194,17 @@ function CIBLE_ChargerListeSeul(Id)
 {
     let IdFonction = Perso.TypeFonction(Id);
     let Ptr = CIBLE_DATA[Id].PtrSelectCible;
-    let AncienCible = Ptr.value;
+    let AncienneCible = CIBLE_DATA[Id].Ancienne;
     Ptr.options.length = 0;
 
-    for(let x = 0;x < PERSO_BASE.length;x++)
+    let Chaine = Perso.Allonge(Id, !Action.Distance(Id));
+    let Tab = (Chaine + "-").split("-");
+    let Distance = Tab[Tab.length-2];
+    let LstPerso = Carte.CiblePersonnage(Id, Distance);
+
+    for(let y = 0;y < LstPerso.length;y++)
     {
+        x = LstPerso[y][0];
         if(((IdFonction == 0) && (Perso.TypeFonction(x) != 0)) ||
             ((IdFonction != 0) && (Perso.TypeFonction(x) == 0)))
         {
@@ -220,7 +227,7 @@ function CIBLE_ChargerListeSeul(Id)
                             let Opt = document.createElement("option");
                             Opt.value = x + "-" + y;
                             Opt.text = Perso.Lettre(x) + "." + String.fromCharCode(97+y) + " " + Perso.Nom(x);
-                            if(Opt.value == AncienCible)
+                            if(Opt.value == AncienneCible)
                             {
                                 Opt.selected = true;
                             }
@@ -233,7 +240,7 @@ function CIBLE_ChargerListeSeul(Id)
                     let Opt = document.createElement("option");
                     Opt.value = x;
                     Opt.text = Perso.Lettre(x) + ". " + Perso.Nom(x);
-                    if(Opt.value == AncienCible)
+                    if(Opt.value == AncienneCible)
                     {
                         Opt.selected = true;
                     }
@@ -249,8 +256,9 @@ function CIBLE_ChargerListeSeul(Id)
     Opt.disabled = true;
     Ptr.add(Opt);
 
-    for(let x = 0;x < PERSO_DATA.length;x++)
+    for(let y = 0;y < LstPerso.length;y++)
     {
+        x = LstPerso[y][0];
         if(((IdFonction == 0) && (PERSO_BASE[x].id_fonction == 0) && (Id != x)) ||
             ((IdFonction != 0) && (PERSO_BASE[x].id_fonction != 0) && (Id != x)))
         {
@@ -259,7 +267,7 @@ function CIBLE_ChargerListeSeul(Id)
                 let Opt = document.createElement("option");
                 Opt.value = x;
                 Opt.text = Perso.Lettre(x) + ". " + Perso.Nom(x);
-                if(Opt.value == AncienCible)
+                if(Opt.value == AncienneCible)
                 {
                     Opt.selected = true;
                 }
@@ -272,7 +280,7 @@ function CIBLE_ChargerListeSeul(Id)
     Opt.text = Perso.Lettre(Id) + ". " + Perso.Nom(Id);
     Ptr.add(Opt);
 
-    if(Ptr.value != AncienCible)
+    if(Ptr.value != AncienneCible)
     {
         Ptr.value = "";
     }
@@ -351,6 +359,10 @@ function CIBLE_AfficherGroupe(Id)
 /*******************************************************************************************/
 function CIBLE_Nouvelle(Obj, Id)
 {
+    if(Obj.value != "-1")
+    {
+        CIBLE_DATA[Id].Ancienne = Obj.value;
+    }
     if(Perso.Actif == Id)
     {
         if(Obj.value != "-1")
@@ -368,8 +380,13 @@ function CIBLE_Nouvelle(Obj, Id)
         switch(Bouton.Valider.Module)
         {
             case "ACTION":
+            case "ATTAQUE":
                 ACTION_Attaquer(Id);
-        }
+                break;
+            default:
+                console.info("CIBLE_Nouvelle <"+Bouton.Valider.Module+"> : "+Id);
+                break;
+            }
     }
 }
 function CIBLE_GroupePlus(x, y)

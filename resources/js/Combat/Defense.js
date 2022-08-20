@@ -154,6 +154,7 @@ function TD_TraiterRetour(Id, DEValide)
         }
     }
 
+    MSG.Journal("DE : (" + DEValide.Yang + " - " + DEValide.Yin + ") Yang - Yin", 3);
     let Nb = 0;
     let Chaine = "";
     let Gratuit = false;
@@ -337,7 +338,6 @@ function TD_InitialiserSelection(Id)
                     }
                     if(PERSO_BASE[Id].Manoeuvres[x].id_manoeuvre == 12)
                     {
-                        console.debug("Double parade : "+LstAttaque[0].CorpsCorps+"/"+Arme.MaitriseCC);
                         if(!LstAttaque[0].CorpsCorps && (Arme.MaitriseCC < 3)){Ajout = false;}
                         if(TD_DATA[Id].DoubleParade){Ajout = false;}
                         let Nb  = parseInt(TD_DATA[Id].LstDefense["P"]) - 1;
@@ -373,17 +373,13 @@ function TD_Activer(Id)
     TD_DATA[Id].PtrSelectJetDefense.value = "";
     Objet.Couleur(TD_DATA[Id].PtrLigne, 2);
     let AucuneDefense = false;
-    console.debug("TD_Activer : "+Id);
     if(TD_InitialiserSelection(Id) < 3)
     {
-        console.debug("  1");
         if(TD_ControlerTaoActif(Id) == 0)
         {
-            console.debug("  2");
             AucuneDefense = true;
         }
     }
-    console.debug("  3 : " + AucuneDefense);
     if(AucuneDefense)
     {
         TD_AucuneDefense(Id);
@@ -429,16 +425,12 @@ function TD_AttaqueSuicide(Id, BoAv)
     let Degat = ATTAQUE_CalculerDegat(Id, TirageDE);
     TD_CalculerDegat(Id, "", false);
 
-    console.debug("Degat : "+Degat);
-
     let Tab = (LstAttaque[0].Source + "-0").split("-");
     let Nb = Tab[0];
     if((TirageDE.Double) || (Touche >= Perso.Base(Nb).DefensePassive))
     {
         let CA = Equipement.Protection(Nb);
-        console.debug("Cible : "+ Nb+" CA : "+CA);
         let PV = Degat - CA;
-        console.debug("PV : "+ PV);
         if(PV > 0)
         {
             JDR_BlesserPersonnage(Nb, PV, LstAttaque[0].Source);

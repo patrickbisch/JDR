@@ -176,6 +176,7 @@ function TA_TraiterRetour(Id, DEValide)
             Double = DEValide.Yang;
         }
     }
+    MSG.Journal("DE : (" + DEValide.Yang + " - " + DEValide.Yin + ") Yang - Yin", 3);
     let Touche  = Math.abs(parseInt(DEValide.Yang) - parseInt(DEValide.Yin));
     if(parseInt(DEValide.Yang) == parseInt(DEValide.Yin))
     {
@@ -186,10 +187,6 @@ function TA_TraiterRetour(Id, DEValide)
             parseInt(BoAv) +
             parseInt(PERSO_DATA[Id].MalusPV) +
             parseInt(LstAction[0].Touche);
-
-MSG.Historique("Taco : "+parseInt(TACO)+" Metal :"+parseInt(PERSO_BASE[Id].Metal)+" BA : "+parseInt(BoAv)+
-" Malus :"+parseInt(PERSO_DATA[Id].MalusPV)+" Yang/Yin : "+parseInt(TirageDE.Yang)+"/"+parseInt(TirageDE.Yin)+ 
-" BonusTouche : "+parseInt(LstAction[0].Touche));
 
     let Degat = parseInt(TirageDE.Yang) - parseInt(TirageDE.Yin);
     if(parseInt(Degat) < 0)
@@ -267,6 +264,7 @@ MSG.Historique("Taco : "+parseInt(TACO)+" Metal :"+parseInt(PERSO_BASE[Id].Metal
 function ATTAQUE_Gerer()
 {
     Moteur.ArreterModule();
+    console.debug("ATTAQUE_Gerer");
     if(LstAttaque.length > 0)
     {
         let Ptr = LstAttaque[0];
@@ -274,6 +272,7 @@ function ATTAQUE_Gerer()
         let Id = Tab[0]
         if(Perso.Mort(Id))
         {
+            console.debug("  Cible morte");
             ATTAQUE_Termine();
             return(0);
         }
@@ -313,11 +312,13 @@ function ATTAQUE_Gerer()
     }
     else
     {
+        console.debug("  Action terminée");
         Action.Termine(Perso.Actif);
     }
 }
 function ATTAQUE_Termine()
 {
+    console.debug("ATTAQUE_Termine");
     Attaque.Afficher(Perso.Actif, false)
     Tao.Afficher(Perso.Actif, "");
     LstAttaque.splice(0, 1);

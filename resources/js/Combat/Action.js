@@ -5,6 +5,7 @@ class ACTION_Interface  {
     ActiverSelection(Id, Etat) {ACTION_DATA[Id].PtrSelect.disabled = !Etat;}
     Afficher(Id, Etat) {OBJET_Afficher(ACTION_DATA[Id].PtrLigne, Etat);}
     Termine(Id) {ACTION_Terminer(Id);}
+    Distance(Id) {return(ACTION_Distance(Id));}
 }
 var Action = new ACTION_Interface();
 let ACTION_DATA = new Array();
@@ -101,8 +102,11 @@ function ACTION_InitialiserSelect(Id)
             TabAction.push(["8", "Dégainer l'arme"],);
         }
     }
-    TabAction.push(["2", "Se déplacer"],
-                    ["1", "Passer son tour"],
+    if(Carte.DeplacementPossible(Id))
+    {
+        TabAction.push(["2", "Se déplacer"],);
+    }
+    TabAction.push(["1", "Passer son tour"],
                     ["0", ""],);
 
     for(let x = 0;x < TabAction.length;x++)
@@ -145,18 +149,21 @@ function ACTION_Nouvelle(Obj, Id)
         case 4:
             ACTION_Ajouter(4);
             MSG.Journal("Il fait une attaque de <strong>corps à corps</strong>.", 1);
+            Cible.Recharger(Id);
             Attaque.InitialiserManoeuvre(Id, Obj.value);
             ACTION_Attaquer(Id);
             break;
         case 5:
             ACTION_Ajouter(5);
             MSG.Journal("Il <strong>lance</strong> son arme.", 1);
+            Cible.Recharger(Id);
             Attaque.InitialiserManoeuvre(Id, Obj.value);
             ACTION_Attaquer(Id);
             break;
         case 6:
             ACTION_Ajouter(6);
             MSG.Journal("Il <strong>tire</strong> avec son arme à distance.", 1);
+            Cible.Recharger(Id);
             Attaque.InitialiserManoeuvre(Id, Obj.value);
             ACTION_Attaquer(Id);
             break;
@@ -290,6 +297,8 @@ function ACTION_Terminer(Id)
             case 6:
                 if(Perso.Mort(Cible.Active))
                 {
+                    Cible.Active = -1;
+                    PERSO_ActualiserListe();
                     ACTION_Terminer(Id);
                 }
                 else
@@ -311,4 +320,13 @@ function ACTION_Terminer(Id)
                 break;
         }
     }
+}
+function ACTION_Distance(Id)
+{
+    if((ACTION_DATA[Id].PtrSelect.value == 5) ||
+        (ACTION_DATA[Id].PtrSelect.value == 6))
+    {
+        return(true);
+    }
+    return(false);
 }

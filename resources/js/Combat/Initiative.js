@@ -176,6 +176,7 @@ function INIT_ActualiserListe()
             if(Perso.Mort(Id))
             {
                 Objet.Couleur(INIT_DATA[x].PtrLigneInit, 2);
+                Objet.Afficher(INIT_DATA[x].PtrLigneInit, false);
             }
             else
             {
@@ -187,8 +188,8 @@ function INIT_ActualiserListe()
                 {
                     Objet.Couleur(INIT_DATA[x].PtrLigneInit, 0);
                 }
+                Objet.Afficher(INIT_DATA[x].PtrLigneInit, Init.Liste.Etat)
             }
-            Objet.Afficher(INIT_DATA[x].PtrLigneInit, Init.Liste.Etat)
         }
     }
     for(;x < INIT_DATA.length;x++)

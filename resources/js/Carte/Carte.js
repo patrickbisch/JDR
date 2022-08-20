@@ -19,6 +19,8 @@ class CARTE_Interface  {
     EffacerPosition(Index) {Matrice.EffacerPosition(CartePerso[Index]);}
     DistancePersonnage(Index, StructureDistance, SansObstacle) {CARTE_DistancePersonnage(Index, StructureDistance, SansObstacle);}
     DistancePersonnageTermine() {CARTE_DistancePersonnageTermine();}
+    DeplacementPossible(Index) {return(CARTE_DeplacementPossible(Index));}
+    CiblePersonnage(Index, Allonge) {return(CARTE_CiblePersonnage(Index, Allonge));}
 }
 var Carte = new CARTE_Interface();
 
@@ -205,13 +207,11 @@ function CARTE_InitialiserBrouillard(Vision, Brouillard)
 }
 function CARTE_DistancePersonnage(Index, StrDist, SansObstacle)
 {
-    console.debug("CARTE_DistancePersonnage : "+Index+" ("+StrDist.length+") "+SansObstacle);
     let Distance = StrDist.length;
     if(Distance == 0){return(-1);}
     Matrice.InitialiserDistancier();
     Matrice.AjouterDistance(CartePerso[Index].Position.Ox, CartePerso[Index].Position.Oy, Distance);    
     let LstObj = Matrice.LancerDistancier(-1, SansObstacle);
-    console.debug("  Taille : "+LstObj.length);
     for(let x = 0;x < LstObj.length;x++)
     {
         if((Matrice.MasqueObjet(LstObj[x], 0) & 2) == 0)
@@ -251,6 +251,42 @@ function CARTE_DistancePersonnageTermine()
            }
         }
     }
+}
+function CARTE_DeplacementPossible(Index)
+{
+    let TabObj = Matrice.Surface(CartePerso[Index].Position.Ox, CartePerso[Index].Position.Oy);
+    for(let x = 0;x < TabObj.length;x++)
+    {
+        if((Matrice.MasqueObjet(TabObj[x], 0) & 2) == 0)
+        {
+            return(true);
+        }
+    }
+    return(false);
+}
+function CARTE_CiblePersonnage(Index, Allonge = 1)
+{
+    Matrice.InitialiserDistancier();
+    let LstObj = Matrice.SurfacePersonnage(CartePerso[Index]);
+    for(let x = 0;x < LstObj.length;x++)
+    {
+        Matrice.AjouterDistance(LstObj[x].Ox, LstObj[x].Oy, Allonge);    
+    }
+    LstObj = Matrice.LancerDistancier(0, true);
+    let Masque = 0;
+    for(let x = 0;x < LstObj.length;x++)
+    {
+        Masque |= Matrice.MasqueObjet(LstObj[x], 3);
+    }
+    let LstRetour = new Array();
+    for(let x = 0;x < CartePerso.length;x++)
+    {
+        if((CartePerso[x].Masque & Masque) > 0)
+        {
+            LstRetour.push([x, Matrice.Distance(CartePerso[x].Position.Ox, CartePerso[x].Position.Oy)])
+        }
+    }
+    return(LstRetour);
 }
 function CARTE_Activer(Index, Etat = true)
 {

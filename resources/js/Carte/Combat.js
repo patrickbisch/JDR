@@ -58,7 +58,7 @@ function CARTO_NouveauTour()
 
     for(let x = 0; x < Perso.Taille; x++)
     {
-        JDR_NouvellePosition(x);
+        CARTO_NouvellePosition(x);
     }
 
     Chaine = document.querySelector("#EntrePJ").innerHTML;
@@ -159,7 +159,7 @@ function JDR_CARTE_NouvelleSelection(Indice, Ox, Oy)
         case "CARTO_PJ":
             Carte.EffacerPosition(Perso.Actif);
             Carte.ModifierPosition(Perso.Actif, Ox, Oy, true);
-            JDR_NouvellePosition(Perso.Actif);
+            CARTO_NouvellePosition(Perso.Actif);
             CARTO_ValiderPosition();
             break;
         case "DEPLACEMENT":
@@ -167,10 +167,8 @@ function JDR_CARTE_NouvelleSelection(Indice, Ox, Oy)
             Carte.ModifierPosition(Perso.Actif, Ox, Oy, true);
             let Nb = 
             Carte.DistancePersonnageTermine();
-            JDR_NouvellePosition(Perso.Actif);
-
-            
-
+            CARTO_NouvellePosition(Perso.Actif);
+            Cible.Recharger(Perso.Actif);
             Action.Termine(Perso.Actif);
             break;
         default:
@@ -178,7 +176,7 @@ function JDR_CARTE_NouvelleSelection(Indice, Ox, Oy)
             break;
     }
 }
-function JDR_NouvellePosition(Index)
+function CARTO_NouvellePosition(Index)
 {
     let Posi = Carte.Position(Index);
     if((Posi.Ox < 0) || (Posi.Oy < 0))

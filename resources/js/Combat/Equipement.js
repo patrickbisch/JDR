@@ -293,6 +293,7 @@ function EQUIP_NouveauObjet(Obj, Id, x)
         if(parseInt(Nb) < 0)
         {
             Perso.AffecterNombreAction(Id, Perso.Base(Id).Eau + 1);
+            Perso.InitialiserAllonge(Id, 1, 0);
         }
         else
         {
@@ -304,6 +305,7 @@ function EQUIP_NouveauObjet(Obj, Id, x)
             {
                 Perso.AffecterNombreAction(Id, Perso.Base(Id).Armes[Nb].MaitriseCC + 1);
             }
+            Perso.InitialiserAllonge(Id, Perso.Base(Id).Armes[Nb].Allonge, Perso.Base(Id).Armes[Nb].Porte);
         }
     }
 }

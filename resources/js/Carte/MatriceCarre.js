@@ -26,6 +26,7 @@ class MATRICE_Carre{
 
 
 
+    SurfacePersonnage(PtrPerso) {return(MC_SurfacePerso(PtrPerso));}
     AfficherPosition(PtrPerso, Etat) {return(MC_AfficherPosition(PtrPerso, Etat));}
     EffacerPosition(PtrPerso) {return(MC_EffacerPosition(PtrPerso));}
     Activer(Position, Etat) {return(MC_Activer(Position, Etat));}
@@ -39,6 +40,7 @@ class MATRICE_Carre{
     LancerDistancier(Seuil, SansObstacle) {return(MC_LancerDistancier(Seuil, SansObstacle));}
     Distance(Ox, Oy) {return(Cellule[Ox][Oy].Distance);}
     DistanceObjet(PtrObj) {return(this.Distance(PtrObj.Ox, PtrObj.Oy));}
+    Surface(Ox, Oy, Taille) {return(MC_Surface(Ox, Oy, Taille));}
 }
 
 class StructureCarre{
@@ -92,36 +94,42 @@ function MC_Initialiser(TailleOx, TailleOy)
     }
     return(1);
 }
-function MC_ListeObjet(PtrPerso)
+function MC_Surface(Ox, Oy, Taille = [1, 1, 1, 1])
 {
     let TabRet = new Array();
+    //  0 = En haut
+    //  1 = A droite
+    //  2 = En bas
+    //  3 = A gauche
+    let y1 = Oy - Taille[0];
+    let y2 = Oy + Taille[2];
+    let x1 = Ox - Taille[3];
+    let x2 = Ox + Taille[1];
+    if(x1 < 0){x1 = 0;}
+    if(y1 < 0){y1 = 0;}
+    if(x2 >= Cellule.length){x2 = Cellule.length - 1;}
+    if(y2 >= Cellule[0].length){y2 = Cellule[0].length - 1;}
+    for(let x = x1;x <= x2;x++)
+    {
+        for(let y = y1;y <= y2;y++)
+        {
+            TabRet.push(Cellule[x][y])
+        }
+    }
+    return(TabRet);
+}
+function MC_SurfacePerso(PtrPerso)
+{
     if(PtrPerso.Grosse)
     {
-        //  0 = En haut
-        //  1 = A droite
-        //  2 = En bas
-        //  3 = A gauche
-        let y1 = PtrPerso.Position.Oy - PtrPerso.Taille[0];
-        let y2 = PtrPerso.Position.Oy + PtrPerso.Taille[2];
-        let x1 = PtrPerso.Position.Ox - PtrPerso.Taille[3];
-        let x2 = PtrPerso.Position.Ox + PtrPerso.Taille[1];
-        if(x1 < 0){x1 = 0;}
-        if(y1 < 0){y1 = 0;}
-        if(x2 >= Cellule.length){x2 = Cellule.length - 1;}
-        if(y2 >= Cellule[0].length){y2 = Cellule[0].length - 1;}
-        for(let x = x1;x <= x2;x++)
-        {
-            for(let y = y1;y <= y2;y++)
-            {
-                TabRet.push(Cellule[x][y])
-            }
-        }
+        return(MC_Surface(PtrPerso.Position.Ox, PtrPerso.Position.Oy, PtrPerso.Taille));
     }
     else
     {
-        TabRet.push(Cellule[PtrPerso.Position.Ox][PtrPerso.Position.Oy])
+        let Retour = new Array();
+        Retour.push(Cellule[PtrPerso.Position.Ox][PtrPerso.Position.Oy]);
+        return(Retour);
     }
-    return(TabRet);
 }
 /******************************************************************************/
 /*      GESTION SUR LES MASQUES
@@ -358,7 +366,7 @@ function MC_AfficherPosition(PtrPerso, Etat = false)
     {
         MC_AjouterMasque(PtrPerso.Position.Ox, PtrPerso.Position.Oy, 2, 16);
     }
-    let TabCel = MC_ListeObjet(PtrPerso);
+    let TabCel = MC_SurfacePerso(PtrPerso);
     for(let x = 0;x < TabCel.length;x++)
     {
         TabCel[x].Masque[3] |= PtrPerso.Masque;
@@ -371,11 +379,10 @@ function MC_EffacerPosition(PtrPerso)
     if(PtrPerso.Position.Ox < 0 ){return(-1);}
     if(PtrPerso.Position.Oy < 0 ){return(-1);}
     let PtrCel = Cellule[PtrPerso.Position.Ox][PtrPerso.Position.Oy];
-    console.debug(PtrCel);
     PtrCel.PtrCellule[2].innerHTML = "";
     MC_EnleverMasque(PtrPerso.Position.Ox, PtrPerso.Position.Oy, 0, 2);
     MC_EnleverMasque(PtrPerso.Position.Ox, PtrPerso.Position.Oy, 2, 28);
-    let TabCel = MC_ListeObjet(PtrPerso);
+    let TabCel = MC_SurfacePerso(PtrPerso);
     for(let x = 0;x < TabCel.length;x++)
     {
         TabCel[x].Masque[3] &= ~PtrPerso.Masque;
@@ -460,11 +467,9 @@ function MC_AjouterDistance(Ox, Oy, Distance)
 {
     Cellule[Ox][Oy].Distance = Distance;
     LstDistance.push(Cellule[Ox][Oy]);
-    console.debug("MC_AjouterDistance : "+Ox+"/"+Oy+" Distance : "+Distance+" Taille : "+LstDistance.length);
 }
 function MC_LancerDistancier(Seuil = 0, SansObstacle = true)
 {
-    console.debug("MC_LancerDistancier : "+Seuil+" Sans Obstacle : "+SansObstacle+" Taille : "+LstDistance.length);
     for(;LstDistance.length != 0;)
     {
         MC_CalculerDistance(LstDistance[0], SansObstacle);
@@ -485,7 +490,6 @@ function MC_LancerDistancier(Seuil = 0, SansObstacle = true)
 }
 function MC_CalculerDistance(Obj, SansObstacle)
 {
-    console.debug("Ox : "+Obj.Ox+" Oy : "+Obj.Oy+" Distance : "+Obj.Distance);
     if(Obj.Distance < 0){return(0);}
     let Distance = Obj.Distance - 1;
     let FiltreObstacle = 28;
@@ -493,7 +497,6 @@ function MC_CalculerDistance(Obj, SansObstacle)
     {
         if(Cellule[Obj.Ox-1][Obj.Oy].Distance < Distance)
         {
-            console.debug("    MAsque : "+Cellule[Obj.Ox-1][Obj.Oy].Masque[2]);
             if(((Cellule[Obj.Ox-1][Obj.Oy].Masque[2] & FiltreObstacle) == 0) || (SansObstacle))
             {
                 Cellule[Obj.Ox-1][Obj.Oy].Distance = Distance;

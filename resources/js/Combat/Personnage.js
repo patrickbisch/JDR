@@ -36,6 +36,8 @@ class PERSO_Interface{
     Bouclier(Index, Numero) {return(PERSO_BASE[Index].Boucliers[Numero]);}
     NombreBouclier(Index) {return(PERSO_BASE[Index].Boucliers.length);}
     Armure(Index, Numero) {return(PERSO_BASE[Index].Armures[Numero]);}
+    InitialiserAllonge(Index, AllongeCC, AllongeDis) {PERSO_InitialiserAllonge(Index, AllongeCC, AllongeDis);}
+    Allonge(Index, CorpsCorps) {return(PERSO_Allonge(Index, CorpsCorps));}
 }
 var Perso            = new PERSO_Interface();
 
@@ -65,6 +67,9 @@ class PERSO_Donnee{
 
     AttaqueCC = 0;
     AttaqueDis = 0;
+
+    AllongeCC = 1;          //  Distance de touche au Corps a Corps
+    AllongeDis = 0;         //  Distance pour les armes de jet
 
     //  Definition pour les actions
     PtrLabelAction;
@@ -363,6 +368,10 @@ function PERSO_ChangerEtat(Index, Mort = true)
         Cible.ActualiserListeGroupe();
     }
     PERSO_ActualiserListe();
+    if(Mort)
+    {
+        Carte.EffacerPosition(Index);
+    }
 }
 function PERSO_ActiverPersonnage(Index)
 {
@@ -371,6 +380,8 @@ function PERSO_ActiverPersonnage(Index)
         case "CARTO_PNJ":
         case "CARTO_PJ":
             Cartographie.ActiverPersonnage(Index);
+            break;
+        case "ATTAQUE":
             break;
         default:
             console.info("PERSO_ActiverPersonnage <"+Bouton.Valider.Module+"> : "+Index);
@@ -387,6 +398,19 @@ function PERSO_BloquerPNJ(Etat = true)
         }
     }
     PERSO_ActualiserListe();
+}
+function PERSO_InitialiserAllonge(Index, AllongeCC, AllongeDis)
+{
+    PERSO_DATA[Index].AllongeCC = AllongeCC;
+    PERSO_DATA[Index].AllongeDis = AllongeDis;
+}
+function PERSO_Allonge(Index, CorpsCorps = true)
+{
+    if(CorpsCorps)
+    {
+        return(PERSO_DATA[Index].AllongeCC);
+    }
+    return(PERSO_DATA[Index].AllongeDis);
 }
 /***************************************************************************************/
 /***************************************************************************************/
